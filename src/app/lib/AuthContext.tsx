@@ -29,22 +29,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const loadUserFromSession = async () => {
-      const storedToken = localStorage.getItem('authToken');
-      if (storedToken) {
-        setToken(storedToken);
-        try {
-          const user = await authService.getProfile();
-          setUser(user);
-        } catch (error) {
-          console.error('Failed to fetch user profile, logging out.', error);
-          handleLogout();
-        }
-      }
-      setIsLoading(false);
-    };
-
-    loadUserFromSession();
+    const storedToken = localStorage.getItem('authToken');
+    const storedUser = localStorage.getItem('user');
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
+    setIsLoading(false);
   }, []);
 
   const redirectUser = (role: string) => {
@@ -81,6 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setToken(responseData.token);
       setUser(responseData.user);
       localStorage.setItem('authToken', responseData.token);
+      localStorage.setItem('user', JSON.stringify(responseData.user));
       redirectUser(responseData.user.role);
     }
   };
@@ -99,6 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(responseData.token);
     setUser(responseData.user);
     localStorage.setItem('authToken', responseData.token);
+    localStorage.setItem('user', JSON.stringify(responseData.user));
     setMfaToken(null); // Clear MFA token
     redirectUser(responseData.user.role);
   };
@@ -115,6 +108,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setToken(responseData.token);
         setUser(responseData.user);
         localStorage.setItem('authToken', responseData.token);
+        localStorage.setItem('user', JSON.stringify(responseData.user));
         redirectUser(responseData.user.role);
     }
   };
@@ -124,6 +118,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     setMfaToken(null);
     localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
     authService.logout();
     router.push('/login');
   };
