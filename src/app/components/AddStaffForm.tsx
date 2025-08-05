@@ -34,7 +34,7 @@ export default function AddStaffForm({ onClose, onSubmit, isLoading, error, init
     onSubmit({ name, email, phone, role });
   };
 
-  const labelClasses = "absolute left-4 top-3 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+  const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
   const inputClasses = "block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
 
   return (
@@ -53,10 +53,10 @@ export default function AddStaffForm({ onClose, onSubmit, isLoading, error, init
         <label htmlFor="phone" className={labelClasses}>Phone</label>
       </div>
       <div>
-        <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+        <label htmlFor="role" className="block text-sm font-medium text-black mb-1">Role</label>
         <select id="role" value={role} onChange={(e) => setRole(e.target.value as UserRole)} required className="block w-full px-4 py-3 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
           {availableRoles.map((r) => (
-            <option key={r} value={r}>{r.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
+            <option key={r} value={r} className="text-black">{r.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
           ))}
         </select>
       </div>

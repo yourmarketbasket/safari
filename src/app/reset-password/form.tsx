@@ -36,11 +36,11 @@ export default function ResetPasswordForm() {
     }
   };
 
-  const labelClasses = "absolute left-4 top-3 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
-  const inputClasses = "block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+  const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+  const inputClasses = "block w-full px-4 py-3 mt-1 bg-transparent border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
 
   return (
-    <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-xl">
+    <div className="w-full max-w-md p-8 space-y-8 bg-white/30 backdrop-blur-md rounded-2xl shadow-xl">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900">Reset Your Password</h1>
       </div>
@@ -66,7 +66,7 @@ export default function ResetPasswordForm() {
         </div>
       </form>
       <div className="text-sm text-center">
-        <Link href="/login" title="Login" className="font-medium text-indigo-600 hover:text-indigo-500">Back to Login</Link>
+        <Link href="/login" title="Login" className="font-medium text-indigo-800 hover:text-indigo-600">Back to Login</Link>
       </div>
     </div>
   );

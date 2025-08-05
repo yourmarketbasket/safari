@@ -28,35 +28,36 @@ export default function LoginPage() {
     }
   };
 
-  const labelClasses = "absolute left-4 top-3 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+  const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+  const inputClasses = "block w-full px-4 py-3 mt-1 bg-transparent border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-white">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-xl">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-200 to-blue-200">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white/30 backdrop-blur-md rounded-2xl shadow-xl">
         <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="mt-2 text-gray-600">Login to your Safary account</p>
+            <p className="mt-2 text-gray-800">Login to your Safary account</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-8 pt-6">
           <div className="relative">
-            <input id="emailOrPhone" name="emailOrPhone" type="text" required value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} placeholder=" " className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer"/>
+            <input id="emailOrPhone" name="emailOrPhone" type="text" required value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} placeholder=" " className={inputClasses}/>
             <label htmlFor="emailOrPhone" className={labelClasses}>Email or Phone</label>
           </div>
           <div className="relative">
-            <input id="password" name="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder=" " className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer"/>
+            <input id="password" name="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder=" " className={inputClasses}/>
             <label htmlFor="password" className={labelClasses}>Password</label>
           </div>
           <div className="relative">
-            <input id="mfaCode" name="mfaCode" type="text" value={mfaCode} onChange={(e) => setMfaCode(e.target.value)} placeholder=" " className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer"/>
+            <input id="mfaCode" name="mfaCode" type="text" value={mfaCode} onChange={(e) => setMfaCode(e.target.value)} placeholder=" " className={inputClasses}/>
             <label htmlFor="mfaCode" className={labelClasses}>MFA Code</label>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input id="remember-me" name="remember-me" type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">Remember me</label>
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-black">Remember me</label>
             </div>
             <div className="text-sm">
-              <Link href="/forgot-password" title="Forgot Password" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <Link href="/forgot-password" title="Forgot Password" className="font-medium text-indigo-800 hover:text-indigo-600">
                 Forgot your password?
               </Link>
             </div>
@@ -68,9 +69,9 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
-        <div className="text-sm text-center text-gray-600">
+        <div className="text-sm text-center text-gray-800">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" title="Sign Up" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <Link href="/signup" title="Sign Up" className="font-medium text-indigo-800 hover:text-indigo-600">
             Sign up
           </Link>
         </div>

@@ -45,15 +45,15 @@ export default function SignupPage() {
     }
   };
 
-  const labelClasses = "absolute left-4 top-3 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
-  const inputClasses = "block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+  const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+  const inputClasses = "block w-full px-4 py-3 mt-1 bg-transparent border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-white">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-xl">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-200 to-blue-200">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white/30 backdrop-blur-md rounded-2xl shadow-xl">
         <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Create an Account</h1>
-            <p className="mt-2 text-gray-600">Join Safary today</p>
+            <p className="mt-2 text-gray-800">Join Safary today</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-8 pt-6">
           <div className="relative">
@@ -73,16 +73,16 @@ export default function SignupPage() {
             <label htmlFor="password" className={labelClasses}>Password</label>
           </div>
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">I am a...</label>
-            <select id="role" value={role} onChange={(e) => setRole(e.target.value as UserRole)} required className="block w-full px-4 py-3 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            <label htmlFor="role" className="block text-sm font-medium text-black mb-1">I am a...</label>
+            <select id="role" value={role} onChange={(e) => setRole(e.target.value as UserRole)} required className="block w-full px-4 py-3 bg-transparent border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
               {availableRoles.map((r) => (
-                <option key={r} value={r}>{r.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
+                <option key={r} value={r} className="text-black">{r.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
               ))}
             </select>
           </div>
            <div className="flex items-center">
               <input id="terms" name="terms" type="checkbox" checked={agreedToTerms} onChange={(e) => setAgreedToTerms(e.target.checked)} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">I agree to the <a href="/terms" className="font-medium text-indigo-600 hover:text-indigo-500">Terms and Conditions</a></label>
+              <label htmlFor="terms" className="ml-2 block text-sm text-black">I agree to the <a href="/terms" className="font-medium text-indigo-800 hover:text-indigo-600">Terms and Conditions</a></label>
             </div>
           {error && <p className="text-sm text-center text-red-600">{error}</p>}
           <div>
@@ -91,9 +91,9 @@ export default function SignupPage() {
             </button>
           </div>
         </form>
-        <div className="text-sm text-center text-gray-600">
+        <div className="text-sm text-center text-gray-800">
           Already have an account?{' '}
-          <Link href="/login" title="Login" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <Link href="/login" title="Login" className="font-medium text-indigo-800 hover:text-indigo-600">
             Log in
           </Link>
         </div>
