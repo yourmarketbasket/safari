@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import authService, { LoginCredentials, SignupData, VerifyMfaData } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
+import Cookies from 'js-cookie';
 
 interface AuthContextType {
   user: User | null;
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
+    const storedToken = Cookies.get('authToken');
     if (storedToken) {
       setToken(storedToken);
       // In a real app, you would also fetch user data here.
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       setToken(response.token);
       setUser(response.user);
-      localStorage.setItem('authToken', response.token);
+      Cookies.set('authToken', response.token, { expires: 7 }); // Expires in 7 days
       router.push('/dashboard');
     }
   };
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     setToken(response.token);
     setUser(response.user);
-    localStorage.setItem('authToken', response.token);
+    Cookies.set('authToken', response.token, { expires: 7 }); // Expires in 7 days
     setMfaToken(null); // Clear MFA token
     router.push('/dashboard');
   };
@@ -72,22 +73,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const handleSignup = async (signupData: SignupData) => {
-    const response = await authService.signup(signupData);
-    if (response.mfaRequired) {
-        setMfaToken(response.mfaToken);
-    } else {
-        setToken(response.token);
-        setUser(response.user);
-        localStorage.setItem('authToken', response.token);
-        router.push('/dashboard');
-    }
+    await authService.signup(signupData);
+    router.push('/login');
   };
 
   const handleLogout = () => {
     setUser(null);
     setToken(null);
     setMfaToken(null);
-    localStorage.removeItem('authToken');
+    Cookies.remove('authToken');
     authService.logout();
     router.push('/login');
   };
