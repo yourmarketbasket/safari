@@ -141,7 +141,7 @@ export default function PassengerDashboardPage() {
           <TicketDialog ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />
           <div className="flex justify-between items-center mt-4">
             <select
-              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              className="px-4 py-2 border-2 border-gray-400 rounded-lg focus:ring-blue-600 focus:border-blue-600 text-gray-900"
               value={itemsPerPage}
               onChange={(e) => setItemsPerPage(Number(e.target.value))}
             >
@@ -153,14 +153,14 @@ export default function PassengerDashboardPage() {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="px-4 py-2 border-2 border-gray-300 rounded-lg mr-2 hover:bg-gray-100 disabled:opacity-50"
+                className="px-4 py-2 border-2 border-gray-400 rounded-lg mr-2 hover:bg-gray-200 disabled:opacity-50 text-gray-900"
               >
                 Previous
               </button>
               <button
                 disabled={currentPage * itemsPerPage >= filteredTickets.length}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="px-4 py-2 border-2 border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50"
+                className="px-4 py-2 border-2 border-gray-400 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-900"
               >
                 Next
               </button>
