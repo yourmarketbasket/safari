@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiTicket, FiList, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 
@@ -21,7 +21,7 @@ const allNavLinks = {
     { name: 'My Trips', href: '/owner/trips', icon: <FiList /> },
   ],
   passenger: [
-    { name: 'Dashboard', href: '/passenger', icon: <FiTicket /> },
+    { name: 'Dashboard', href: '/passenger', icon: <FiPocket /> },
   ],
   support: [
     { name: 'Dashboard', href: '/support', icon: <FiUsers /> },
