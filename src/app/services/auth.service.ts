@@ -96,7 +96,7 @@ export const logout = () => {
  * Fetches the current user's profile.
  */
 export const getProfile = async (): Promise<User> => {
-    const response = await api.get<User>('/auth/profile');
+    const response = await api.get<User>('/auth/me');
     return response.data;
 };
 
