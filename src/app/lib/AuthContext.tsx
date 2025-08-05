@@ -73,14 +73,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleLogin = async (loginData: LoginCredentials) => {
-    const response = await authService.login(loginData);
-    if (response.mfaRequired) {
-      setMfaToken(response.mfaToken);
+    const responseData = await authService.login(loginData);
+
+    if (responseData.mfaRequired) {
+      setMfaToken(responseData.mfaToken);
     } else {
-      setToken(response.token);
-      setUser(response.user);
-      localStorage.setItem('authToken', response.token);
-      redirectUser(response.user.role);
+      setToken(responseData.token);
+      setUser(responseData.user);
+      localStorage.setItem('authToken', responseData.token);
+      redirectUser(responseData.user.role);
     }
   };
 
@@ -88,18 +89,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!mfaToken) throw new Error("MFA token not available.");
 
     const verifyData: VerifyMfaData = { mfaToken, mfaCode };
-    const response = await authService.verifyMfa(verifyData);
+    const responseData = await authService.verifyMfa(verifyData);
 
-    if (response.mfaRequired) {
+    if (responseData.mfaRequired) {
         // This would be an error case, e.g., invalid code
         throw new Error("MFA verification failed.");
     }
 
-    setToken(response.token);
-    setUser(response.user);
-    localStorage.setItem('authToken', response.token);
+    setToken(responseData.token);
+    setUser(responseData.user);
+    localStorage.setItem('authToken', responseData.token);
     setMfaToken(null); // Clear MFA token
-    redirectUser(response.user.role);
+    redirectUser(responseData.user.role);
   };
 
   const handleCancelMfa = () => {
@@ -107,14 +108,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const handleSignup = async (signupData: SignupData) => {
-    const response = await authService.signup(signupData);
-    if (response.mfaRequired) {
-        setMfaToken(response.mfaToken);
+    const responseData = await authService.signup(signupData);
+    if (responseData.mfaRequired) {
+        setMfaToken(responseData.mfaToken);
     } else {
-        setToken(response.token);
-        setUser(response.user);
-        localStorage.setItem('authToken', response.token);
-        redirectUser(response.user.role);
+        setToken(responseData.token);
+        setUser(responseData.user);
+        localStorage.setItem('authToken', responseData.token);
+        redirectUser(responseData.user.role);
     }
   };
 

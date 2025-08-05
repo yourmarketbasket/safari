@@ -30,7 +30,7 @@ export type VerifyMfaData = {
 
 // The API response for a successful login/signup
 // It can be a partial response if MFA is required.
-export type AuthResponse = {
+export type AuthData = {
     token: string;
     user: User;
     mfaRequired?: false;
@@ -39,28 +39,33 @@ export type AuthResponse = {
     mfaToken: string;
 }
 
+export type AuthResponse = {
+    success: boolean;
+    data: AuthData;
+}
+
 /**
  * Logs in a user. Can return a final auth token or an MFA token.
  */
-export const login = async (loginData: LoginCredentials): Promise<AuthResponse> => {
+export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
   const response = await api.post<AuthResponse>('/auth/login', loginData);
-  return response.data;
+  return response.data.data;
 };
 
 /**
  * Verifies the MFA code using the temporary MFA token.
  */
-export const verifyMfa = async (verifyData: VerifyMfaData): Promise<AuthResponse> => {
+export const verifyMfa = async (verifyData: VerifyMfaData): Promise<AuthData> => {
     const response = await api.post<AuthResponse>('/auth/verify-mfa', verifyData);
-    return response.data;
+    return response.data.data;
 }
 
 /**
  * Signs up a new user.
  */
-export const signup = async (signupData: SignupData): Promise<AuthResponse> => {
+export const signup = async (signupData: SignupData): Promise<AuthData> => {
   const response = await api.post<AuthResponse>('/auth/signup', signupData);
-  return response.data;
+  return response.data.data;
 };
 
 /**
