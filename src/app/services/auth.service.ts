@@ -92,6 +92,14 @@ export const logout = () => {
   console.log('User logged out.');
 };
 
+/**
+ * Fetches the current user's profile.
+ */
+export const getProfile = async (): Promise<User> => {
+    const response = await api.get<User>('/auth/profile');
+    return response.data;
+};
+
 const authService = {
   login,
   verifyMfa,
@@ -100,6 +108,7 @@ const authService = {
   forgotPassword,
   resetPassword,
   logout,
+  getProfile,
 };
 
 export default authService;

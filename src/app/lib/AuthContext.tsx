@@ -29,12 +29,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
-    if (storedToken) {
-      setToken(storedToken);
-      // In a real app, you would also fetch user data here.
-    }
-    setIsLoading(false);
+    const loadUserFromSession = async () => {
+      const storedToken = localStorage.getItem('authToken');
+      if (storedToken) {
+        setToken(storedToken);
+        try {
+          const user = await authService.getProfile();
+          setUser(user);
+        } catch (error) {
+          console.error('Failed to fetch user profile, logging out.', error);
+          handleLogout();
+        }
+      }
+      setIsLoading(false);
+    };
+
+    loadUserFromSession();
   }, []);
 
   const redirectUser = (role: string) => {

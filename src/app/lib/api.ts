@@ -2,12 +2,16 @@ import axios from 'axios';
 import { encryptData, decryptData } from '../utils/encryption';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/v1/api',
+  baseURL: 'http://localhost:3000/api/v1',
 });
 
 // Request interceptor for encrypting data
 api.interceptors.request.use(
   (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     // Only encrypt data for POST, PUT, PATCH requests
     // if (config.data && (config.method === 'post' || config.method === 'put' || config.method === 'patch')) {
     //   console.log('Encrypting outgoing data...');
