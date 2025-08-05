@@ -43,7 +43,7 @@ export default function Sidebar() {
     <aside className={`flex-shrink-0 bg-white text-gray-800 flex flex-col transition-all duration-300 shadow-2xl ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className="h-20 flex items-center justify-between px-4 text-2xl font-bold border-b border-gray-200">
         {!isCollapsed && <Link href="/dashboard" className="text-purple-600">Safary</Link>}
-        <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-md hover:bg-gray-200 focus:outline-none">
+        <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-md hover:bg-gray-200 focus:outline-none flex items-center justify-center w-10 h-10">
           <AnimatedHamburgerIcon isCollapsed={isCollapsed} />
         </button>
       </div>
