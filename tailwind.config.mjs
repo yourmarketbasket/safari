@@ -7,6 +7,44 @@ const config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Poppins', 'sans-serif'],
+      },
+      colors: {
+        pink: {
+          100: '#fdf2f8',
+          200: '#fce7f3',
+          300: '#fbcfe8',
+          400: '#f9a8d4',
+          500: '#f472b6',
+          600: '#ec4899',
+          700: '#db2777',
+          800: '#be185d',
+          900: '#9d174d',
+        },
+        purple: {
+          100: '#f5f3ff',
+          200: '#ede9fe',
+          300: '#ddd6fe',
+          400: '#c4b5fd',
+          500: '#a78bfa',
+          600: '#8b5cf6',
+          700: '#7c3aed',
+          800: '#6d28d9',
+          900: '#5b21b6',
+        },
+        red: {
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#ef4444',
+          600: '#dc2626',
+          700: '#b91c1c',
+          800: '#991b1b',
+          900: '#7f1d1d',
+        },
+      },
       animation: {
         'fade-in-down': 'fade-in-down 0.6s ease-out forwards',
         'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
