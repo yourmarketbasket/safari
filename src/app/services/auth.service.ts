@@ -8,8 +8,8 @@ export type LoginCredentials = {
   mfaCode?: string;
 }
 
-// Omit 'id' and 'role' for signup, as these are usually set by the server
-export type SignupData = Omit<User, 'id' | 'role'>;
+// Omit 'id' for signup, as this is set by the server. Role is now included.
+export type SignupData = Omit<User, 'id'>;
 
 export type SuperuserSignupData = SignupData & {
     adminKey: string;

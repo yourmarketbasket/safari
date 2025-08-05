@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Safari",
+  title: "Safary",
   description: "Your partner in seamless travel management.",
 };
 

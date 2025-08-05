@@ -6,7 +6,7 @@ export default function DashboardPage() {
       <h1 className="text-2xl font-semibold text-gray-800">Main Dashboard</h1>
       <div className="mt-8">
         <p className="text-gray-600">
-          Welcome to your Safari dashboard.
+          Welcome to your Safary dashboard.
         </p>
         <p className="mt-4 text-gray-600">
           You can navigate to the different sections of the application using the sidebar on the left.

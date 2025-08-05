@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Improve default form text visibility */
+input,
+select {
+  color: #111827; /* Tailwind's gray-900 */
+}
+
+/* Ensure dark mode also has visible form text if needed */
+@media (prefers-color-scheme: dark) {
+  input,
+  select {
+    color: #ededed; /* A light color for dark backgrounds */
+  }
+}
