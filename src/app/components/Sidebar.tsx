@@ -15,32 +15,45 @@ const QueueListIcon = () => <svg className="w-6 h-6" fill="none" stroke="current
 const SteeringWheelIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.152 13.248A9.942 9.942 0 0112 22a9.942 9.942 0 01-9.152-8.752M12 2v2.05a7 7 0 014.95 2.9l1.414-1.414A9.942 9.942 0 0012 2zm0 18v2.05a7 7 0 004.95-2.9l1.414 1.414A9.942 9.942 0 0112 22zm-7.05-4.95a7 7 0 002.9 4.95V22a9.942 9.942 0 01-1.414-1.414l-1.486 1.486zm14.1 0a7 7 0 00-2.9-4.95V22a9.942 9.942 0 001.414-1.414l1.486 1.486zM12 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
 const ArrowLeftOnRectangleIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l-3-3m0 0l-3 3m3-3V9" /></svg>;
 
-const navLinks = [
-  { name: 'Dashboard', href: '/dashboard', icon: <HomeIcon /> },
-  { name: 'Head Office', href: '/head-office', icon: <BuildingOfficeIcon /> },
-  { name: 'Support Staff', href: '/support', icon: <UserGroupIcon /> },
-  { name: 'Admin', href: '/admin', icon: <ShieldCheckIcon /> },
-  { name: 'Sacco', href: '/sacco', icon: <TruckIcon /> },
-  { name: 'Owner', href: '/owner', icon: <UserCircleIcon /> },
-  { name: 'Passenger', href: '/passenger', icon: <TicketIcon /> },
-  { name: 'Queue Manager', href: '/queue-manager', icon: <QueueListIcon /> },
-  { name: 'Driver', href: '/driver', icon: <SteeringWheelIcon /> },
-];
+import { useAuth } from '../lib/AuthContext';
+import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
+  admin: [
+    { name: 'Dashboard', href: '/admin', icon: <ShieldCheckIcon /> },
+    { name: 'Escalation Queue', href: '/admin/escalation-queue', icon: <QueueListIcon /> },
+  ],
+  sacco: [
+    { name: 'Dashboard', href: '/sacco', icon: <TruckIcon /> },
+    { name: 'Route Management', href: '/sacco/route-management', icon: <QueueListIcon /> },
+  ],
+  owner: [
+    { name: 'Dashboard', href: '/owner', icon: <UserCircleIcon /> },
+    { name: 'My Trips', href: '/owner/trips', icon: <QueueListIcon /> },
+  ],
+  passenger: [
+    { name: 'Dashboard', href: '/passenger', icon: <TicketIcon /> },
+  ],
+  support: [
+    { name: 'Dashboard', href: '/support', icon: <UserGroupIcon /> },
+    { name: 'Sacco Management', href: '/support/sacco-management', icon: <TruckIcon /> },
+  ],
+  headoffice: [
+    { name: 'Dashboard', href: '/head-office', icon: <BuildingOfficeIcon /> },
+    { name: 'Policy Management', href: '/head-office/policy-management', icon: <QueueListIcon /> },
+  ],
+  // Add other roles as needed
+};
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { user, logout } = useAuth();
+  const navLinks = user ? allNavLinks[user.role] || [] : [];
 
   return (
     <aside className={`flex-shrink-0 bg-white text-gray-800 flex flex-col transition-all duration-300 shadow-lg ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className="h-16 flex items-center justify-between px-4 text-2xl font-bold border-b border-gray-200">
         {!isCollapsed && <Link href="/dashboard" className="text-blue-600">Safary</Link>}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600"
-        >
-          <ArrowLeftOnRectangleIcon />
-        </button>
+        <AnimatedHamburgerIcon onClick={() => setIsCollapsed(!isCollapsed)} isCollapsed={isCollapsed} />
       </div>
       <nav className="flex-1 px-2 py-4 space-y-1">
         {navLinks.map((link) => {
@@ -61,6 +74,19 @@ export default function Sidebar() {
           );
         })}
       </nav>
+      <div className="px-2 py-4 border-t border-gray-200">
+        <Link href="/profile" className="flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600">
+          <UserCircleIcon />
+          {!isCollapsed && <span className="ml-4">Profile</span>}
+        </Link>
+        <button
+          onClick={logout}
+          className="w-full flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600"
+        >
+          <ArrowLeftOnRectangleIcon />
+          {!isCollapsed && <span className="ml-4">Logout</span>}
+        </button>
+      </div>
     </aside>
   );
 }
