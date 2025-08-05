@@ -37,6 +37,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false);
   }, []);
 
+  const redirectUser = (role: string) => {
+    switch (role) {
+      case 'admin':
+        router.push('/admin');
+        break;
+      case 'sacco':
+        router.push('/sacco');
+        break;
+      case 'owner':
+        router.push('/owner');
+        break;
+      case 'passenger':
+        router.push('/passenger');
+        break;
+      case 'support':
+        router.push('/support');
+        break;
+      case 'headoffice':
+        router.push('/head-office');
+        break;
+      default:
+        router.push('/login');
+    }
+  };
+
   const handleLogin = async (loginData: LoginCredentials) => {
     const response = await authService.login(loginData);
     if (response.mfaRequired) {
@@ -45,7 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setToken(response.token);
       setUser(response.user);
       localStorage.setItem('authToken', response.token);
-      router.push('/dashboard');
+      redirectUser(response.user.role);
     }
   };
 
@@ -64,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(response.user);
     localStorage.setItem('authToken', response.token);
     setMfaToken(null); // Clear MFA token
-    router.push('/dashboard');
+    redirectUser(response.user.role);
   };
 
   const handleCancelMfa = () => {
@@ -79,7 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setToken(response.token);
         setUser(response.user);
         localStorage.setItem('authToken', response.token);
-        router.push('/dashboard');
+        redirectUser(response.user.role);
     }
   };
 

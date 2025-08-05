@@ -2,7 +2,7 @@ import axios from 'axios';
 import { encryptData, decryptData } from '../utils/encryption';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api/v1',
+  baseURL: 'http://localhost:3000/v1/api',
 });
 
 // Request interceptor for encrypting data

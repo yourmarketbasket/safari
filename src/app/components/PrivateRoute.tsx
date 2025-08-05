@@ -4,15 +4,28 @@ import { useAuth } from '../lib/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const { token, isLoading } = useAuth();
+interface PrivateRouteProps {
+  children: React.ReactNode;
+  allowedRoles: string[];
+}
+
+export default function PrivateRoute({ children, allowedRoles }: PrivateRouteProps) {
+  const { user, token, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !token) {
+    if (isLoading) return;
+
+    if (!token) {
       router.push('/login');
+      return;
     }
-  }, [token, isLoading, router]);
+
+    if (user && !allowedRoles.includes(user.role)) {
+      // Redirect to a default page or an unauthorized page
+      router.push('/dashboard'); // Or a new '/unauthorized' page
+    }
+  }, [user, token, isLoading, router, allowedRoles]);
 
   if (isLoading) {
     return (
