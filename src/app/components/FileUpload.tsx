@@ -36,7 +36,7 @@ export default function FileUpload({ onFileChange }: FileUploadProps) {
           {isDragActive ? (
             <p className="text-gray-700">Drop the files here ...</p>
           ) : (
-            <p className="text-gray-700">Drag 'n' drop some files here, or click to select files</p>
+            <p className="text-gray-700">Drag &apos;n&apos; drop some files here, or click to select files</p>
           )}
         </div>
       )}
