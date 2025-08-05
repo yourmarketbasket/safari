@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../lib/AuthContext';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UserRole } from '../models/User.model';
 import Message from '../components/Message';
@@ -32,7 +33,14 @@ export default function SignupPage() {
   const [confirmedDetails, setConfirmedDetails] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
+  const { user, signup } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
