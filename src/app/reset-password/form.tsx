@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import authService from '../services/auth.service';
+import Link from 'next/link';
 
 export default function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -35,32 +36,37 @@ export default function ResetPasswordForm() {
     }
   };
 
+  const labelClasses = "absolute left-4 top-3 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+  const inputClasses = "block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+
   return (
-    <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold text-center text-gray-900">Reset Your Password</h1>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="otp" className="block text-sm font-medium text-gray-700">One-Time Password (OTP)</label>
-          <input id="otp" name="otp" type="text" required value={otp} onChange={(e) => setOtp(e.target.value)} className="block w-full px-3 py-2 mt-1" />
+    <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-xl">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-gray-900">Reset Your Password</h1>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-8 pt-6">
+        <div className="relative">
+          <input id="otp" name="otp" type="text" required value={otp} onChange={(e) => setOtp(e.target.value)} placeholder=" " className={inputClasses} />
+          <label htmlFor="otp" className={labelClasses}>One-Time Password (OTP)</label>
         </div>
-        <div>
-          <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">New Password</label>
-          <input id="newPassword" name="newPassword" type="password" required value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="block w-full px-3 py-2 mt-1" />
+        <div className="relative">
+          <input id="newPassword" name="newPassword" type="password" required value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder=" " className={inputClasses} />
+          <label htmlFor="newPassword" className={labelClasses}>New Password</label>
         </div>
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm New Password</label>
-          <input id="confirmPassword" name="confirmPassword" type="password" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="block w-full px-3 py-2 mt-1" />
+        <div className="relative">
+          <input id="confirmPassword" name="confirmPassword" type="password" required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder=" " className={inputClasses} />
+          <label htmlFor="confirmPassword" className={labelClasses}>Confirm New Password</label>
         </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        {message && <p className="text-sm text-green-600">{message}</p>}
+        {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+        {message && <p className="text-sm text-green-600 text-center">{message}</p>}
         <div>
-          <button type="submit" disabled={loading} className="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md">
+          <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
             {loading ? 'Resetting...' : 'Reset Password'}
           </button>
         </div>
       </form>
       <div className="text-sm text-center">
-        <a href="/login" title="Login" className="font-medium text-indigo-600 hover:text-indigo-500">Back to Login</a>
+        <Link href="/login" title="Login" className="font-medium text-indigo-600 hover:text-indigo-500">Back to Login</Link>
       </div>
     </div>
   );

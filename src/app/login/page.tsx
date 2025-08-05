@@ -28,6 +28,8 @@ export default function LoginPage() {
     }
   };
 
+  const labelClasses = "absolute left-4 top-3 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-white">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-xl">
@@ -35,18 +37,18 @@ export default function LoginPage() {
             <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
             <p className="mt-2 text-gray-600">Login to your Safary account</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="emailOrPhone" className="block text-sm font-medium text-gray-700">Email or Phone</label>
-            <input id="emailOrPhone" name="emailOrPhone" type="text" required value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
+        <form onSubmit={handleSubmit} className="space-y-8 pt-6">
+          <div className="relative">
+            <input id="emailOrPhone" name="emailOrPhone" type="text" required value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} placeholder=" " className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer"/>
+            <label htmlFor="emailOrPhone" className={labelClasses}>Email or Phone</label>
           </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input id="password" name="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
+          <div className="relative">
+            <input id="password" name="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder=" " className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer"/>
+            <label htmlFor="password" className={labelClasses}>Password</label>
           </div>
-          <div>
-            <label htmlFor="mfaCode" className="block text-sm font-medium text-gray-700">MFA Code</label>
-            <input id="mfaCode" name="mfaCode" type="text" value={mfaCode} onChange={(e) => setMfaCode(e.target.value)} className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
+          <div className="relative">
+            <input id="mfaCode" name="mfaCode" type="text" value={mfaCode} onChange={(e) => setMfaCode(e.target.value)} placeholder=" " className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer"/>
+            <label htmlFor="mfaCode" className={labelClasses}>MFA Code</label>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center">

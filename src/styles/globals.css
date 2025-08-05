@@ -25,16 +25,28 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Improve default form text visibility */
+/* Improve default form text visibility and add placeholder styling */
 input,
 select {
-  color: #111827; /* Tailwind's gray-900 */
+  color: #030712; /* Tailwind's gray-950, very dark */
 }
+
+input::placeholder,
+select::placeholder {
+    color: #9ca3af; /* Tailwind's gray-400 */
+}
+
 
 /* Ensure dark mode also has visible form text if needed */
 @media (prefers-color-scheme: dark) {
   input,
   select {
-    color: #ededed; /* A light color for dark backgrounds */
+    color: #f9fafb; /* Tailwind's gray-50, very light */
+    background-color: #1f2937; /* A dark background for inputs */
+  }
+
+  input::placeholder,
+  select::placeholder {
+    color: #6b7280; /* Tailwind's gray-500 */
   }
 }

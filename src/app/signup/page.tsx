@@ -45,6 +45,9 @@ export default function SignupPage() {
     }
   };
 
+  const labelClasses = "absolute left-4 top-3 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+  const inputClasses = "block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-white">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-2xl shadow-xl">
@@ -52,26 +55,26 @@ export default function SignupPage() {
             <h1 className="text-3xl font-bold text-gray-900">Create an Account</h1>
             <p className="mt-2 text-gray-600">Join Safary today</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
-            <input id="name" name="name" type="text" required value={name} onChange={(e) => setName(e.target.value)} className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
+        <form onSubmit={handleSubmit} className="space-y-8 pt-6">
+          <div className="relative">
+            <input id="name" name="name" type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder=" " className={inputClasses}/>
+            <label htmlFor="name" className={labelClasses}>Full Name</label>
+          </div>
+          <div className="relative">
+            <input id="email" name="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder=" " className={inputClasses}/>
+            <label htmlFor="email" className={labelClasses}>Email Address</label>
+          </div>
+           <div className="relative">
+            <input id="phone" name="phone" type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder=" " className={inputClasses}/>
+            <label htmlFor="phone" className={labelClasses}>Phone Number</label>
+          </div>
+          <div className="relative">
+            <input id="password" name="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder=" " className={inputClasses}/>
+            <label htmlFor="password" className={labelClasses}>Password</label>
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-            <input id="email" name="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
-          </div>
-           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-            <input id="phone" name="phone" type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input id="password" name="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"/>
-          </div>
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700">I am a...</label>
-            <select id="role" value={role} onChange={(e) => setRole(e.target.value as UserRole)} required className="block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">I am a...</label>
+            <select id="role" value={role} onChange={(e) => setRole(e.target.value as UserRole)} required className="block w-full px-4 py-3 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
               {availableRoles.map((r) => (
                 <option key={r} value={r}>{r.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
               ))}

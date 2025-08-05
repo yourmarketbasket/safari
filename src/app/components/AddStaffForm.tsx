@@ -31,44 +31,37 @@ export default function AddStaffForm({ onClose, onSubmit, isLoading, error, init
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // The password would be set here for a new user, or handled in a separate flow.
-    // For this form, we'll assume a default or temporary password is set server-side.
     onSubmit({ name, email, phone, role });
   };
 
+  const labelClasses = "absolute left-4 top-3 text-gray-500 transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+  const inputClasses = "block w-full px-4 py-3 mt-1 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-xl font-bold text-gray-900">{initialData ? 'Edit Staff Member' : 'Add New Staff Member'}</h2>
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
-        <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required className="block w-full px-3 py-2 mt-1 border-gray-300 rounded-md shadow-sm" />
+    <form onSubmit={handleSubmit} className="space-y-8 pt-6">
+       <h2 className="text-xl font-bold text-gray-900 text-center mb-4">{initialData ? 'Edit Staff Member' : 'Add New Staff Member'}</h2>
+      <div className="relative">
+        <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required placeholder=" " className={inputClasses} />
+        <label htmlFor="name" className={labelClasses}>Full Name</label>
+      </div>
+      <div className="relative">
+        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder=" " className={inputClasses} />
+        <label htmlFor="email" className={labelClasses}>Email</label>
+      </div>
+      <div className="relative">
+        <input type="tel" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required placeholder=" " className={inputClasses} />
+        <label htmlFor="phone" className={labelClasses}>Phone</label>
       </div>
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="block w-full px-3 py-2 mt-1 border-gray-300 rounded-md shadow-sm" />
-      </div>
-      <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
-        <input type="tel" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} required className="block w-full px-3 py-2 mt-1 border-gray-300 rounded-md shadow-sm" />
-      </div>
-      <div>
-        <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
-        <select
-          id="role"
-          value={role}
-          onChange={(e) => setRole(e.target.value as UserRole)}
-          required
-          className="block w-full px-3 py-2 mt-1 border-gray-300 rounded-md shadow-sm"
-        >
+        <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+        <select id="role" value={role} onChange={(e) => setRole(e.target.value as UserRole)} required className="block w-full px-4 py-3 bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
           {availableRoles.map((r) => (
-            <option key={r} value={r}>
-              {r.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-            </option>
+            <option key={r} value={r}>{r.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
           ))}
         </select>
       </div>
       {error && (
-        <p className="text-sm text-red-600">
+        <p className="text-sm text-red-600 text-center">
           Failed to add staff: {error.message}
         </p>
       )}

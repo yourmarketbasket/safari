@@ -32,8 +32,11 @@ export default function LandingNavbar() {
             <Link href="#features" className="py-2 px-3 text-gray-600 hover:text-gray-800">Features</Link>
             <Link href="#about" className="py-2 px-3 text-gray-600 hover:text-gray-800">About Us</Link>
             <div className="relative" ref={accountMenuRef}>
-              <button onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)} className="py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                Account
+              <button onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)} className="flex items-center space-x-1 py-2 px-3 text-gray-600 hover:text-gray-800">
+                <span>Account</span>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
               {isAccountMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-20">
