@@ -81,6 +81,8 @@ export default function Sidebar() {
           <UserCircleIcon />
           {!isCollapsed && <span className="ml-4">Profile</span>}
         </Link>
+      </div>
+      <div className="px-2 py-4 border-t border-gray-200">
         <button
           onClick={logout}
           className="w-full flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-blue-100 hover:text-blue-600"

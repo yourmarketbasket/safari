@@ -9,7 +9,7 @@ interface AnimatedHamburgerIconProps {
 
 export default function AnimatedHamburgerIcon({ onClick, isCollapsed }: AnimatedHamburgerIconProps) {
   return (
-    <button onClick={onClick} className="relative w-8 h-8 focus:outline-none">
+    <button onClick={onClick} className="relative w-6 h-6 focus:outline-none">
       <span
         className={`absolute h-0.5 w-full bg-gray-800 transform transition-all duration-300 ease-in-out ${
           isCollapsed ? 'rotate-45 top-1/2' : 'top-1/4'
