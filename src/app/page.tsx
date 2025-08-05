@@ -1,5 +1,6 @@
 import LandingNavbar from './components/LandingNavbar';
 import Link from 'next/link';
+import PublicRoute from './components/PublicRoute';
 
 // Since this is a server component, we can't use hooks.
 // We'll define components for each section.
@@ -83,14 +84,16 @@ const Footer = () => (
 
 export default function HomePage() {
   return (
-    <div className="bg-white">
-      <LandingNavbar />
-      <main>
-        <HeroSection />
-        <FeaturesSection />
-        <AboutSection />
-      </main>
-      <Footer />
-    </div>
+    <PublicRoute>
+      <div className="bg-white">
+        <LandingNavbar />
+        <main>
+          <HeroSection />
+          <FeaturesSection />
+          <AboutSection />
+        </main>
+        <Footer />
+      </div>
+    </PublicRoute>
   );
 }

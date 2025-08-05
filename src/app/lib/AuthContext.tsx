@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       case 'passenger':
         router.push('/passenger');
         break;
-      case 'support':
+      case 'support_staff':
         router.push('/support');
         break;
       case 'headoffice':
@@ -101,16 +101,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const handleSignup = async (signupData: SignupData) => {
-    const responseData = await authService.signup(signupData);
-    if (responseData.mfaRequired) {
-        setMfaToken(responseData.mfaToken);
-    } else {
-        setToken(responseData.token);
-        setUser(responseData.user);
-        localStorage.setItem('authToken', responseData.token);
-        localStorage.setItem('user', JSON.stringify(responseData.user));
-        redirectUser(responseData.user.role);
-    }
+    await authService.signup(signupData);
+    router.push('/login');
   };
 
   const handleLogout = () => {

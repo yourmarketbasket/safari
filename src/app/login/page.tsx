@@ -5,6 +5,7 @@ import { useAuth } from '../lib/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Message from '../components/Message';
+import PublicRoute from '../components/PublicRoute';
 
 // Regex for basic email or phone number validation
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
@@ -19,11 +20,6 @@ export default function LoginPage() {
   const { user, login } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (user) {
-      router.push('/dashboard');
-    }
-  }, [user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,64 +45,66 @@ export default function LoginPage() {
   const inputClasses = "block w-full px-4 py-3 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-200 to-blue-200">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl">
-        <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-            <p className="mt-2 text-gray-800">Login to your Safary account</p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
-          <div className="relative">
-            <input id="emailOrPhone" name="emailOrPhone" type="text" required value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} placeholder=" " className={inputClasses}/>
-            <label htmlFor="emailOrPhone" className={labelClasses}>Email or Phone</label>
+    <PublicRoute>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-200 to-blue-200">
+        <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl">
+          <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
+              <p className="mt-2 text-gray-800">Login to your Safary account</p>
           </div>
-          <div className="relative">
-            <input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder=" " className={inputClasses}/>
-            <label htmlFor="password" className={labelClasses}>Password</label>
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 px-3 flex items-center text-sm leading-5"
-            >
-              {showPassword ? (
-                <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              ) : (
-                <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.118 3.558-5.558 6.818-6.505M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.542 12c-1.274 4.057-5.064 7-9.542 7-1.096 0-2.144-.196-3.138-.55M2.458 12c.946-3.118 3.558-5.558 6.818-6.505" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M1 1l22 22" />
-                </svg>
-              )}
-            </button>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input id="remember-me" name="remember-me" type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-black">Remember me</label>
+          <form onSubmit={handleSubmit} className="space-y-6 pt-4">
+            <div className="relative">
+              <input id="emailOrPhone" name="emailOrPhone" type="text" required value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} placeholder=" " className={inputClasses}/>
+              <label htmlFor="emailOrPhone" className={labelClasses}>Email or Phone</label>
             </div>
-            <div className="text-sm">
-              <Link href="/forgot-password" title="Forgot Password" className="font-medium text-indigo-800 hover:text-indigo-600">
-                Forgot your password?
-              </Link>
+            <div className="relative">
+              <input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder=" " className={inputClasses}/>
+              <label htmlFor="password" className={labelClasses}>Password</label>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-sm leading-5"
+              >
+                {showPassword ? (
+                  <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                ) : (
+                  <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.118 3.558-5.558 6.818-6.505M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.542 12c-1.274 4.057-5.064 7-9.542 7-1.096 0-2.144-.196-3.138-.55M2.458 12c.946-3.118 3.558-5.558 6.818-6.505" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M1 1l22 22" />
+                  </svg>
+                )}
+              </button>
             </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input id="remember-me" name="remember-me" type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-black">Remember me</label>
+              </div>
+              <div className="text-sm">
+                <Link href="/forgot-password" title="Forgot Password" className="font-medium text-indigo-800 hover:text-indigo-600">
+                  Forgot your password?
+                </Link>
+              </div>
+            </div>
+            {error && <Message message={error} type="error" />}
+            <div>
+              <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 transition-all duration-300">
+                {loading ? 'Logging in...' : 'Login'}
+              </button>
+            </div>
+          </form>
+          <div className="text-sm text-center text-gray-800">
+            Don&apos;t have an account?{' '}
+            <Link href="/signup" title="Sign Up" className="font-medium text-indigo-800 hover:text-indigo-600">
+              Sign up
+            </Link>
           </div>
-          {error && <Message message={error} type="error" />}
-          <div>
-            <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 transition-all duration-300">
-              {loading ? 'Logging in...' : 'Login'}
-            </button>
-          </div>
-        </form>
-        <div className="text-sm text-center text-gray-800">
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" title="Sign Up" className="font-medium text-indigo-800 hover:text-indigo-600">
-            Sign up
-          </Link>
         </div>
       </div>
-    </div>
+    </PublicRoute>
   );
 }
