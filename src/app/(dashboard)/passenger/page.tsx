@@ -91,16 +91,16 @@ export default function PassengerDashboardPage() {
 
         {/* My Tickets Table */}
         <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">My Tickets</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">My Tickets</h2>
           <div className="flex justify-between items-center mb-4">
             <input
               type="text"
               placeholder="Search by route..."
-              className="px-4 py-2 border rounded-lg"
+              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <select
-              className="px-4 py-2 border rounded-lg"
+              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <option value="all">All Statuses</option>
@@ -109,24 +109,24 @@ export default function PassengerDashboardPage() {
             </select>
           </div>
           <table className="min-w-full bg-white">
-            <thead>
+            <thead className="bg-blue-600 text-white">
               <tr>
-                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => requestSort('route')}>Route</th>
-                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => requestSort('date')}>Date</th>
-                <th className="py-2 px-4 border-b cursor-pointer" onClick={() => requestSort('status')}>Status</th>
+                <th className="py-3 px-4 border-b border-gray-300 cursor-pointer" onClick={() => requestSort('route')}>Route</th>
+                <th className="py-3 px-4 border-b border-gray-300 cursor-pointer" onClick={() => requestSort('date')}>Date</th>
+                <th className="py-3 px-4 border-b border-gray-300 cursor-pointer" onClick={() => requestSort('status')}>Status</th>
               </tr>
             </thead>
-            <tbody>
-              {paginatedTickets.map((ticket) => (
-                <tr key={ticket.id}>
-                  <td className="py-2 px-4 border-b">{ticket.route}</td>
-                  <td className="py-2 px-4 border-b">{ticket.date}</td>
-                  <td className="py-2 px-4 border-b">
+            <tbody className="text-gray-800">
+              {paginatedTickets.map((ticket, index) => (
+                <tr key={ticket.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                  <td className="py-3 px-4 border-b border-gray-300">{ticket.route}</td>
+                  <td className="py-3 px-4 border-b border-gray-300">{ticket.date}</td>
+                  <td className="py-3 px-4 border-b border-gray-300">
                     <span
-                      className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
+                      className={`px-2 py-1 text-xs font-bold rounded-full ${
                         ticket.status === 'upcoming'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-green-200 text-green-900'
+                          : 'bg-gray-200 text-gray-900'
                       }`}
                     >
                       {ticket.status}
@@ -138,7 +138,7 @@ export default function PassengerDashboardPage() {
           </table>
           <div className="flex justify-between items-center mt-4">
             <select
-              className="px-4 py-2 border rounded-lg"
+              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
               value={itemsPerPage}
               onChange={(e) => setItemsPerPage(Number(e.target.value))}
             >
@@ -150,14 +150,14 @@ export default function PassengerDashboardPage() {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(currentPage - 1)}
-                className="px-4 py-2 border rounded-lg mr-2"
+                className="px-4 py-2 border-2 border-gray-300 rounded-lg mr-2 hover:bg-gray-100 disabled:opacity-50"
               >
                 Previous
               </button>
               <button
                 disabled={currentPage * itemsPerPage >= filteredTickets.length}
                 onClick={() => setCurrentPage(currentPage + 1)}
-                className="px-4 py-2 border rounded-lg"
+                className="px-4 py-2 border-2 border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50"
               >
                 Next
               </button>
