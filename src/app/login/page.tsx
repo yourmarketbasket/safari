@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import { useAuth } from '../lib/AuthContext';
 import Link from 'next/link';
+import Message from '../components/Message';
+
+// Regex for basic email or phone number validation
+const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 
 export default function LoginPage() {
   const [emailOrPhone, setEmailOrPhone] = useState('');
@@ -14,10 +18,15 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
+
+    if (!emailOrPhoneRegex.test(emailOrPhone)) {
+        setError('Please enter a valid email or phone number.');
+        return;
+    }
+
+    setLoading(true);
     try {
-      // MFA code is no longer passed from here
       await login({ emailOrPhone, password });
     } catch (err) {
       setError('Failed to login. Please check your credentials.');
@@ -27,7 +36,7 @@ export default function LoginPage() {
     }
   };
 
-  const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
+  const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
   const inputClasses = "block w-full px-4 py-3 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
 
   return (
@@ -57,7 +66,7 @@ export default function LoginPage() {
               </Link>
             </div>
           </div>
-          {error && <p className="text-sm text-center text-red-600">{error}</p>}
+          {error && <Message message={error} type="error" />}
           <div>
             <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 transition-all duration-300">
               {loading ? 'Logging in...' : 'Login'}
