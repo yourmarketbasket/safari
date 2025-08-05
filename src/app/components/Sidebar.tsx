@@ -10,6 +10,7 @@ const UserGroupIcon = () => <svg className="w-6 h-6" fill="none" stroke="current
 const ShieldCheckIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 018.618-3.04 11.955 11.955 0 018.618 3.04z" /></svg>;
 const TruckIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h8l2-2zM5 16h8m-1-4h.01M21 16h-2a1 1 0 00-1 1v1a1 1 0 001 1h2v-3z" /></svg>;
 const UserCircleIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
+const TicketIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.5 5.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM19.5 14.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM4.5 14.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM15.5 19.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 19.5v-5.5a2 2 0 00-2-2h-4a2 2 0 00-2 2v5.5m10-14v5.5a2 2 0 01-2 2h-4a2 2 0 01-2-2V5.5" /></svg>;
 const QueueListIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>;
 const SteeringWheelIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.152 13.248A9.942 9.942 0 0112 22a9.942 9.942 0 01-9.152-8.752M12 2v2.05a7 7 0 014.95 2.9l1.414-1.414A9.942 9.942 0 0012 2zm0 18v2.05a7 7 0 004.95-2.9l1.414 1.414A9.942 9.942 0 0112 22zm-7.05-4.95a7 7 0 002.9 4.95V22a9.942 9.942 0 01-1.414-1.414l-1.486 1.486zm14.1 0a7 7 0 00-2.9-4.95V22a9.942 9.942 0 001.414-1.414l1.486 1.486zM12 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>;
 const ArrowLeftOnRectangleIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l-3-3m0 0l-3 3m3-3V9" /></svg>;
@@ -21,6 +22,7 @@ const navLinks = [
   { name: 'Admin', href: '/admin', icon: <ShieldCheckIcon /> },
   { name: 'Sacco', href: '/sacco', icon: <TruckIcon /> },
   { name: 'Owner', href: '/owner', icon: <UserCircleIcon /> },
+  { name: 'Passenger', href: '/passenger', icon: <TicketIcon /> },
   { name: 'Queue Manager', href: '/queue-manager', icon: <QueueListIcon /> },
   { name: 'Driver', href: '/driver', icon: <SteeringWheelIcon /> },
 ];
