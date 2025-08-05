@@ -2,6 +2,7 @@
 
 import Sidebar from './Sidebar';
 import { useAuth } from '../lib/AuthContext';
+import Link from 'next/link';
 
 // A simple header component, can be moved to its own file later if it grows.
 function Header() {
@@ -13,6 +14,9 @@ function Header() {
                 {user && (
                     <div className="flex items-center space-x-4">
                         <span>Welcome, {user.name || 'User'}</span>
+                        <Link href="/profile" className="text-sm font-medium text-gray-600 hover:text-gray-800">
+                            Profile
+                        </Link>
                         <button
                             onClick={logout}
                             className="text-sm font-medium text-red-600 hover:text-red-800"
