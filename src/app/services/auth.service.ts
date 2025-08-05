@@ -47,9 +47,18 @@ export type AuthResponse = {
 /**
  * Logs in a user. Can return a final auth token or an MFA token.
  */
+import axios from 'axios';
+
 export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
-  const response = await api.post<AuthResponse>('/auth/login', loginData);
-  return response.data.data;
+  try {
+    const response = await api.post<AuthResponse>('/auth/login', loginData);
+    return response.data.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 500) {
+      throw new Error('Could not login');
+    }
+    throw error;
+  }
 };
 
 /**
