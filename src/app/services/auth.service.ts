@@ -5,10 +5,9 @@ import { User } from '../models/User.model';
 export type LoginCredentials = {
   emailOrPhone: string;
   password?: string;
-  mfaCode?: string;
+  // mfaCode is removed from initial login
 }
 
-// Omit 'id' for signup, as this is set by the server. Role is now included.
 export type SignupData = Omit<User, 'id'>;
 
 export type SuperuserSignupData = SignupData & {
@@ -24,15 +23,24 @@ export type ResetPasswordData = {
     newPassword?: string;
 }
 
+export type VerifyMfaData = {
+    mfaToken: string;
+    mfaCode: string;
+}
+
 // The API response for a successful login/signup
+// It can be a partial response if MFA is required.
 export type AuthResponse = {
     token: string;
     user: User;
+    mfaRequired?: false;
+} | {
+    mfaRequired: true;
+    mfaToken: string;
 }
 
 /**
- * Logs in a user.
- * The request body will be automatically encrypted by the api instance.
+ * Logs in a user. Can return a final auth token or an MFA token.
  */
 export const login = async (loginData: LoginCredentials): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>('/auth/login', loginData);
@@ -40,7 +48,15 @@ export const login = async (loginData: LoginCredentials): Promise<AuthResponse> 
 };
 
 /**
- * Signs up a new user (Support Staff or Admin).
+ * Verifies the MFA code using the temporary MFA token.
+ */
+export const verifyMfa = async (verifyData: VerifyMfaData): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>('/auth/verify-mfa', verifyData);
+    return response.data;
+}
+
+/**
+ * Signs up a new user.
  */
 export const signup = async (signupData: SignupData): Promise<AuthResponse> => {
   const response = await api.post<AuthResponse>('/auth/signup', signupData);
@@ -78,6 +94,7 @@ export const logout = () => {
 
 const authService = {
   login,
+  verifyMfa,
   signup,
   registerSuperuser,
   forgotPassword,

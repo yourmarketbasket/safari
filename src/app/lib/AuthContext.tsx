@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import authService, { LoginCredentials, SignupData } from '../services/auth.service';
+import authService, { LoginCredentials, SignupData, VerifyMfaData } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
 
@@ -9,9 +9,12 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   isLoading: boolean;
+  isMfaRequired: boolean;
   login: (loginData: LoginCredentials) => Promise<void>;
   logout: () => void;
   signup: (signupData: SignupData) => Promise<void>;
+  verifyMfa: (mfaCode: string) => Promise<void>;
+  cancelMfa: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,53 +23,70 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [mfaToken, setMfaToken] = useState<string | null>(null);
+
+  const isMfaRequired = !!mfaToken;
   const router = useRouter();
 
   useEffect(() => {
-    // Check for a token in local storage on initial load
     const storedToken = localStorage.getItem('authToken');
     if (storedToken) {
       setToken(storedToken);
-      // TODO: Add a call to a '/me' or '/verify-token' endpoint
-      // to get user data and verify the token is still valid.
-      // For now, we'll assume the token is valid if it exists.
-      // const userData = await userService.getMe();
-      // setUser(userData);
+      // In a real app, you would also fetch user data here.
     }
     setIsLoading(false);
   }, []);
 
   const handleLogin = async (loginData: LoginCredentials) => {
-    try {
-      const response = await authService.login(loginData);
-      const { token, user } = response;
-      setToken(token);
-      setUser(user);
-      localStorage.setItem('authToken', token);
-      router.push('/dashboard'); // Redirect to a protected dashboard page
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error; // Re-throw to be caught by the UI component
+    const response = await authService.login(loginData);
+    if (response.mfaRequired) {
+      setMfaToken(response.mfaToken);
+    } else {
+      setToken(response.token);
+      setUser(response.user);
+      localStorage.setItem('authToken', response.token);
+      router.push('/dashboard');
     }
   };
 
+  const handleVerifyMfa = async (mfaCode: string) => {
+    if (!mfaToken) throw new Error("MFA token not available.");
+
+    const verifyData: VerifyMfaData = { mfaToken, mfaCode };
+    const response = await authService.verifyMfa(verifyData);
+
+    if (response.mfaRequired) {
+        // This would be an error case, e.g., invalid code
+        throw new Error("MFA verification failed.");
+    }
+
+    setToken(response.token);
+    setUser(response.user);
+    localStorage.setItem('authToken', response.token);
+    setMfaToken(null); // Clear MFA token
+    router.push('/dashboard');
+  };
+
+  const handleCancelMfa = () => {
+    setMfaToken(null);
+  }
+
   const handleSignup = async (signupData: SignupData) => {
-     try {
-      const response = await authService.signup(signupData);
-      const { token, user } = response;
-      setToken(token);
-      setUser(user);
-      localStorage.setItem('authToken', token);
-      router.push('/dashboard');
-    } catch (error) {
-      console.error('Signup failed:', error);
-      throw error;
+    const response = await authService.signup(signupData);
+    if (response.mfaRequired) {
+        setMfaToken(response.mfaToken);
+    } else {
+        setToken(response.token);
+        setUser(response.user);
+        localStorage.setItem('authToken', response.token);
+        router.push('/dashboard');
     }
   };
 
   const handleLogout = () => {
     setUser(null);
     setToken(null);
+    setMfaToken(null);
     localStorage.removeItem('authToken');
     authService.logout();
     router.push('/login');
@@ -76,9 +96,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user,
     token,
     isLoading,
+    isMfaRequired,
     login: handleLogin,
     logout: handleLogout,
     signup: handleSignup,
+    verifyMfa: handleVerifyMfa,
+    cancelMfa: handleCancelMfa,
   };
 
   return (

@@ -7,7 +7,6 @@ import Link from 'next/link';
 export default function LoginPage() {
   const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [mfaCode, setMfaCode] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,8 +17,8 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      await login({ emailOrPhone, password, mfaCode: mfaCode || undefined });
-      // On success, the AuthContext will redirect
+      // MFA code is no longer passed from here
+      await login({ emailOrPhone, password });
     } catch (err) {
       setError('Failed to login. Please check your credentials.');
       console.error(err);
@@ -29,16 +28,16 @@ export default function LoginPage() {
   };
 
   const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600";
-  const inputClasses = "block w-full px-4 py-3 mt-1 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+  const inputClasses = "block w-full px-4 py-3 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-200 to-blue-200">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white/30 backdrop-blur-md rounded-2xl shadow-xl">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl">
         <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
             <p className="mt-2 text-gray-800">Login to your Safary account</p>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-8 pt-6">
+        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
           <div className="relative">
             <input id="emailOrPhone" name="emailOrPhone" type="text" required value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} placeholder=" " className={inputClasses}/>
             <label htmlFor="emailOrPhone" className={labelClasses}>Email or Phone</label>
@@ -46,10 +45,6 @@ export default function LoginPage() {
           <div className="relative">
             <input id="password" name="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder=" " className={inputClasses}/>
             <label htmlFor="password" className={labelClasses}>Password</label>
-          </div>
-          <div className="relative">
-            <input id="mfaCode" name="mfaCode" type="text" value={mfaCode} onChange={(e) => setMfaCode(e.target.value)} placeholder=" " className={inputClasses}/>
-            <label htmlFor="mfaCode" className={labelClasses}>MFA Code</label>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
