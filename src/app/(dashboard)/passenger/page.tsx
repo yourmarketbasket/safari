@@ -26,7 +26,7 @@ const getStatusClasses = (status: string) => {
     case 'upcoming':
       return 'bg-purple-200 text-purple-800';
     case 'completed':
-      return 'bg-pink-200 text-pink-800';
+      return 'bg-green-200 text-green-800';
     case 'cancelled':
       return 'bg-red-200 text-red-800';
     default:
