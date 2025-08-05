@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import PrivateRoute from '@/app/components/PrivateRoute';
+import TicketDialog from '@/app/components/TicketDialog';
 
 // Mock Data
 const mockTicketsData = [
@@ -24,6 +25,7 @@ export default function PassengerDashboardPage() {
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: string } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   const filteredTickets = useMemo(() => {
     let tickets = mockTicketsData.filter((ticket) =>
@@ -96,11 +98,11 @@ export default function PassengerDashboardPage() {
             <input
               type="text"
               placeholder="Search by route..."
-              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              className="px-4 py-2 border-2 border-gray-400 rounded-lg focus:ring-blue-600 focus:border-blue-600 text-gray-900"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <select
-              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              className="px-4 py-2 border-2 border-gray-400 rounded-lg focus:ring-blue-600 focus:border-blue-600 text-gray-900"
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <option value="all">All Statuses</option>
@@ -118,7 +120,7 @@ export default function PassengerDashboardPage() {
             </thead>
             <tbody className="text-gray-800">
               {paginatedTickets.map((ticket, index) => (
-                <tr key={ticket.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                <tr key={ticket.id} onClick={() => setSelectedTicket(ticket)} className={`cursor-pointer ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
                   <td className="py-3 px-4 border-b border-gray-300">{ticket.route}</td>
                   <td className="py-3 px-4 border-b border-gray-300">{ticket.date}</td>
                   <td className="py-3 px-4 border-b border-gray-300">
@@ -136,6 +138,7 @@ export default function PassengerDashboardPage() {
               ))}
             </tbody>
           </table>
+          <TicketDialog ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />
           <div className="flex justify-between items-center mt-4">
             <select
               className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"

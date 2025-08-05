@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from 'react';
-
 interface AnimatedHamburgerIconProps {
   onClick: () => void;
   isCollapsed: boolean;
