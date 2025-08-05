@@ -10,25 +10,31 @@ import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 const allNavLinks = {
   admin: [
     { name: 'Dashboard', href: '/admin', icon: <FiShield /> },
+    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Escalation Queue', href: '/admin/escalation-queue', icon: <FiList /> },
   ],
   sacco: [
     { name: 'Dashboard', href: '/sacco', icon: <FiTruck /> },
+    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Route Management', href: '/sacco/route-management', icon: <FiList /> },
   ],
   owner: [
     { name: 'Dashboard', href: '/owner', icon: <FiUser /> },
+    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'My Trips', href: '/owner/trips', icon: <FiList /> },
   ],
   passenger: [
     { name: 'Dashboard', href: '/passenger', icon: <FiPocket /> },
+    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
   ],
   support: [
     { name: 'Dashboard', href: '/support', icon: <FiUsers /> },
+    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Sacco Management', href: '/support/sacco-management', icon: <FiTruck /> },
   ],
   headoffice: [
     { name: 'Dashboard', href: '/head-office', icon: <FiHome /> },
+    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Policy Management', href: '/head-office/policy-management', icon: <FiList /> },
   ],
 };
@@ -41,11 +47,13 @@ export default function Sidebar() {
 
   return (
     <aside className={`flex-shrink-0 bg-white text-gray-800 flex flex-col transition-all duration-300 shadow-2xl ${isCollapsed ? 'w-20' : 'w-64'}`}>
-      <div className="h-20 flex items-center justify-between px-4 text-2xl font-bold border-b border-gray-200">
+      <div className="h-20 flex items-center justify-center px-4 text-2xl font-bold border-b border-gray-200 relative">
         {!isCollapsed && <Link href="/dashboard" className="text-purple-600">Safary</Link>}
-        <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-md hover:bg-gray-200 focus:outline-none flex items-center justify-center w-10 h-10">
-          <AnimatedHamburgerIcon isCollapsed={isCollapsed} />
-        </button>
+        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-md hover:bg-gray-200 focus:outline-none">
+            <AnimatedHamburgerIcon isCollapsed={isCollapsed} />
+          </button>
+        </div>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-2">
         {navLinks.map((link) => {

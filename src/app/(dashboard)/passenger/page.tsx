@@ -3,14 +3,16 @@
 import { useState, useMemo } from 'react';
 import PrivateRoute from '@/app/components/PrivateRoute';
 import TicketDialog from '@/app/components/TicketDialog';
+import Rating from '@/app/components/Rating';
+import { FiMessageSquare } from 'react-icons/fi';
 
 // Mock Data
 const mockTicketsData = [
-  { id: 't-1', route: 'Nairobi - Nakuru', date: '2024-10-26', status: 'upcoming', totalCost: 500, comments: 'Window seat preferred' },
-  { id: 't-2', route: 'Mombasa - Nairobi', date: '2024-10-22', status: 'completed', totalCost: 1200, comments: '' },
-  { id: 't-3', route: 'Kisumu - Nairobi', date: '2024-11-01', status: 'upcoming', totalCost: 800, comments: '' },
-  { id: 't-4', route: 'Eldoret - Nairobi', date: '2024-09-15', status: 'completed', totalCost: 750, comments: 'Extra luggage' },
-  { id: 't-5', route: 'Nairobi - Kisumu', date: '2024-08-20', status: 'cancelled', totalCost: 800, comments: 'User cancelled' },
+  { id: 't-1', route: 'Nairobi - Nakuru', date: '2024-10-26', status: 'upcoming', totalCost: 500, comments: 'Window seat preferred', rating: 0 },
+  { id: 't-2', route: 'Mombasa - Nairobi', date: '2024-10-22', status: 'completed', totalCost: 1200, comments: '', rating: 4 },
+  { id: 't-3', route: 'Kisumu - Nairobi', date: '2024-11-01', status: 'upcoming', totalCost: 800, comments: '', rating: 0 },
+  { id: 't-4', route: 'Eldoret - Nairobi', date: '2024-09-15', status: 'completed', totalCost: 750, comments: 'Extra luggage', rating: 5 },
+  { id: 't-5', route: 'Nairobi - Kisumu', date: '2024-08-20', status: 'cancelled', totalCost: 800, comments: 'User cancelled', rating: 0 },
 ];
 
 const mockLoyalty = { points: 450 };
@@ -133,20 +135,30 @@ export default function PassengerDashboardPage() {
                   <th className="py-3 px-6 text-center cursor-pointer" onClick={() => requestSort('status')}>Status</th>
                   <th className="py-3 px-6 text-right cursor-pointer" onClick={() => requestSort('totalCost')}>Total Cost</th>
                   <th className="py-3 px-6 text-left">Comments</th>
+                  <th className="py-3 px-6 text-center">Rating</th>
+                  <th className="py-3 px-6 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="text-gray-800 text-sm font-light">
                 {paginatedTickets.map((ticket) => (
-                  <tr key={ticket.id} onClick={() => setSelectedTicket(ticket)} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer">
+                  <tr key={ticket.id} className="border-b border-gray-200 hover:bg-gray-100">
                     <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{ticket.route}</td>
                     <td className="py-4 px-6 text-left">{ticket.date}</td>
                     <td className="py-4 px-6 text-center">
-                      <span className={`px-3 py-1 text-xs font-bold rounded-full ${getStatusClasses(ticket.status)}`}>
+                      <span className={`px-3 py-1 text-[10px] rounded-full ${getStatusClasses(ticket.status)}`}>
                         {ticket.status}
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right font-semibold">Ksh {ticket.totalCost.toLocaleString()}</td>
                     <td className="py-4 px-6 text-left">{ticket.comments || '-'}</td>
+                    <td className="py-4 px-6 text-center">
+                      <Rating rating={ticket.rating} readOnly={ticket.status !== 'completed'} />
+                    </td>
+                    <td className="py-4 px-6 text-center">
+                      <button className="text-purple-600 hover:text-purple-800">
+                        <FiMessageSquare />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

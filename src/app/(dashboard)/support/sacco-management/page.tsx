@@ -1,64 +1,96 @@
 "use client";
 
-// Mock data
+import { useState, useMemo } from 'react';
+import PrivateRoute from '@/app/components/PrivateRoute';
+import { FiPlus, FiEdit, FiTrash, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+
 const mockSaccos = [
-  { id: 'sacco-1', name: '2NK Sacco', license: 'NTSA-123', contact: '0711223344', ntsaCompliance: true, status: 'approved' },
-  { id: 'sacco-2', name: 'Prestige Shuttle', license: 'NTSA-456', contact: '0755667788', ntsaCompliance: false, status: 'pending' },
-  { id: 'sacco-3', name: 'Climax Coaches', license: 'NTSA-789', contact: '0799887766', ntsaCompliance: true, status: 'rejected' },
+  { id: 's-1', name: 'Prestige', status: 'approved' },
+  { id: 's-2', name: 'Climax', status: 'pending' },
+  { id: 's-3', name: 'Modern Coast', status: 'approved' },
+  { id: 's-4', name: 'Easy Coach', status: 'suspended' },
 ];
 
-const statusColors: { [key: string]: string } = {
-    approved: 'bg-green-100 text-green-800',
-    pending: 'bg-yellow-100 text-yellow-800',
-    rejected: 'bg-red-100 text-red-800',
-}
-
 export default function SaccoManagementPage() {
-  return (
-    <div>
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-800">Sacco Management</h1>
-        <button className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
-          Add New Sacco
-        </button>
-      </div>
+  const [saccos, setSaccos] = useState(mockSaccos);
+  const [searchTerm, setSearchTerm] = useState('');
 
-      <div className="mt-8 bg-white shadow-md rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">License</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NTSA Compliance</th>
-              <th scope="col" className="relative px-6 py-3">
-                <span className="sr-only">Actions</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {mockSaccos.map((sacco) => (
-              <tr key={sacco.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{sacco.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{sacco.license}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColors[sacco.status]}`}>
-                    {sacco.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${sacco.ntsaCompliance ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {sacco.ntsaCompliance ? 'Compliant' : 'Non-Compliant'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <a href="#" className="text-indigo-600 hover:text-indigo-900">View/Edit</a>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  const filteredSaccos = useMemo(() => {
+    return saccos.filter(sacco =>
+      sacco.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [saccos, searchTerm]);
+
+  const getStatusClasses = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-200 text-green-800';
+      case 'pending':
+        return 'bg-yellow-200 text-yellow-800';
+      case 'suspended':
+        return 'bg-red-200 text-red-800';
+      default:
+        return 'bg-gray-200 text-gray-800';
+    }
+  };
+
+  return (
+    <PrivateRoute allowedRoles={['support_staff']}>
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">Sacco Management</h1>
+          <button className="flex items-center px-4 py-2 font-bold text-white bg-purple-600 rounded-lg hover:bg-purple-700">
+            <FiPlus className="mr-2" />
+            Register Sacco
+          </button>
+        </div>
+
+        <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
+          <input
+            type="text"
+            placeholder="Search by Sacco name..."
+            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 w-full mb-6"
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white">
+              <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                <tr>
+                  <th className="py-3 px-6 text-left">Sacco Name</th>
+                  <th className="py-3 px-6 text-center">Status</th>
+                  <th className="py-3 px-6 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-800 text-sm font-light">
+                {filteredSaccos.map((sacco) => (
+                  <tr key={sacco.id} className="border-b border-gray-200 hover:bg-gray-100">
+                    <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{sacco.name}</td>
+                    <td className="py-4 px-6 text-center">
+                      <span className={`px-3 py-1 text-[10px] rounded-full ${getStatusClasses(sacco.status)}`}>
+                        {sacco.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-center">
+                      <div className="flex item-center justify-center">
+                        <button className="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center mr-2">
+                          <FiCheckCircle />
+                        </button>
+                        <button className="w-6 h-6 rounded-full bg-yellow-500 text-white flex items-center justify-center mr-2">
+                          <FiEdit />
+                        </button>
+                        <button className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center">
+                          <FiTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
+    </PrivateRoute>
   );
 }
