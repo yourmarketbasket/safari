@@ -43,6 +43,7 @@ export type AuthResponse = {
  * Logs in a user. Can return a final auth token or an MFA token.
  */
 export const login = async (loginData: LoginCredentials): Promise<AuthResponse> => {
+  console.log("Data sent to backend for login:", loginData);
   const response = await api.post<AuthResponse>('/auth/login', loginData);
   return response.data;
 };
@@ -59,6 +60,7 @@ export const verifyMfa = async (verifyData: VerifyMfaData): Promise<AuthResponse
  * Signs up a new user.
  */
 export const signup = async (signupData: SignupData): Promise<AuthResponse> => {
+  console.log("Data sent to backend for signup:", signupData);
   const response = await api.post<AuthResponse>('/auth/signup', signupData);
   return response.data;
 };
