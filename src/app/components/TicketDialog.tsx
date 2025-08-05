@@ -16,7 +16,7 @@ export default function TicketDialog({ ticket, onClose }: TicketDialogProps) {
   if (!ticket) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-30 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gray-200 bg-opacity-75 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-gray-900">
         <h2 className="text-2xl font-bold mb-6 text-blue-600">Ticket Details</h2>
         <div className="space-y-3">
