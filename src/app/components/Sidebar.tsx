@@ -20,7 +20,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 flex-shrink-0 bg-gray-800 text-white flex flex-col">
       <div className="h-16 flex items-center justify-center text-2xl font-bold border-b border-gray-700">
-        <Link href="/dashboard">SafarEasy</Link>
+        <Link href="/dashboard">Safari</Link>
       </div>
       <nav className="flex-1 px-2 py-4 space-y-1">
         {navLinks.map((link) => (

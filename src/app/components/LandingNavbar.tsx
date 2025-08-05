@@ -12,7 +12,7 @@ export default function LandingNavbar() {
         <div className="flex items-center justify-between">
           <div className="text-xl font-semibold text-gray-700">
             <Link href="/" className="text-gray-800 text-xl font-bold hover:text-gray-700">
-              SafarEasy
+              Safari
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-4">
