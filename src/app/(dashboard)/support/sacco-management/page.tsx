@@ -10,6 +10,7 @@ const mockSaccos = [
   { id: 's-3', name: 'Modern Coast', status: 'approved' },
   { id: 's-4', name: 'Easy Coach', status: 'suspended' },
 ];
+// force
 
 export default function SaccoManagementPage() {
   const [saccos, setSaccos] = useState(mockSaccos);
