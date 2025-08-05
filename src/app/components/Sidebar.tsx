@@ -17,6 +17,8 @@ const ArrowLeftOnRectangleIcon = () => <svg className="w-6 h-6" fill="none" stro
 
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
+
+const allNavLinks = {
   admin: [
     { name: 'Dashboard', href: '/admin', icon: <ShieldCheckIcon /> },
     { name: 'Escalation Queue', href: '/admin/escalation-queue', icon: <QueueListIcon /> },
