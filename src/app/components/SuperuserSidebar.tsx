@@ -28,14 +28,18 @@ export default function SuperuserSidebar() {
     <aside className={`flex-shrink-0 bg-white text-gray-800 flex flex-col transition-all duration-300 shadow-2xl ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className="h-20 flex items-center justify-center px-4 text-2xl font-bold border-b border-gray-200 relative">
         {!isCollapsed && (
-            <div className="flex items-center">
+            <div className="flex items-center relative">
                 <Link href="/superuser/dashboard" className="text-purple-600">Superuser</Link>
-                <ConnectionStatus isCollapsed={isCollapsed} />
+                <div className="ml-2">
+                    <ConnectionStatus isCollapsed={isCollapsed} />
+                </div>
             </div>
         )}
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
-            <AnimatedHamburgerIcon isCollapsed={isCollapsed} onClick={() => setIsCollapsed(!isCollapsed)} />
-            {isCollapsed && <ConnectionStatus isCollapsed={isCollapsed} />}
+            <div className="relative">
+                <AnimatedHamburgerIcon isCollapsed={isCollapsed} onClick={() => setIsCollapsed(!isCollapsed)} />
+                {isCollapsed && <ConnectionStatus isCollapsed={isCollapsed} />}
+            </div>
         </div>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
