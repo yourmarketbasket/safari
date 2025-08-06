@@ -1,8 +1,8 @@
 "use client";
 
 import Sidebar from './Sidebar';
+import SupportSidebar from './SupportSidebar';
 import { useAuth } from '../lib/AuthContext';
-import Link from 'next/link';
 
 // A simple header component, can be moved to its own file later if it grows.
 function Header() {
@@ -23,9 +23,11 @@ function Header() {
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+
   return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar />
+      {user?.role === 'support_staff' ? <SupportSidebar /> : <Sidebar />}
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
