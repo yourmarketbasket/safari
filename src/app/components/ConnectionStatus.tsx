@@ -3,7 +3,11 @@
 import { useState, useEffect } from 'react';
 import socketService from '../services/socket.service';
 
-const ConnectionStatus = () => {
+interface ConnectionStatusProps {
+  isCollapsed: boolean;
+}
+
+const ConnectionStatus = ({ isCollapsed }: ConnectionStatusProps) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
@@ -19,13 +23,12 @@ const ConnectionStatus = () => {
   }, []);
 
   return (
-    <div className="flex items-center">
+    <div className={`absolute ${isCollapsed ? 'top-0 right-0' : ''}`}>
       <span
-        className={`w-3 h-3 rounded-full mr-2 ${
+        className={`w-3 h-3 rounded-full ${
           isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'
-        }`}
+        } ${isCollapsed ? 'w-2 h-2' : ''}`}
       ></span>
-      <span className="text-sm">{isConnected ? 'Online' : 'Offline'}</span>
     </div>
   );
 };
