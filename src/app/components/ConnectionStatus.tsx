@@ -7,14 +7,12 @@ const ConnectionStatus = () => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const handleStatusChange = (status: boolean) => {
-      setIsConnected(status);
-    };
-
-    socketService.on('statusChanged', handleStatusChange);
+    const interval = setInterval(() => {
+      setIsConnected(socketService.isConnected);
+    }, 1000); // Check every second
 
     return () => {
-      socketService.off('statusChanged', handleStatusChange);
+      clearInterval(interval);
     };
   }, []);
 

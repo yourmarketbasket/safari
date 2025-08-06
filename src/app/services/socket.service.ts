@@ -2,9 +2,8 @@ import { io, Socket } from 'socket.io-client';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000';
 
-import { EventEmitter } from 'events';
-
-class SocketService extends EventEmitter {
+class SocketService {
+  public isConnected = false;
   private socket: Socket | null = null;
 
   connect(): void {
@@ -21,17 +20,17 @@ class SocketService extends EventEmitter {
 
       this.socket.on('disconnect', () => {
         console.log('Disconnected from socket server');
-        this.emit('statusChanged', false);
+        this.isConnected = false;
       });
 
       this.socket.on('userConnected', () => {
         console.log('userConnected event received');
-        this.emit('statusChanged', true);
+        this.isConnected = true;
       });
 
       this.socket.on('userDisconnected', () => {
         console.log('userDisconnected event received');
-        this.emit('statusChanged', false);
+        this.isConnected = false;
       });
     }
   }
