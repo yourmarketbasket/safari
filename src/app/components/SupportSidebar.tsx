@@ -3,56 +3,37 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift } from 'react-icons/fi';
+import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiMonitor, FiHelpCircle, FiTool, FiXCircle, FiTrendingUp, FiPlus, FiCheckCircle } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 
-const allNavLinks = {
-  admin: [
-    { name: 'Dashboard', href: '/admin', icon: <FiShield /> },
-    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-    { name: 'Performance Monitoring', href: '/admin/performance-monitoring', icon: <FiTrendingUp /> },
-    { name: 'Escalation Queue', href: '/admin/escalation-queue', icon: <FiList /> },
-    { name: 'System Reports', href: '/admin/system-reports', icon: <FiList /> },
-  ],
-  sacco: [
-    { name: 'Dashboard', href: '/sacco', icon: <FiTruck /> },
-    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-    { name: 'Route Management', href: '/sacco/route-management', icon: <FiList /> },
-    { name: 'Vehicle Management', href: '/sacco/vehicle-management', icon: <FiTruck /> },
-    { name: 'Queue Management', href: '/sacco/queue-management', icon: <FiList /> },
-    { name: 'Driver Management', href: '/sacco/driver-management', icon: <FiUser /> },
-    { name: 'Revenue', href: '/sacco/revenue', icon: <FiTrendingUp /> },
-    { name: 'Promotions', href: '/sacco/promotions', icon: <FiGift /> },
-    { name: 'HR/Payroll', href: '/sacco/hr-payroll', icon: <FiUsers /> },
-  ],
-  owner: [
-    { name: 'Dashboard', href: '/owner', icon: <FiUser /> },
-    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-    { name: 'My Trips', href: '/owner/trips', icon: <FiList /> },
-  ],
-  passenger: [
-    { name: 'Dashboard', href: '/passenger', icon: <FiPocket /> },
-    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-  ],
-  support: [
+const supportNavLinks = [
     { name: 'Dashboard', href: '/support', icon: <FiUsers /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-    { name: 'Sacco Management', href: '/support/sacco-management', icon: <FiTruck /> },
-  ],
-  headoffice: [
-    { name: 'Dashboard', href: '/head-office', icon: <FiHome /> },
-    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-    { name: 'Policy Management', href: '/head-office/policy-management', icon: <FiList /> },
-  ],
-};
+    {
+      name: 'Sacco Management',
+      href: '/support/sacco-management',
+      icon: <FiTruck />,
+      subLinks: [
+        { name: 'Onboard Sacco', href: '/support/sacco-management/onboard', icon: <FiPlus /> },
+        { name: 'Approve Sacco', href: '/support/sacco-management/approve', icon: <FiCheckCircle /> },
+        { name: 'Reject Sacco', href: '/support/sacco-management/reject', icon: <FiXCircle /> },
+      ],
+    },
+    { name: 'System Monitoring', href: '/support/system-monitoring', icon: <FiMonitor /> },
+    { name: 'Inquiry Management', href: '/support/inquiries', icon: <FiHelpCircle /> },
+    { name: 'Driver Support', href: '/support/driver-support', icon: <FiUser /> },
+    { name: 'Cancellations & Reallocations', href: '/support/cancellations', icon: <FiXCircle /> },
+    { name: 'Payroll Disputes', href: '/support/payroll-disputes', icon: <FiTrendingUp /> },
+    { name: 'Reports', href: '/support/reports', icon: <FiList /> },
+    { name: 'Escalations', href: '/support/escalations', icon: <FiTrendingUp /> },
+];
 
-export default function Sidebar() {
+export default function SupportSidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-  const { user, logout } = useAuth();
-  const navLinks = user ? allNavLinks[user.role] || [] : [];
+  const { logout } = useAuth();
 
   const handleSubmenuClick = (name: string) => {
     setOpenSubmenu(openSubmenu === name ? null : name);
@@ -69,7 +50,7 @@ export default function Sidebar() {
         </div>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-        {navLinks.map((link) => (
+        {supportNavLinks.map((link) => (
           <div key={link.name}>
             {link.subLinks ? (
               <>

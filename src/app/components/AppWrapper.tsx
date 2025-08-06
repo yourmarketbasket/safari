@@ -2,12 +2,22 @@
 
 import { useAuth } from '../lib/AuthContext';
 import MfaDialog from './MfaDialog';
-import { useState } from 'react';
+import LoadingOverlay from './LoadingOverlay';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function AppWrapper({ children }: { children: React.ReactNode }) {
-  const { isMfaRequired, verifyMfa, cancelMfa } = useAuth();
+  const { isMfaRequired, verifyMfa, cancelMfa, isLoading } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setIsNavigating(true);
+    const timer = setTimeout(() => setIsNavigating(false), 500); // Adjust timeout as needed
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   const handleMfaSubmit = async (mfaCode: string) => {
     setLoading(true);
@@ -25,6 +35,7 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
 
   return (
     <>
+      {(isLoading || isNavigating) && <LoadingOverlay />}
       {children}
       <MfaDialog
         isOpen={isMfaRequired}
