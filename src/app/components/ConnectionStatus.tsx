@@ -1,9 +1,22 @@
 "use client";
 
-import { useSocketStatus } from '../lib/SocketStatusContext';
+import { useState, useEffect } from 'react';
+import socketService from '../services/socket.service';
 
 const ConnectionStatus = () => {
-  const { isConnected } = useSocketStatus();
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    const handleStatusChange = (status: boolean) => {
+      setIsConnected(status);
+    };
+
+    socketService.on('statusChanged', handleStatusChange);
+
+    return () => {
+      socketService.off('statusChanged', handleStatusChange);
+    };
+  }, []);
 
   return (
     <div className="flex items-center justify-center">
