@@ -8,7 +8,7 @@ import { User } from '../models/User.model';
 interface SuperuserAuthContextType {
   user: User | null;
   token: string | null;
-  isLoading: boolean;
+  isInitialized: boolean;
   login: (loginData: LoginCredentials) => Promise<void>;
   logout: () => void;
 }
@@ -18,7 +18,7 @@ const SuperuserAuthContext = createContext<SuperuserAuthContextType | undefined>
 export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
     }
-    setIsLoading(false);
+    setIsInitialized(true);
   }, []);
 
   const handleLogin = async (loginData: LoginCredentials) => {
@@ -55,7 +55,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
   const value = {
     user,
     token,
-    isLoading,
+    isInitialized,
     login: handleLogin,
     logout: handleLogout,
   };

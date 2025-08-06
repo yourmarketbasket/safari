@@ -3,34 +3,26 @@
 import { useSuperuserAuth } from '../lib/SuperuserAuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import LoadingOverlay from './LoadingOverlay';
 
 interface SuperuserPrivateRouteProps {
   children: React.ReactNode;
 }
 
 export default function SuperuserPrivateRoute({ children }: SuperuserPrivateRouteProps) {
-  const { user, token, isLoading } = useSuperuserAuth();
+  const { user, token, isInitialized } = useSuperuserAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (!isInitialized) return;
 
-    if (!token) {
-      router.push('/superuser/login');
-      return;
-    }
-
-    if (user && user.role !== 'superuser') {
+    if (!token || (user && user.role !== 'superuser')) {
       router.push('/superuser/login');
     }
-  }, [user, token, isLoading, router]);
+  }, [user, token, isInitialized, router]);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Loading...</p>
-      </div>
-    );
+  if (!isInitialized) {
+    return <LoadingOverlay />;
   }
 
   if (!token || (user && user.role !== 'superuser')) {
