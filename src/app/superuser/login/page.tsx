@@ -1,21 +1,21 @@
 "use client";
 
 import { useState } from 'react';
-import { useAuth } from '../../lib/AuthContext';
+import { useSuperuserAuth, SuperuserAuthProvider } from '../../lib/SuperuserAuthContext';
 import Link from 'next/link';
 import Message from '../../components/Message';
-import PublicRoute from '../../components/PublicRoute';
+import SuperuserPublicRoute from '../../components/SuperuserPublicRoute';
 
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 
-export default function SuperuserLoginPage() {
+function SuperuserLoginPageContent() {
   const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login } = useSuperuserAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +41,7 @@ export default function SuperuserLoginPage() {
   const inputClasses = "block w-full px-4 py-3 bg-gray-800 text-white border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 peer";
 
   return (
-    <PublicRoute>
+    <SuperuserPublicRoute>
       <div className="flex items-center justify-center min-h-screen bg-gray-900">
         <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-2xl shadow-2xl">
           <div className="text-center">
@@ -101,6 +101,14 @@ export default function SuperuserLoginPage() {
           </div>
         </div>
       </div>
-    </PublicRoute>
+    </SuperuserPublicRoute>
+  );
+}
+
+export default function SuperuserLoginPage() {
+  return (
+    <SuperuserAuthProvider>
+      <SuperuserLoginPageContent />
+    </SuperuserAuthProvider>
   );
 }

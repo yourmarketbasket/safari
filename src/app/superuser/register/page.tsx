@@ -4,13 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Message from '../../components/Message';
-import PublicRoute from '../../components/PublicRoute';
+import SuperuserPublicRoute from '../../components/SuperuserPublicRoute';
 import authService, { SignupData } from '../../services/auth.service';
+import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-export default function SuperuserRegisterPage() {
+function SuperuserRegisterPageContent() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -67,7 +68,7 @@ export default function SuperuserRegisterPage() {
   const inputClasses = "block w-full px-4 py-3 bg-gray-800 text-white border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 peer";
 
   return (
-    <PublicRoute>
+    <SuperuserPublicRoute>
       <div className="flex items-center justify-center min-h-screen bg-gray-900">
         <div className="w-full max-w-2xl p-8 space-y-6 bg-gray-800 rounded-2xl shadow-2xl">
           <div className="text-center">
@@ -138,6 +139,14 @@ export default function SuperuserRegisterPage() {
           </div>
         </div>
       </div>
-    </PublicRoute>
+    </SuperuserPublicRoute>
+  );
+}
+
+export default function SuperuserRegisterPage() {
+  return (
+    <SuperuserAuthProvider>
+      <SuperuserRegisterPageContent />
+    </SuperuserAuthProvider>
   );
 }
