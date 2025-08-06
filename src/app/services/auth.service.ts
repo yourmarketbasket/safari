@@ -58,21 +58,6 @@ export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
 };
 
 /**
- * Logs in a superuser.
- */
-export const superuserLogin = async (loginData: LoginCredentials): Promise<AuthData> => {
-  try {
-    const response = await api.post<AuthResponse>('/superuser/login', loginData);
-    return response.data.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 500) {
-      throw new Error('Could not login');
-    }
-    throw error;
-  }
-};
-
-/**
  * Verifies the MFA code using the temporary MFA token.
  */
 export const verifyMfa = async (verifyData: VerifyMfaData): Promise<AuthData> => {
@@ -86,14 +71,6 @@ export const verifyMfa = async (verifyData: VerifyMfaData): Promise<AuthData> =>
 export const signup = async (signupData: SignupData): Promise<AuthData> => {
   const response = await api.post<AuthResponse>('/auth/signup', signupData);
   return response.data.data;
-};
-
-/**
- * Registers a new superuser.
- */
-export const registerSuperuser = async (userData: SignupData, adminKey: string): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>('/superuser/register', { userData, adminKey });
-  return response.data;
 };
 
 /**
@@ -127,10 +104,8 @@ export const getProfile = async (): Promise<User> => {
 
 const authService = {
   login,
-  superuserLogin,
   verifyMfa,
   signup,
-  registerSuperuser,
   forgotPassword,
   resetPassword,
   logout,

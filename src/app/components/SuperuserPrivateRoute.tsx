@@ -16,12 +16,12 @@ export default function SuperuserPrivateRoute({ children }: SuperuserPrivateRout
     if (isLoading) return;
 
     if (!token) {
-      router.push('/superuser/login');
+      router.push('/superuser/auth/login');
       return;
     }
 
     if (user && user.role !== 'superuser') {
-      router.push('/superuser/login');
+      router.push('/superuser/auth/login');
     }
   }, [user, token, isLoading, router]);
 

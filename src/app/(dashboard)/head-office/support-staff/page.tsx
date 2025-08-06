@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Modal from '../../../components/Modal';
 import AddStaffForm from '../../../components/AddStaffForm';
-import superuserService, { NewStaffData } from '../../../services/superuser.service';
+import superuserService from '../../../services/superuser.service';
 import { User } from '../../../models/User.model';
+import { NewStaffData } from '@/app/services/superuser.service';
 
 export default function SupportStaffPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);

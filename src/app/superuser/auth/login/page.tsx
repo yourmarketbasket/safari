@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from 'react';
-import { useSuperuserAuth } from '../../lib/SuperuserAuthContext';
+import { useSuperuserAuth } from '../../../lib/SuperuserAuthContext';
 import Link from 'next/link';
-import Message from '../../components/Message';
-import SuperuserPublicRoute from '../../components/SuperuserPublicRoute';
+import Message from '../../../components/Message';
+import SuperuserPublicRoute from '../../../components/SuperuserPublicRoute';
+import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 
@@ -95,7 +96,7 @@ function SuperuserLoginPageContent() {
           </form>
           <div className="text-sm text-center text-gray-400">
             Don&apos;t have a superuser account?{' '}
-            <Link href="/superuser/register" title="Superuser Registration" className="font-medium text-cyan-400 hover:text-cyan-300">
+            <Link href="/superuser/auth/register" title="Superuser Registration" className="font-medium text-cyan-400 hover:text-cyan-300">
               Register
             </Link>
           </div>
@@ -107,6 +108,8 @@ function SuperuserLoginPageContent() {
 
 export default function SuperuserLoginPage() {
   return (
-    <SuperuserLoginPageContent />
+    <SuperuserAuthProvider>
+      <SuperuserLoginPageContent />
+    </SuperuserAuthProvider>
   );
 }

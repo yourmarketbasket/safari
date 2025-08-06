@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Message from '../../components/Message';
-import SuperuserPublicRoute from '../../components/SuperuserPublicRoute';
-import authService, { SignupData } from '../../services/auth.service';
+import Message from '../../../components/Message';
+import SuperuserPublicRoute from '../../../components/SuperuserPublicRoute';
+import superuserService, { SignupData } from '../../../services/superuser.service';
+import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -53,8 +54,8 @@ function SuperuserRegisterPageContent() {
         password,
         role: 'superuser',
       };
-      await authService.registerSuperuser(userData, adminKey);
-      router.push('/superuser/login');
+      await superuserService.register(userData, adminKey);
+      router.push('/superuser/auth/login');
     } catch (err) {
       setError('Failed to register. Please check the admin key and try again.');
       console.error(err);
@@ -132,7 +133,7 @@ function SuperuserRegisterPageContent() {
           </form>
           <div className="text-sm text-center text-gray-400">
             Already have a superuser account?{' '}
-            <Link href="/superuser/login" title="Superuser Login" className="font-medium text-cyan-400 hover:text-cyan-300">
+            <Link href="/superuser/auth/login" title="Superuser Login" className="font-medium text-cyan-400 hover:text-cyan-300">
               Log in
             </Link>
           </div>
@@ -144,6 +145,8 @@ function SuperuserRegisterPageContent() {
 
 export default function SuperuserRegisterPage() {
   return (
-    <SuperuserRegisterPageContent />
+    <SuperuserAuthProvider>
+      <SuperuserRegisterPageContent />
+    </SuperuserAuthProvider>
   );
 }

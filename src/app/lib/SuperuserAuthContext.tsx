@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import authService, { LoginCredentials } from '../services/auth.service';
+import superuserService, { LoginCredentials } from '../services/superuser.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
 
@@ -32,7 +32,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
   }, []);
 
   const handleLogin = async (loginData: LoginCredentials) => {
-    const responseData = await authService.superuserLogin(loginData);
+    const responseData = await superuserService.login(loginData);
     if (responseData.mfaRequired) {
         // Superusers might not have MFA, so this needs to be handled
     } else {
@@ -49,7 +49,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     setToken(null);
     localStorage.removeItem('superuserAuthToken');
     localStorage.removeItem('superuser');
-    router.push('/superuser/login');
+    router.push('/superuser/auth/login');
   };
 
   const value = {

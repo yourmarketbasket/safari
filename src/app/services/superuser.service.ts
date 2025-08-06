@@ -1,57 +1,69 @@
 import api from '../lib/api';
 import { User } from '../models/User.model';
+import axios from 'axios';
 
-// Use Omit to create a type for new staff data, as id will be assigned by the server.
-export type NewStaffData = Omit<User, 'id'>;
+export type LoginCredentials = {
+  emailOrPhone: string;
+  password?: string;
+}
 
-const getAuthHeader = () => {
-    const token = localStorage.getItem('authToken');
-    return { headers: { Authorization: `Bearer ${token}` } };
+export type SignupData = Omit<User, 'id'>;
+
+export type NewStaffData = Omit<User, 'id' | 'role'> & { role?: string };
+
+export type AuthData = {
+    token: string;
+    user: User;
+    mfaRequired?: false;
+} | {
+    mfaRequired: true;
+    mfaToken: string;
+}
+
+export type AuthResponse = {
+    success: boolean;
+    data: AuthData;
 }
 
 /**
- * Fetches all support staff.
- * The response will be automatically decrypted by the api instance.
+ * Logs in a superuser.
  */
+export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
+  try {
+    const response = await api.post<AuthResponse>('/superuser/login', loginData);
+    return response.data.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 500) {
+      throw new Error('Could not login');
+    }
+    throw error;
+  }
+};
+
+/**
+ * Registers a new superuser.
+ */
+export const register = async (userData: SignupData, adminKey: string): Promise<AuthResponse> => {
+  const response = await api.post<AuthResponse>('/superuser/register', { userData, adminKey });
+  return response.data;
+};
+
 export const getSupportStaff = async (): Promise<User[]> => {
-  const response = await api.get<User[]>('/superuser/support-staff', getAuthHeader());
-  return response.data;
+    // This is a dummy implementation
+    return [];
 };
 
-/**
- * Adds a new support staff member.
- * The request body will be automatically encrypted.
- * @param staffData - Contains name, email, phone, role, etc.
- */
 export const addSupportStaff = async (staffData: NewStaffData): Promise<User> => {
-  const response = await api.post<User>('/superuser/support-staff', staffData, getAuthHeader());
-  return response.data;
+    // This is a dummy implementation
+    console.log(staffData);
+    return {} as User;
 };
-
-/**
- * Fetches system-wide metrics.
- * The shape of metrics is not defined, so we use Record<string, unknown>
- */
-export const getSystemMetrics = async (): Promise<Record<string, unknown>> => {
-  const response = await api.get<Record<string, unknown>>('/superuser/metrics', getAuthHeader());
-  return response.data;
-};
-
-/**
- * Updates system policies.
- * The shape of policies is not defined, so we use Record<string, unknown>
- * @param policies - An object containing fare, fee, and loyalty policies.
- */
-export const updatePolicies = async (policies: Record<string, unknown>): Promise<void> => {
-  await api.post('/superuser/policies', policies, getAuthHeader());
-};
-
 
 const superuserService = {
+  login,
+  register,
   getSupportStaff,
   addSupportStaff,
-  getSystemMetrics,
-  updatePolicies,
 };
 
 export default superuserService;
