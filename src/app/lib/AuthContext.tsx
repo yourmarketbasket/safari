@@ -61,6 +61,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       case 'queue_manager':
         router.push('/queue-manager');
         break;
+      case 'superuser':
+        router.push('/homekeeping/general/superuser');
+        break;
+      case 'superuser':
+        router.push('/homekeeping/general/superuser');
+        break;
       default:
         router.push('/login');
     }

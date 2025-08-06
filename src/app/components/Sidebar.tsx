@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift } from 'react-icons/fi';
+import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift, FiTool } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 
@@ -60,6 +60,12 @@ const allNavLinks = {
     { name: 'Passenger Verification', href: '/driver/passenger-verification', icon: <FiPocket /> },
     { name: 'Earnings', href: '/driver/earnings', icon: <FiTrendingUp /> },
     { name: 'Trip Completion', href: '/driver/trip-completion', icon: <FiList /> },
+  ],
+  superuser: [
+    { name: 'Dashboard', href: '/homekeeping/general/superuser', icon: <FiShield /> },
+    { name: 'User Management', href: '/homekeeping/general/superuser/user-management', icon: <FiUsers /> },
+    { name: 'System Settings', href: '/homekeeping/general/superuser/system-settings', icon: <FiTool /> },
+    { name: 'Reports', href: '/homekeeping/general/superuser/reports', icon: <FiList /> },
   ],
 };
 
