@@ -58,6 +58,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       case 'headoffice':
         router.push('/head-office');
         break;
+      case 'queue_manager':
+        router.push('/queue-manager');
+        break;
       default:
         router.push('/login');
     }

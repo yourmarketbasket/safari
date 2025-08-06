@@ -48,7 +48,7 @@ const allNavLinks = {
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Policy Management', href: '/head-office/policy-management', icon: <FiList /> },
   ],
-  queueManager: [
+  queue_manager: [
     { name: 'Dashboard', href: '/queue-manager', icon: <FiList /> },
     { name: 'Ticket Scanning', href: '/queue-manager/ticket-scanning', icon: <FiPocket /> },
     { name: 'Boarding Stats', href: '/queue-manager/boarding-stats', icon: <FiTrendingUp /> },
