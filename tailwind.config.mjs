@@ -67,6 +67,7 @@ const config = {
       animation: {
         'fade-in-down': 'fade-in-down 0.6s ease-out forwards',
         'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
+        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         'fade-in-down': {
@@ -87,6 +88,14 @@ const config = {
           '100%': {
             opacity: '1',
             transform: 'translateY(0)',
+          },
+        },
+        'pulse': {
+          '0%, 100%': {
+            opacity: 1,
+          },
+          '50%': {
+            opacity: .5,
           },
         },
       },

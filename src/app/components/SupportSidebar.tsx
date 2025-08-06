@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { FiUsers, FiTruck, FiUser, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiMonitor, FiHelpCircle, FiXCircle, FiTrendingUp, FiPlus, FiCheckCircle } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
+import ConnectionStatus from './ConnectionStatus';
 
 const supportNavLinks = [
     { name: 'Dashboard', href: '/support', icon: <FiUsers /> },
@@ -102,6 +103,7 @@ export default function SupportSidebar() {
         ))}
       </nav>
       <div className="px-4 py-6 border-t border-gray-200 space-y-2">
+        {!isCollapsed && <ConnectionStatus />}
         <Link href="/profile" className="flex items-center px-4 py-2 text-xs font-semibold rounded-lg text-gray-600 hover:bg-purple-100 hover:text-purple-600">
           <FiUser className="w-5 h-5" />
           {!isCollapsed && <span className="ml-3">Profile</span>}
