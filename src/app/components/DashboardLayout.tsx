@@ -24,6 +24,7 @@ function Header() {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+  console.log("DashboardLayout user", user);
 
   return (
     <div className="flex h-screen bg-gray-100">
