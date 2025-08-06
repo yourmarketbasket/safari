@@ -62,7 +62,7 @@ export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
  */
 export const superuserLogin = async (loginData: LoginCredentials): Promise<AuthData> => {
   try {
-    const response = await api.post<AuthResponse>('/auth/superuser-login', loginData);
+    const response = await api.post<AuthResponse>('/superuser/login', loginData);
     return response.data.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 500) {
@@ -92,7 +92,7 @@ export const signup = async (signupData: SignupData): Promise<AuthData> => {
  * Registers a new superuser.
  */
 export const registerSuperuser = async (userData: SignupData, adminKey: string): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>('/auth/register-superuser', { userData, adminKey });
+  const response = await api.post<AuthResponse>('/superuser/register', { userData, adminKey });
   return response.data;
 };
 
