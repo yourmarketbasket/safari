@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Message from '../../components/Message';
 import SuperuserPublicRoute from '../../components/SuperuserPublicRoute';
 import authService, { SignupData } from '../../services/auth.service';
-import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -145,8 +144,6 @@ function SuperuserRegisterPageContent() {
 
 export default function SuperuserRegisterPage() {
   return (
-    <SuperuserAuthProvider>
-      <SuperuserRegisterPageContent />
-    </SuperuserAuthProvider>
+    <SuperuserRegisterPageContent />
   );
 }

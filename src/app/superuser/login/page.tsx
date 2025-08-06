@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { useSuperuserAuth, SuperuserAuthProvider } from '../../lib/SuperuserAuthContext';
+import { useSuperuserAuth } from '../../lib/SuperuserAuthContext';
 import Link from 'next/link';
 import Message from '../../components/Message';
 import SuperuserPublicRoute from '../../components/SuperuserPublicRoute';
@@ -107,8 +107,6 @@ function SuperuserLoginPageContent() {
 
 export default function SuperuserLoginPage() {
   return (
-    <SuperuserAuthProvider>
-      <SuperuserLoginPageContent />
-    </SuperuserAuthProvider>
+    <SuperuserLoginPageContent />
   );
 }
