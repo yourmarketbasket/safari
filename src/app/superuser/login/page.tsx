@@ -39,16 +39,16 @@ export default function SuperuserLoginPage() {
     }
   };
 
-  const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
-  const inputClasses = "block w-full px-4 py-3 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+  const labelClasses = "absolute left-4 top-3 text-gray-400 transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-cyan-400 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
+  const inputClasses = "block w-full px-4 py-3 bg-gray-800 text-white border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 peer";
 
   return (
     <PublicRoute>
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-700 via-gray-900 to-black">
-        <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl">
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-2xl shadow-2xl">
           <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900">Superuser Login</h1>
-              <p className="mt-2 text-gray-800">Access the superuser dashboard</p>
+              <h1 className="text-3xl font-bold text-white">Superuser Login</h1>
+              <p className="mt-2 text-gray-400">Access the superuser dashboard</p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6 pt-4">
             <div className="relative">
@@ -61,32 +61,43 @@ export default function SuperuserLoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 px-3 flex items-center text-sm leading-5"
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-sm leading-5 text-gray-400 hover:text-white"
               >
-                {showPassword ? <span>Hide</span> : <span>Show</span>}
+                {showPassword ? (
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  ) : (
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.118 3.558-5.558 6.818-6.505M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.542 12c-1.274 4.057-5.064 7-9.542 7-1.096 0-2.144-.196-3.138-.55M2.458 12c.946-3.118 3.558-5.558 6.818-6.505" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M1 1l22 22" />
+                    </svg>
+                  )}
               </button>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <input id="remember-me" name="remember-me" type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-black">Remember me</label>
+                <input id="remember-me" name="remember-me" type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-600 rounded bg-gray-800"/>
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">Remember me</label>
               </div>
               <div className="text-sm">
-                <Link href="/forgot-password" title="Forgot Password" className="font-medium text-indigo-800 hover:text-indigo-600">
+                <Link href="/forgot-password" title="Forgot Password" className="font-medium text-cyan-400 hover:text-cyan-300">
                   Forgot your password?
                 </Link>
               </div>
             </div>
             {error && <Message message={error} type="error" />}
             <div>
-              <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 transition-all duration-300">
+              <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-400 transition-all duration-300">
                 {loading ? 'Logging in...' : 'Login'}
               </button>
             </div>
           </form>
-          <div className="text-sm text-center text-gray-800">
+          <div className="text-sm text-center text-gray-400">
             Don&apos;t have a superuser account?{' '}
-            <Link href="/superuser/register" title="Superuser Registration" className="font-medium text-indigo-800 hover:text-indigo-600">
+            <Link href="/superuser/register" title="Superuser Registration" className="font-medium text-cyan-400 hover:text-cyan-300">
               Register
             </Link>
           </div>
