@@ -36,6 +36,10 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     if (responseData.mfaRequired) {
         // Superusers might not have MFA, so this needs to be handled
     } else {
+        // Clear normal user data
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+
         setToken(responseData.token);
         setUser(responseData.user);
         localStorage.setItem('superuserAuthToken', responseData.token);
@@ -49,6 +53,8 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     setToken(null);
     localStorage.removeItem('superuserAuthToken');
     localStorage.removeItem('superuser');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
     router.push('/superuser/login');
   };
 

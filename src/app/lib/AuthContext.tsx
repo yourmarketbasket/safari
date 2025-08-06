@@ -72,6 +72,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (responseData.mfaRequired) {
       setMfaToken(responseData.mfaToken);
     } else {
+      // Clear superuser data
+      localStorage.removeItem('superuserAuthToken');
+      localStorage.removeItem('superuser');
+
       setToken(responseData.token);
       setUser(responseData.user);
       localStorage.setItem('authToken', responseData.token);
@@ -114,6 +118,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMfaToken(null);
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
+    localStorage.removeItem('superuserAuthToken');
+    localStorage.removeItem('superuser');
     authService.logout();
     router.push('/login');
   };
