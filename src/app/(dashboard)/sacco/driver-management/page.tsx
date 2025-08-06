@@ -11,7 +11,7 @@ const mockDrivers = [
 ];
 
 export default function DriverManagementPage() {
-  const [drivers, setDrivers] = useState(mockDrivers);
+  const drivers = mockDrivers;
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredDrivers = useMemo(() => {

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { encryptData, decryptData } from '../utils/encryption';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000/api/v1',

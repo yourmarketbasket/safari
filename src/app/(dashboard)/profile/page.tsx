@@ -6,6 +6,7 @@ import PrivateRoute from '@/app/components/PrivateRoute';
 import FileUpload from '@/app/components/FileUpload';
 import { FaUserCircle } from 'react-icons/fa';
 import { FiEdit, FiSave, FiX } from 'react-icons/fi';
+import Image from 'next/image';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -77,7 +78,7 @@ export default function ProfilePage() {
             ) : (
               <div className="text-center">
                 {user.avatar ? (
-                  <img src={user.avatar} alt="Avatar" className="w-32 h-32 rounded-full mx-auto mb-4" />
+                    <Image src={user.avatar} alt="Avatar" width={128} height={128} className="rounded-full mx-auto mb-4" />
                 ) : (
                   <FaUserCircle className="w-32 h-32 text-gray-400 mx-auto mb-4" />
                 )}

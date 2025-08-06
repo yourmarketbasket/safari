@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../lib/AuthContext';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Message from '../components/Message';
 import PublicRoute from '../components/PublicRoute';
@@ -17,8 +16,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { user, login } = useAuth();
-  const router = useRouter();
+  const { login } = useAuth();
   
 
 

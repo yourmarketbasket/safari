@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import PrivateRoute from '@/app/components/PrivateRoute';
-import { FiPlus, FiEdit, FiTrash, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { FiPlus, FiEdit, FiTrash, FiCheckCircle } from 'react-icons/fi';
 
 const mockSaccos = [
   { id: 's-1', name: 'Prestige', status: 'approved' },
@@ -13,7 +13,7 @@ const mockSaccos = [
 // force
 
 export default function SaccoManagementPage() {
-  const [saccos, setSaccos] = useState(mockSaccos);
+  const saccos = mockSaccos;
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredSaccos = useMemo(() => {

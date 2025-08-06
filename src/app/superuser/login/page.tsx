@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useAuth } from '../../lib/AuthContext';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Message from '../../components/Message';
 import PublicRoute from '../../components/PublicRoute';
@@ -17,7 +16,6 @@ export default function SuperuserLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

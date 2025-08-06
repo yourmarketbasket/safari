@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiMonitor, FiHelpCircle, FiTool, FiXCircle, FiTrendingUp, FiPlus, FiCheckCircle } from 'react-icons/fi';
+import { FiUsers, FiTruck, FiUser, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiMonitor, FiHelpCircle, FiXCircle, FiTrendingUp, FiPlus, FiCheckCircle } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 
@@ -44,9 +44,7 @@ export default function SupportSidebar() {
       <div className="h-20 flex items-center justify-center px-4 text-2xl font-bold border-b border-gray-200 relative">
         {!isCollapsed && <Link href="/dashboard" className="text-purple-600">Safary</Link>}
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-md hover:bg-gray-200 focus:outline-none">
-            <AnimatedHamburgerIcon isCollapsed={isCollapsed} />
-          </button>
+          <AnimatedHamburgerIcon isCollapsed={isCollapsed} onClick={() => setIsCollapsed(!isCollapsed)} />
         </div>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">

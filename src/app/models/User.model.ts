@@ -6,7 +6,8 @@ export type UserRole =
   | "driver"
   | "support_staff"
   | "admin"
-  | "superuser";
+  | "superuser"
+  | "headoffice";
 
 export interface User {
   id: string;
