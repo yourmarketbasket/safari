@@ -49,7 +49,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     setToken(null);
     localStorage.removeItem('superuserAuthToken');
     localStorage.removeItem('superuser');
-    router.push('/superuser/auth/login');
+    router.push('/superuser/login');
   };
 
   const value = {
