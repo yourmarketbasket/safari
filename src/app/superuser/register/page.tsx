@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Message from '../../../components/Message';
-import superuserService, { SignupData } from '../../../services/superuser.service';
+import Message from '../../components/Message';
+import authService, { SignupData } from '../../services/superuser.service';
 import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -53,7 +53,7 @@ function SuperuserRegisterPageContent() {
         password,
         role: 'superuser',
       };
-      await superuserService.register(userData, adminKey);
+      await authService.register(userData, adminKey);
       router.push('/superuser/login');
     } catch (err) {
       setError('Failed to register. Please check the admin key and try again.');
