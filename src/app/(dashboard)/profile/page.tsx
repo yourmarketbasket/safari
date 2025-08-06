@@ -26,7 +26,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice']}>
+    <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice', 'queue_manager']}>
       <div className="container mx-auto px-6 py-8">
         <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
         {user && (
