@@ -10,20 +10,14 @@ import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 const supportNavLinks = [
     { name: 'Dashboard', href: '/support', icon: <FiUsers /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-    {
-      name: 'Management',
-      icon: <FiTool />,
-      subLinks: [
-        { name: 'Sacco Management', href: '/support/sacco-management', icon: <FiTruck /> },
-        { name: 'System Monitoring', href: '/support/system-monitoring', icon: <FiMonitor /> },
-        { name: 'Inquiry Management', href: '/support/inquiries', icon: <FiHelpCircle /> },
-        { name: 'Driver Support', href: '/support/driver-support', icon: <FiUser /> },
-        { name: 'Cancellations & Reallocations', href: '/support/cancellations', icon: <FiXCircle /> },
-        { name: 'Payroll Disputes', href: '/support/payroll-disputes', icon: <FiTrendingUp /> },
-        { name: 'Reports', href: '/support/reports', icon: <FiList /> },
-        { name: 'Escalations', href: '/support/escalations', icon: <FiTrendingUp /> },
-      ],
-    },
+    { name: 'Sacco Management', href: '/support/sacco-management', icon: <FiTruck /> },
+    { name: 'System Monitoring', href: '/support/system-monitoring', icon: <FiMonitor /> },
+    { name: 'Inquiry Management', href: '/support/inquiries', icon: <FiHelpCircle /> },
+    { name: 'Driver Support', href: '/support/driver-support', icon: <FiUser /> },
+    { name: 'Cancellations & Reallocations', href: '/support/cancellations', icon: <FiXCircle /> },
+    { name: 'Payroll Disputes', href: '/support/payroll-disputes', icon: <FiTrendingUp /> },
+    { name: 'Reports', href: '/support/reports', icon: <FiList /> },
+    { name: 'Escalations', href: '/support/escalations', icon: <FiTrendingUp /> },
 ];
 
 export default function SupportSidebar() {
