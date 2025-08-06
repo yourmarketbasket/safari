@@ -15,10 +15,12 @@ class SocketService {
 
       this.socket.on('connect', () => {
         console.log('Connected to socket server');
+        this.emit('userConnected');
       });
 
       this.socket.on('disconnect', () => {
         console.log('Disconnected from socket server');
+        this.emit('userDisconnected');
       });
     }
   }
