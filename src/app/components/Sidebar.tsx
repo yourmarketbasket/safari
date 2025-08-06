@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp } from 'react-icons/fi';
+import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 
@@ -19,6 +19,12 @@ const allNavLinks = {
     { name: 'Dashboard', href: '/sacco', icon: <FiTruck /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Route Management', href: '/sacco/route-management', icon: <FiList /> },
+    { name: 'Vehicle Management', href: '/sacco/vehicle-management', icon: <FiTruck /> },
+    { name: 'Queue Management', href: '/sacco/queue-management', icon: <FiList /> },
+    { name: 'Driver Management', href: '/sacco/driver-management', icon: <FiUser /> },
+    { name: 'Revenue', href: '/sacco/revenue', icon: <FiTrendingUp /> },
+    { name: 'Promotions', href: '/sacco/promotions', icon: <FiGift /> },
+    { name: 'HR/Payroll', href: '/sacco/hr-payroll', icon: <FiUsers /> },
   ],
   owner: [
     { name: 'Dashboard', href: '/owner', icon: <FiUser /> },
