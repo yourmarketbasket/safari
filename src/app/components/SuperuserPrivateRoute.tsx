@@ -25,12 +25,16 @@ export default function SuperuserPrivateRoute({ children }: SuperuserPrivateRout
     }
   }, [user, token, isLoading, router]);
 
-  if (isLoading || !token || (user && user.role !== 'superuser')) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p>Loading...</p>
       </div>
     );
+  }
+
+  if (!token || (user && user.role !== 'superuser')) {
+    return null;
   }
 
   return <>{children}</>;
