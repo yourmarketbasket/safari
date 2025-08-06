@@ -29,7 +29,10 @@ const allNavLinks = {
   owner: [
     { name: 'Dashboard', href: '/owner', icon: <FiUser /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-    { name: 'My Trips', href: '/owner/trips', icon: <FiList /> },
+    { name: 'Trips', href: '/owner/trips', icon: <FiList /> },
+    { name: 'Income', href: '/owner/income', icon: <FiTrendingUp /> },
+    { name: 'Vehicle Details', href: '/owner/vehicle-details', icon: <FiTruck /> },
+    { name: 'HR/Payroll', href: '/owner/hr-payroll', icon: <FiUsers /> },
   ],
   passenger: [
     { name: 'Dashboard', href: '/passenger', icon: <FiPocket /> },
@@ -44,6 +47,19 @@ const allNavLinks = {
     { name: 'Dashboard', href: '/head-office', icon: <FiHome /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Policy Management', href: '/head-office/policy-management', icon: <FiList /> },
+  ],
+  queueManager: [
+    { name: 'Dashboard', href: '/queue-manager', icon: <FiList /> },
+    { name: 'Ticket Scanning', href: '/queue-manager/ticket-scanning', icon: <FiPocket /> },
+    { name: 'Boarding Stats', href: '/queue-manager/boarding-stats', icon: <FiTrendingUp /> },
+  ],
+  driver: [
+    { name: 'Dashboard', href: '/driver', icon: <FiUser /> },
+    { name: 'Trip Registration', href: '/driver/trip-registration', icon: <FiList /> },
+    { name: 'Trip Monitoring', href: '/driver/trip-monitoring', icon: <FiTrendingUp /> },
+    { name: 'Passenger Verification', href: '/driver/passenger-verification', icon: <FiPocket /> },
+    { name: 'Earnings', href: '/driver/earnings', icon: <FiTrendingUp /> },
+    { name: 'Trip Completion', href: '/driver/trip-completion', icon: <FiList /> },
   ],
 };
 
