@@ -27,16 +27,12 @@ export default function PrivateRoute({ children, allowedRoles }: PrivateRoutePro
     }
   }, [user, token, isLoading, router, allowedRoles]);
 
-  if (isLoading) {
+  if (isLoading || !token || (user && !allowedRoles.includes(user.role))) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p>Loading...</p>
       </div>
     );
-  }
-
-  if (!token) {
-    return null; // or a redirect component, but useEffect handles it
   }
 
   return <>{children}</>;

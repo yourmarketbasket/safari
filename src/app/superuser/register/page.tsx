@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Message from '../../components/Message';
 import PublicRoute from '../../components/PublicRoute';
-import authService from '../../services/auth.service';
+import authService, { SignupData } from '../../services/auth.service';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -46,14 +46,14 @@ export default function SuperuserRegisterPage() {
 
     setLoading(true);
     try {
-      await authService.registerSuperuser({
+      const userData: SignupData = {
         name,
         email,
         phone,
         password,
-        role: 'admin', // Superuser role is admin
-        adminKey,
-      });
+        role: 'superuser',
+      };
+      await authService.registerSuperuser(userData, adminKey);
       router.push('/superuser/login');
     } catch (err) {
       setError('Failed to register. Please check the admin key and try again.');

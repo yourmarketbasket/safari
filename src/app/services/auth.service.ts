@@ -10,10 +10,6 @@ export type LoginCredentials = {
 
 export type SignupData = Omit<User, 'id'>;
 
-export type SuperuserSignupData = SignupData & {
-    adminKey: string;
-}
-
 export type ForgotPasswordData = {
     emailOrPhone: string;
 }
@@ -80,8 +76,8 @@ export const signup = async (signupData: SignupData): Promise<AuthData> => {
 /**
  * Registers a new superuser.
  */
-export const registerSuperuser = async (superuserData: SuperuserSignupData): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>('/auth/register-superuser', superuserData);
+export const registerSuperuser = async (userData: SignupData, adminKey: string): Promise<AuthResponse> => {
+  const response = await api.post<AuthResponse>('/auth/register-superuser', { userData, adminKey });
   return response.data;
 };
 
