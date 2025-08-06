@@ -5,6 +5,7 @@ import MfaDialog from './MfaDialog';
 import LoadingOverlay from './LoadingOverlay';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import useSocketStore from '../store/socket.store';
 
 export default function AppWrapper({ children }: { children: React.ReactNode }) {
   const { isMfaRequired, verifyMfa, cancelMfa, isLoading } = useAuth();
@@ -12,6 +13,14 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
   const [loading, setLoading] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const pathname = usePathname();
+  const { connect, disconnect } = useSocketStore();
+
+  useEffect(() => {
+    connect();
+    return () => {
+      disconnect();
+    };
+  }, [connect, disconnect]);
 
   useEffect(() => {
     setIsNavigating(true);

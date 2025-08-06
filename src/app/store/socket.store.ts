@@ -4,14 +4,20 @@ import { io, Socket } from 'socket.io-client';
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000';
 
 interface SocketState {
+  socket: Socket | null;
   isConnected: boolean;
   connect: () => void;
   disconnect: () => void;
 }
 
-const useSocketStore = create<SocketState>((set) => ({
+const useSocketStore = create<SocketState>((set, get) => ({
+  socket: null,
   isConnected: false,
   connect: () => {
+    if (get().socket) {
+      return;
+    }
+
     const socket: Socket = io(URL, {
       reconnection: true,
       reconnectionAttempts: 5,
@@ -20,6 +26,7 @@ const useSocketStore = create<SocketState>((set) => ({
 
     socket.on('connect', () => {
       console.log('Connected to socket server');
+      set({ isConnected: true });
     });
 
     socket.on('disconnect', () => {
@@ -27,20 +34,14 @@ const useSocketStore = create<SocketState>((set) => ({
       set({ isConnected: false });
     });
 
-    socket.on('userConnected', () => {
-      console.log('userConnected event received');
-      set({ isConnected: true });
-    });
-
-    socket.on('userDisconnected', () => {
-      console.log('userDisconnected event received');
-      set({ isConnected: false });
-    });
+    set({ socket });
   },
   disconnect: () => {
-    // This is a bit tricky with zustand, as we don't have a single socket instance to disconnect.
-    // For now, we'll just set the state to disconnected.
-    set({ isConnected: false });
+    const { socket } = get();
+    if (socket) {
+      socket.disconnect();
+      set({ isConnected: false, socket: null });
+    }
   },
 }));
 

@@ -6,9 +6,6 @@ import { useEffect } from 'react';
 const ConnectionStatus = () => {
   const { isConnected, connect } = useSocketStore();
 
-  useEffect(() => {
-    connect();
-  }, [connect]);
 
   return (
     <div className="flex items-center justify-center">
