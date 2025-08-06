@@ -1,20 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import socketService from '../services/socket.service';
+import { useSocketStatus } from '../lib/SocketStatusContext';
 
 const ConnectionStatus = () => {
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsConnected(socketService.isConnected);
-    }, 1000); // Check every second
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  const { isConnected } = useSocketStatus();
 
   return (
     <div className="flex items-center justify-center">

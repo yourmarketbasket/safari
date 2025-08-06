@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "./lib/AuthContext";
+import { SocketStatusProvider } from "./lib/SocketStatusContext";
 import AppWrapper from "./components/AppWrapper";
 import "@/styles/globals.css";
 
@@ -30,7 +31,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <AppWrapper>{children}</AppWrapper>
+          <SocketStatusProvider>
+            <AppWrapper>{children}</AppWrapper>
+          </SocketStatusProvider>
         </AuthProvider>
       </body>
     </html>
