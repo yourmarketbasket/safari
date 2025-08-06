@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Message from '../../../components/Message';
-import PublicRoute from '../../../components/PublicRoute';
-import authService from '../../../services/auth.service';
+import Message from '../../components/Message';
+import PublicRoute from '../../components/PublicRoute';
+import authService from '../../services/auth.service';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
