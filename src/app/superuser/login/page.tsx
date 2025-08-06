@@ -105,8 +105,6 @@ function SuperuserLoginPageContent() {
 
 export default function SuperuserLoginPage() {
   return (
-    <SuperuserAuthProvider>
       <SuperuserLoginPageContent />
-    </SuperuserAuthProvider>
   );
 }

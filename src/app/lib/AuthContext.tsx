@@ -116,6 +116,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setToken(null);
     setMfaToken(null);
+    setIsLoading(true); // Reset loading state
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     localStorage.removeItem('superuserAuthToken');
@@ -123,6 +124,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     authService.logout();
     router.push('/login');
   };
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+        if (event.key === 'authToken' && event.newValue === null) {
+            setUser(null);
+            setToken(null);
+            setIsLoading(true);
+        }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+        window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const value = {
     user,

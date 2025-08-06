@@ -31,11 +31,6 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     setIsInitialized(true);
   }, []);
 
-  useEffect(() => {
-    if (token && user) {
-        router.push('/superuser/dashboard');
-    }
-  }, [token, user, router]);
 
   const handleLogin = async (loginData: LoginCredentials) => {
     const responseData = await superuserService.login(loginData);
@@ -50,18 +45,35 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
         setUser(responseData.user);
         localStorage.setItem('superuserAuthToken', responseData.token);
         localStorage.setItem('superuser', JSON.stringify(responseData.user));
+        router.push('/superuser/dashboard');
     }
   };
 
   const handleLogout = () => {
     setUser(null);
     setToken(null);
+    setIsInitialized(false); // Reset initialization state
     localStorage.removeItem('superuserAuthToken');
     localStorage.removeItem('superuser');
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     router.push('/superuser/login');
   };
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'superuserAuthToken' && event.newValue === null) {
+        setUser(null);
+        setToken(null);
+        setIsInitialized(false);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const value = {
     user,
