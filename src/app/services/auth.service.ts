@@ -52,7 +52,12 @@ import axios from 'axios';
 export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
   try {
     const response = await api.post<AuthResponse>('/auth/login', loginData);
-    return response.data.data;
+    // The API might return the AuthData directly or nested under a `data` property.
+    // This handles both cases.
+    if (response.data.data) {
+      return response.data.data;
+    }
+    return response.data as unknown as AuthData;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 500) {
       throw new Error('Could not login');
