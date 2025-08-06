@@ -31,6 +31,12 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     setIsInitialized(true);
   }, []);
 
+  useEffect(() => {
+    if (token && user) {
+        router.push('/superuser/dashboard');
+    }
+  }, [token, user, router]);
+
   const handleLogin = async (loginData: LoginCredentials) => {
     const responseData = await superuserService.login(loginData);
     if (responseData.mfaRequired) {
@@ -44,7 +50,6 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
         setUser(responseData.user);
         localStorage.setItem('superuserAuthToken', responseData.token);
         localStorage.setItem('superuser', JSON.stringify(responseData.user));
-        router.push('/superuser/dashboard'); // Redirect to a superuser-specific dashboard
     }
   };
 
