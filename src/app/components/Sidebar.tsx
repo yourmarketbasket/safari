@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 
@@ -11,7 +11,9 @@ const allNavLinks = {
   admin: [
     { name: 'Dashboard', href: '/admin', icon: <FiShield /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
+    { name: 'Performance Monitoring', href: '/admin/performance-monitoring', icon: <FiTrendingUp /> },
     { name: 'Escalation Queue', href: '/admin/escalation-queue', icon: <FiList /> },
+    { name: 'System Reports', href: '/admin/system-reports', icon: <FiList /> },
   ],
   sacco: [
     { name: 'Dashboard', href: '/sacco', icon: <FiTruck /> },
