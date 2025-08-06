@@ -37,7 +37,7 @@ export default function SuperuserSidebar() {
           <Link
             key={link.name}
             href={link.href}
-            className={`flex items-center px-4 py-2 text-sm font-semibold rounded-lg transition-colors ${
+            className={`flex items-center px-4 py-2 text-sm font-light rounded-lg transition-colors ${
               pathname === link.href
                 ? 'bg-purple-600 text-white shadow-lg'
                 : 'text-gray-600 hover:bg-purple-100 hover:text-purple-600'
@@ -47,7 +47,7 @@ export default function SuperuserSidebar() {
             {!isCollapsed && <span className="ml-3">{link.name}</span>}
           </Link>
         ))}
-        <Link href="/superuser/profile" className="flex items-center px-4 py-2 text-sm font-semibold rounded-lg text-gray-600 hover:bg-purple-100 hover:text-purple-600">
+        <Link href="/superuser/profile" className="flex items-center px-4 py-2 text-sm font-light rounded-lg text-gray-600 hover:bg-purple-100 hover:text-purple-600">
             <FiUsers className="w-5 h-5" />
             {!isCollapsed && <span className="ml-3">Profile</span>}
         </Link>
@@ -56,7 +56,7 @@ export default function SuperuserSidebar() {
         <ConnectionStatus />
         <button
           onClick={logout}
-          className="w-full flex items-center px-4 py-2 text-sm font-semibold rounded-lg text-gray-600 hover:bg-red-100 hover:text-red-600"
+          className="w-full flex items-center px-4 py-2 text-sm font-light rounded-lg text-gray-600 hover:bg-red-100 hover:text-red-600"
         >
           <FiLogOut className="w-5 h-5" />
           {!isCollapsed && <span className="ml-3">Logout</span>}

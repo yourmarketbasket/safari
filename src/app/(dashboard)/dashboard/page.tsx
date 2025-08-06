@@ -3,7 +3,7 @@
 export default function DashboardPage() {
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-800">Main Dashboard</h1>
+      <h1 className="text-xl font-semibold text-gray-800">Main Dashboard</h1>
       <div className="mt-8">
         <p className="text-gray-600">
           Welcome to your Safary dashboard.

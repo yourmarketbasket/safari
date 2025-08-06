@@ -10,8 +10,8 @@ const ConnectionStatus = () => {
     const onConnect = () => setIsConnected(true);
     const onDisconnect = () => setIsConnected(false);
 
-    socketService.on('connect', onConnect);
-    socketService.on('disconnect', onDisconnect);
+    socketService.on('userConnected', onConnect);
+    socketService.on('userDisconnected', onDisconnect);
 
     return () => {
       // No need to remove listeners on 'disconnect' as the socket instance is destroyed

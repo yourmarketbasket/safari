@@ -26,7 +26,7 @@ export default function HeadOfficePage() {
   return (
     <PrivateRoute allowedRoles={['headoffice']}>
       <div>
-        <h1 className="text-2xl font-semibold text-gray-800">Head Office Dashboard</h1>
+        <h1 className="text-xl font-semibold text-gray-800">Head Office Dashboard</h1>
         <p className="mt-2 text-gray-600">
           As a Superuser, you have full administrative control over the system.
         </p>

@@ -101,7 +101,15 @@ const config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addUtilities }) {
+      addUtilities({
+        '.font-italic': {
+          'font-style': 'italic',
+        },
+      })
+    }
+  ],
 };
 
 export default config;
