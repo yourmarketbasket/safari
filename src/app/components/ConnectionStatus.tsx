@@ -7,14 +7,14 @@ const ConnectionStatus = () => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const onConnect = () => setIsConnected(true);
-    const onDisconnect = () => setIsConnected(false);
+    const handleStatusChange = (status: boolean) => {
+      setIsConnected(status);
+    };
 
-    socketService.on('userConnected', onConnect);
-    socketService.on('userDisconnected', onDisconnect);
+    socketService.on('statusChanged', handleStatusChange);
 
     return () => {
-      // No need to remove listeners on 'disconnect' as the socket instance is destroyed
+      socketService.off('statusChanged', handleStatusChange);
     };
   }, []);
 

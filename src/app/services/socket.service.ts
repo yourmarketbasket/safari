@@ -2,7 +2,9 @@ import { io, Socket } from 'socket.io-client';
 
 const URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000';
 
-class SocketService {
+import { EventEmitter } from 'events';
+
+class SocketService extends EventEmitter {
   private socket: Socket | null = null;
 
   connect(): void {
@@ -15,12 +17,21 @@ class SocketService {
 
       this.socket.on('connect', () => {
         console.log('Connected to socket server');
-        this.emit('userConnected');
       });
 
       this.socket.on('disconnect', () => {
         console.log('Disconnected from socket server');
-        this.emit('userDisconnected');
+        this.emit('statusChanged', false);
+      });
+
+      this.socket.on('userConnected', () => {
+        console.log('userConnected event received');
+        this.emit('statusChanged', true);
+      });
+
+      this.socket.on('userDisconnected', () => {
+        console.log('userDisconnected event received');
+        this.emit('statusChanged', false);
       });
     }
   }
@@ -32,11 +43,6 @@ class SocketService {
     }
   }
 
-  on(event: string, listener: (...args: any[]) => void): void {
-    if (this.socket) {
-      this.socket.on(event, listener);
-    }
-  }
 
   emit(event: string, ...args: any[]): void {
     if (this.socket) {
