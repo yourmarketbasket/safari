@@ -3,13 +3,18 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiSettings, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiUsers, FiSettings, FiLogOut, FiBriefcase, FiDollarSign, FiBarChart2, FiHelpCircle } from 'react-icons/fi';
 import { useSuperuserAuth } from '../lib/SuperuserAuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 
 const navLinks = [
   { name: 'Dashboard', href: '/superuser/dashboard', icon: <FiHome /> },
+  { name: 'Performance', href: '/superuser/performance-dashboard', icon: <FiBarChart2 /> },
   { name: 'Users', href: '/superuser/users', icon: <FiUsers /> },
+  { name: 'Saccos', href: '/superuser/sacco-management', icon: <FiBriefcase /> },
+  { name: 'Support', href: '/superuser/support-management', icon: <FiHelpCircle /> },
+  { name: 'Fees', href: '/superuser/fees-management', icon: <FiDollarSign /> },
+  { name: 'Wallets', href: '/superuser/wallet-management', icon: <FiDollarSign /> },
   { name: 'Settings', href: '/superuser/settings', icon: <FiSettings /> },
 ];
 
