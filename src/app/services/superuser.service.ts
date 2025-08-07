@@ -52,14 +52,14 @@ export const register = async (userData: SignupData, adminKey: string): Promise<
  * Sends a signup OTP to the user's email.
  */
 export const sendSignupOtp = async (email: string): Promise<void> => {
-  await api.post('/auth/send-signup-otp', { email });
+  await api.post('/auth/send-otp', { email });
 };
 
 /**
  * Verifies the signup OTP.
  */
 export const verifySignupOtp = async (email: string, otp: string): Promise<void> => {
-  await api.post('/auth/verify-signup-otp', { email, otp });
+  await api.post('/auth/verify-otp', { email, otp });
 };
 
 export const getSupportStaff = async (): Promise<User[]> => {
