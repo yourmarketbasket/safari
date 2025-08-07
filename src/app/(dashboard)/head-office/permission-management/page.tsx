@@ -5,6 +5,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
 import { permissions as initialPermissions, Permission } from '../../../data/permissions';
 import Modal from '../../../components/Modal';
+import SearchAndFilter from '../../../components/SearchAndFilter';
+import Pagination from '../../../components/Pagination';
 
 // Mock API functions
 const getPermissions = async (): Promise<Permission[]> => {
@@ -208,20 +210,14 @@ export default function PermissionManagementPage() {
         )}
       </Modal>
 
-      {/* Filters and Search */}
-      <div className="flex justify-between items-center mb-4">
-        <input
-            type="text"
-            placeholder="Search descriptions..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 border border-gray-400 rounded text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500"
-        />
-        <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className="p-2 border border-gray-400 rounded text-black focus:ring-2 focus:ring-blue-500">
-            <option value="">Filter by Role</option>
-            {allRoles.map(role => <option key={role} value={role}>{role}</option>)}
-        </select>
-      </div>
+      <SearchAndFilter
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        filterValue={filterRole}
+        onFilterChange={setFilterRole}
+        filterOptions={allRoles}
+        filterPlaceholder="Filter by Role"
+      />
 
       {/* Permissions Table */}
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -258,12 +254,11 @@ export default function PermissionManagementPage() {
             </tbody>
           </table>
         </div>
-        {/* Pagination */}
-        <div className="flex justify-between items-center p-4">
-            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="p-2 border rounded disabled:opacity-50">Previous</button>
-            <span>Page {currentPage} of {totalPages}</span>
-            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="p-2 border rounded disabled:opacity-50">Next</button>
-        </div>
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );
