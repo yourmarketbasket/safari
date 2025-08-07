@@ -50,6 +50,9 @@ function SuperuserLoginPageContent() {
               <h1 className="text-3xl font-bold text-white">Superuser Login</h1>
               <p className="mt-2 text-gray-400">Access the superuser dashboard</p>
           </div>
+          <div className="my-4">
+            {error && <Message message={error} type="error" />}
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6 pt-4">
             <div className="relative">
               <input id="emailOrPhone" name="emailOrPhone" type="text" required value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} placeholder=" " className={inputClasses}/>
@@ -88,7 +91,6 @@ function SuperuserLoginPageContent() {
                 </Link>
               </div>
             </div>
-            {error && <Message message={error} type="error" />}
             <div>
               <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-400 transition-all duration-300">
                 {loading ? 'Logging in...' : 'Login'}

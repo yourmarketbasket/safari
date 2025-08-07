@@ -55,6 +55,9 @@ export default function LoginPage() {
               <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
               <p className="mt-2 text-gray-800">Login to your Safary account</p>
           </div>
+          <div className="my-4">
+            {error && <Message message={error} type="error" />}
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6 pt-4">
             <div className="relative">
               <input id="emailOrPhone" name="emailOrPhone" type="text" required value={emailOrPhone} onChange={(e) => setEmailOrPhone(e.target.value)} placeholder=" " className={inputClasses}/>
@@ -93,7 +96,6 @@ export default function LoginPage() {
                 </Link>
               </div>
             </div>
-            {error && <Message message={error} type="error" />}
             <div>
               <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 transition-all duration-300">
                 {loading ? 'Logging in...' : 'Login'}

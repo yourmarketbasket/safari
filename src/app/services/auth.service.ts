@@ -51,7 +51,7 @@ export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
     return response.data.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || 'Could not login');
+      throw new Error(error.response.data.error || 'Could not login');
     }
     throw error;
   }
