@@ -20,7 +20,7 @@ export default function FeesManagementPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Fees Management</h1>
+      <h1 className="text-xl font-bold text-gray-800 mb-4">Fees Management</h1>
       <div className="bg-white p-8 rounded-2xl shadow-xl">
         <input
           type="text"

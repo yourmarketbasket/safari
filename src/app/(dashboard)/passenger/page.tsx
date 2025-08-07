@@ -83,7 +83,7 @@ export default function PassengerDashboardPage() {
   return (
     <PrivateRoute allowedRoles={['passenger']}>
       <div className="container mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold text-gray-800">My Dashboard</h1>
+        <h1 className="text-xl font-bold text-gray-800 mb-4">My Dashboard</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
           {/* Loyalty Points */}

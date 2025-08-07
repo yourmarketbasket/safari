@@ -26,7 +26,7 @@ export default function RoutesDashboardPage() {
   return (
     <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice']}>
       <div className="container mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold text-gray-800">Routes</h1>
+        <h1 className="text-xl font-bold text-gray-800 mb-4">Routes</h1>
 
         <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

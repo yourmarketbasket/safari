@@ -23,8 +23,8 @@ export default function DriverManagementPage() {
   return (
     <PrivateRoute allowedRoles={['sacco']}>
       <div className="container mx-auto px-6 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Driver Management</h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-xl font-bold text-gray-800">Driver Management</h1>
           <button className="flex items-center px-4 py-2 font-bold text-white bg-purple-600 rounded-lg hover:bg-purple-700">
             <FiPlus className="mr-2" />
             Add Driver
