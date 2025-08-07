@@ -161,8 +161,8 @@ export default function PermissionManagementPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Permission Management</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-bold text-gray-900">Permission Management</h1>
         <button onClick={() => setIsModalOpen(true)} className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
             <FiPlus className="mr-2" />
             Add Permissions

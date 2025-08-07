@@ -27,7 +27,7 @@ export default function SuperuserProfilePage() {
 
   return (
     <div className="container mx-auto px-6 py-8">
-      <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
+      <h1 className="text-xl font-bold text-gray-800 mb-4">My Profile</h1>
       {user && (
         <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
           {isEditing ? (
