@@ -6,6 +6,8 @@ import Link from 'next/link';
 import Message from '../../components/Message';
 import authService, { SignupData } from '../../services/superuser.service';
 import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
+import OtpInput from '@/app/components/OtpInput';
+import superuserService from '@/app/services/superuser.service';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -22,11 +24,60 @@ function SuperuserRegisterPageContent() {
   const router = useRouter();
 
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [otp, setOtp] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const [otpError, setOtpError] = useState('');
+  const [sendOtpLoading, setSendOtpLoading] = useState(false);
+  const [verifyOtpLoading, setVerifyOtpLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handleSendOtp = async () => {
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address to receive an OTP.');
+      return;
+    }
+    setSendOtpLoading(true);
+    setOtpError('');
+    setError('');
+    try {
+      await superuserService.sendSignupOtp(email);
+      setIsOtpSent(true);
+      setSuccessMessage('OTP has been sent to your email.');
+    } catch (err) {
+      setError('Failed to send OTP. Please try again.');
+    } finally {
+      setSendOtpLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (otp.length !== 6) {
+      setOtpError('Please enter the 6-digit OTP.');
+      return;
+    }
+    setVerifyOtpLoading(true);
+    setOtpError('');
+    try {
+      await superuserService.verifySignupOtp(email, otp);
+      setIsOtpVerified(true);
+      setSuccessMessage('Email verified successfully!');
+      setError('');
+    } catch (err) {
+      setOtpError('Invalid or expired OTP. Please try again.');
+    } finally {
+      setVerifyOtpLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
+    if (!isOtpVerified) {
+      setError('Please verify your email before creating an account.');
+      return;
+    }
     if (!emailRegex.test(email)) {
         setError('Please enter a valid email address.');
         return;
@@ -65,6 +116,7 @@ function SuperuserRegisterPageContent() {
 
   const labelClasses = "absolute left-4 top-3 text-gray-400 transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-cyan-400 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
   const inputClasses = "block w-full px-4 py-3 bg-gray-800 text-white border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 peer";
+  const isEmailValid = emailRegex.test(email);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -80,7 +132,7 @@ function SuperuserRegisterPageContent() {
                 <label htmlFor="name" className={labelClasses}>Full Name</label>
               </div>
               <div className="relative">
-                <input id="email" name="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder=" " className={inputClasses}/>
+                <input id="email" name="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder=" " className={inputClasses} disabled={isOtpSent}/>
                 <label htmlFor="email" className={labelClasses}>Email Address</label>
               </div>
             </div>
@@ -94,37 +146,64 @@ function SuperuserRegisterPageContent() {
                 <label htmlFor="adminKey" className={labelClasses}>Admin Key</label>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative">
-                <input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder=" " className={inputClasses}/>
-                <label htmlFor="password" className={labelClasses}>Password</label>
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 px-3 flex items-center text-sm leading-5 text-gray-400 hover:text-white"
-                >
-                  {showPassword ? (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  ) : (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.118 3.558-5.558 6.818-6.505M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.542 12c-1.274 4.057-5.064 7-9.542 7-1.096 0-2.144-.196-3.138-.55M2.458 12c.946-3.118 3.558-5.558 6.818-6.505" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M1 1l22 22" />
-                    </svg>
-                  )}
-                </button>
+
+            {!isOtpVerified && (
+              <div className="space-y-4">
+                {isEmailValid && !isOtpSent && (
+                  <button type="button" onClick={handleSendOtp} disabled={sendOtpLoading} className="w-full px-4 py-2 font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:bg-green-400">
+                    {sendOtpLoading ? 'Sending OTP...' : 'Send OTP'}
+                  </button>
+                )}
+                {isOtpSent && !isOtpVerified && (
+                  <>
+                    <OtpInput onComplete={setOtp} />
+                    <button type="button" onClick={handleVerifyOtp} disabled={verifyOtpLoading || otp.length !== 6} className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-400">
+                      {verifyOtpLoading ? 'Verifying...' : 'Verify OTP'}
+                    </button>
+                  </>
+                )}
               </div>
-              <div className="relative">
-                <input id="confirmPassword" name="confirmPassword" type={showPassword ? 'text' : 'password'} required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder=" " className={inputClasses}/>
-                <label htmlFor="confirmPassword" className={labelClasses}>Confirm Password</label>
-              </div>
-            </div>
+            )}
+
+            {otpError && <Message message={otpError} type="error" />}
+            {successMessage && <Message message={successMessage} type="success" />}
+
+            {isOtpVerified && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="relative">
+                    <input id="password" name="password" type={showPassword ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="password" className={labelClasses}>Password</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 px-3 flex items-center text-sm leading-5 text-gray-400 hover:text-white"
+                    >
+                      {showPassword ? (
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      ) : (
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.118 3.558-5.558 6.818-6.505M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.542 12c-1.274 4.057-5.064 7-9.542 7-1.096 0-2.144-.196-3.138-.55M2.458 12c.946-3.118 3.558-5.558 6.818-6.505" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M1 1l22 22" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <input id="confirmPassword" name="confirmPassword" type={showPassword ? 'text' : 'password'} required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="confirmPassword" className={labelClasses}>Confirm Password</label>
+                  </div>
+                </div>
+              </>
+            )}
+
             {error && <Message message={error} type="error" />}
             <div>
-              <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-400 transition-all duration-300">
+              <button type="submit" disabled={loading || !isOtpVerified} className="w-full px-4 py-3 font-bold text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-400 transition-all duration-300">
                 {loading ? 'Registering...' : 'Register'}
               </button>
             </div>

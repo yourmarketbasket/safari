@@ -48,6 +48,20 @@ export const register = async (userData: SignupData, adminKey: string): Promise<
   return response.data;
 };
 
+/**
+ * Sends a signup OTP to the user's email.
+ */
+export const sendSignupOtp = async (email: string): Promise<void> => {
+  await api.post('/auth/send-signup-otp', { email });
+};
+
+/**
+ * Verifies the signup OTP.
+ */
+export const verifySignupOtp = async (email: string, otp: string): Promise<void> => {
+  await api.post('/auth/verify-signup-otp', { email, otp });
+};
+
 export const getSupportStaff = async (): Promise<User[]> => {
     // This is a dummy implementation
     return [];
@@ -62,6 +76,8 @@ export const addSupportStaff = async (staffData: NewStaffData): Promise<User> =>
 const superuserService = {
   login,
   register,
+  sendSignupOtp,
+  verifySignupOtp,
   getSupportStaff,
   addSupportStaff,
 };

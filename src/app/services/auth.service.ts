@@ -74,6 +74,20 @@ export const signup = async (signupData: SignupData): Promise<AuthData> => {
 };
 
 /**
+ * Sends a signup OTP to the user's email.
+ */
+export const sendSignupOtp = async (email: string): Promise<void> => {
+  await api.post('/auth/send-signup-otp', { email });
+};
+
+/**
+ * Verifies the signup OTP.
+ */
+export const verifySignupOtp = async (email: string, otp: string): Promise<void> => {
+  await api.post('/auth/verify-signup-otp', { email, otp });
+};
+
+/**
  * Sends a password reset OTP.
  */
 export const forgotPassword = async (forgotPasswordData: ForgotPasswordData): Promise<void> => {
@@ -106,6 +120,8 @@ const authService = {
   login,
   verifyMfa,
   signup,
+  sendSignupOtp,
+  verifySignupOtp,
   forgotPassword,
   resetPassword,
   logout,
