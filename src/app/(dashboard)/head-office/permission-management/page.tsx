@@ -2,8 +2,9 @@
 
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
 import { permissions as initialPermissions, Permission } from '../../../data/permissions';
+import Modal from '../../../components/Modal';
 
 // Mock API functions
 const getPermissions = async (): Promise<Permission[]> => {
@@ -47,6 +48,8 @@ const getRoleColor = (role: string) => {
 
 export default function PermissionManagementPage() {
   const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('single');
   const [newPermission, setNewPermission] = useState<Omit<Permission, 'permissionNumber'>>({
     description: '',
     roles: [],
@@ -71,6 +74,7 @@ export default function PermissionManagementPage() {
     mutationFn: addPermission,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
+      setIsModalOpen(false);
     },
   });
 
@@ -78,6 +82,7 @@ export default function PermissionManagementPage() {
     mutationFn: bulkAddPermissions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
+      setIsModalOpen(false);
     },
   });
 
@@ -154,41 +159,54 @@ export default function PermissionManagementPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Permission Management</h1>
-
-      {/* Add Permission Form */}
-      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Add New Permission</h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <input name="description" value={newPermission.description} onChange={handleInputChange} placeholder="Description" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500" />
-          <input name="roles" value={rolesInput} onChange={handleRolesChange} placeholder="Roles (comma-separated)" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500" />
-          <input name="modulePage" value={newPermission.modulePage} onChange={handleInputChange} placeholder="Module/Page" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500" />
-          <select name="httpMethod" value={newPermission.httpMethod} onChange={handleInputChange} className="p-2 border rounded focus:ring-2 focus:ring-blue-500">
-            <option>GET</option>
-            <option>POST</option>
-            <option>PUT</option>
-            <option>DELETE</option>
-          </select>
-          <input name="constraints" value={newPermission.constraints} onChange={handleInputChange} placeholder="Constraints" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500 md:col-span-2" />
-          <button type="submit" disabled={isAdding} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400 md:col-span-2">
-            {isAdding ? 'Adding...' : 'Add Permission'}
-          </button>
-        </form>
-      </div>
-
-      {/* Bulk Add Form */}
-      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Bulk Add Permissions</h2>
-        <textarea
-          value={bulkJson}
-          onChange={(e) => setBulkJson(e.target.value)}
-          placeholder="Paste JSON array of permissions here..."
-          className="w-full h-32 p-2 border rounded mb-4"
-        />
-        <button onClick={handleBulkSubmit} disabled={isBulkAdding} className="bg-green-500 text-white p-2 rounded hover:bg-green-600 disabled:bg-gray-400">
-          {isBulkAdding ? 'Adding...' : 'Bulk Add Permissions'}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-900">Permission Management</h1>
+        <button onClick={() => setIsModalOpen(true)} className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <FiPlus className="mr-2" />
+            Add Permissions
         </button>
       </div>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="flex border-b mb-4">
+            <button onClick={() => setActiveTab('single')} className={`py-2 px-4 ${activeTab === 'single' ? 'border-b-2 border-blue-500 font-semibold' : 'text-gray-500'}`}>Add Single</button>
+            <button onClick={() => setActiveTab('bulk')} className={`py-2 px-4 ${activeTab === 'bulk' ? 'border-b-2 border-blue-500 font-semibold' : 'text-gray-500'}`}>Bulk Add</button>
+        </div>
+        {activeTab === 'single' && (
+            <div>
+                <h2 className="text-2xl font-semibold mb-4 text-gray-900">Add New Permission</h2>
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input name="description" value={newPermission.description} onChange={handleInputChange} placeholder="Description" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500" />
+                    <input name="roles" value={rolesInput} onChange={handleRolesChange} placeholder="Roles (comma-separated)" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500" />
+                    <input name="modulePage" value={newPermission.modulePage} onChange={handleInputChange} placeholder="Module/Page" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500" />
+                    <select name="httpMethod" value={newPermission.httpMethod} onChange={handleInputChange} className="p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                        <option>GET</option>
+                        <option>POST</option>
+                        <option>PUT</option>
+                        <option>DELETE</option>
+                    </select>
+                    <input name="constraints" value={newPermission.constraints} onChange={handleInputChange} placeholder="Constraints" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500 md:col-span-2" />
+                    <button type="submit" disabled={isAdding} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400 md:col-span-2">
+                        {isAdding ? 'Adding...' : 'Add Permission'}
+                    </button>
+                </form>
+            </div>
+        )}
+        {activeTab === 'bulk' && (
+            <div>
+                <h2 className="text-2xl font-semibold mb-4 text-gray-900">Bulk Add Permissions</h2>
+                <textarea
+                value={bulkJson}
+                onChange={(e) => setBulkJson(e.target.value)}
+                placeholder="Paste JSON array of permissions here..."
+                className="w-full h-32 p-2 border rounded mb-4"
+                />
+                <button onClick={handleBulkSubmit} disabled={isBulkAdding} className="bg-green-500 text-white p-2 rounded hover:bg-green-600 disabled:bg-gray-400">
+                {isBulkAdding ? 'Adding...' : 'Bulk Add Permissions'}
+                </button>
+            </div>
+        )}
+      </Modal>
 
       {/* Filters and Search */}
       <div className="flex justify-between items-center mb-4">
@@ -222,8 +240,8 @@ export default function PermissionManagementPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {paginatedPermissions.map((permission) => (
                 <tr key={permission.permissionNumber}>
-                  <td className="px-6 py-4 whitespace-nowrap">{permission.permissionNumber}</td>
-                  <td className="px-6 py-4 whitespace-normal">{permission.description}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-900">{permission.permissionNumber}</td>
+                  <td className="px-6 py-4 whitespace-normal text-gray-900">{permission.description}</td>
                   <td className="px-6 py-4 whitespace-normal">
                     <div className="flex flex-wrap gap-1">
                       {permission.roles.map(role => (
