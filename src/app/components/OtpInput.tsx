@@ -12,7 +12,7 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 6, onComplete }) => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
-    if (!/^\d*$/.test(value)) return;
+    if (!/^[a-zA-Z0-9]*$/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1);
@@ -36,22 +36,25 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 6, onComplete }) => {
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pasteData = e.clipboardData.getData('text').slice(0, length);
-    if (!/^\d+$/.test(pasteData)) return;
+    if (!/^[a-zA-Z0-9]+$/.test(pasteData)) return;
 
-    const newOtp = Array(length).fill('');
+    const newOtp = [...otp];
     for (let i = 0; i < pasteData.length; i++) {
-      newOtp[i] = pasteData[i];
+        if (i < length) {
+            newOtp[i] = pasteData[i];
+        }
     }
     setOtp(newOtp);
 
     if (newOtp.every(digit => digit !== '')) {
         onComplete(newOtp.join(''));
     }
-    inputRefs.current[pasteData.length - 1]?.focus();
+    const nextFocusIndex = Math.min(pasteData.length, length - 1);
+    inputRefs.current[nextFocusIndex]?.focus();
   };
 
   return (
-    <div className="flex justify-center space-x-2" onPaste={handlePaste}>
+    <div className="flex justify-center space-x-2">
       {otp.map((digit, index) => (
         <input
           key={index}
@@ -65,6 +68,7 @@ const OtpInput: React.FC<OtpInputProps> = ({ length = 6, onComplete }) => {
           value={digit}
           onChange={e => handleChange(e, index)}
           onKeyDown={e => handleKeyDown(e, index)}
+          onPaste={handlePaste}
           className="w-12 h-12 text-center text-2xl font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200"
           aria-label="Please enter your OTP"
         />
