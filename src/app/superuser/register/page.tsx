@@ -8,6 +8,7 @@ import authService, { SignupData } from '../../services/superuser.service';
 import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 import OtpInput from '@/app/components/OtpInput';
 import superuserService from '@/app/services/superuser.service';
+import { FiSend } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -132,28 +133,30 @@ function SuperuserRegisterPageContent() {
                 <label htmlFor="name" className={labelClasses}>Full Name</label>
               </div>
               <div className="relative">
-                <input id="email" name="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder=" " className={inputClasses} disabled={isOtpSent}/>
-                <label htmlFor="email" className={labelClasses}>Email Address</label>
+                <input id="phone" name="phone" type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder=" " className={inputClasses}/>
+                <label htmlFor="phone" className={labelClasses}>Phone Number</label>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
-                <input id="phone" name="phone" type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder=" " className={inputClasses}/>
-                <label htmlFor="phone" className={labelClasses}>Phone Number</label>
-              </div>
-               <div className="relative">
                 <input id="adminKey" name="adminKey" type="password" required value={adminKey} onChange={(e) => setAdminKey(e.target.value)} placeholder=" " className={inputClasses}/>
                 <label htmlFor="adminKey" className={labelClasses}>Admin Key</label>
               </div>
+              {!isOtpVerified && (
+                <div className="relative">
+                  <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder=" " className={inputClasses} disabled={isOtpSent}/>
+                  <label htmlFor="email" className={labelClasses}>Email Address</label>
+                  {isEmailValid && !isOtpSent && (
+                    <button type="button" onClick={handleSendOtp} disabled={sendOtpLoading} className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white disabled:text-gray-600">
+                      <FiSend className="h-5 w-5" />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             {!isOtpVerified && (
               <div className="space-y-4">
-                {isEmailValid && !isOtpSent && (
-                  <button type="button" onClick={handleSendOtp} disabled={sendOtpLoading} className="w-full px-4 py-2 font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:bg-green-400">
-                    {sendOtpLoading ? 'Sending OTP...' : 'Send OTP'}
-                  </button>
-                )}
                 {isOtpSent && !isOtpVerified && (
                   <>
                     <OtpInput onComplete={setOtp} />
