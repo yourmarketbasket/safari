@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Modal from '../../../components/Modal';
+import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import AddStaffForm from '../../../components/AddStaffForm';
 import superuserService from '../../../services/superuser.service';
 import { User } from '../../../models/User.model';
 import { NewStaffData } from '@/app/services/superuser.service';
 
 export default function SupportStaffPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("Support Staff Management");
+  }, [setTitle]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -36,8 +42,7 @@ export default function SupportStaffPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-800">Support Staff Management</h1>
+      <div className="flex justify-end items-center mb-4">
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
