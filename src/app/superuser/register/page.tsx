@@ -32,6 +32,7 @@ function SuperuserRegisterPageContent() {
   const [sendOtpLoading, setSendOtpLoading] = useState(false);
   const [verifyOtpLoading, setVerifyOtpLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [verifiedToken, setVerifiedToken] = useState('');
 
   const handleSendOtp = async () => {
     if (!emailRegex.test(email)) {
@@ -60,7 +61,8 @@ function SuperuserRegisterPageContent() {
     setVerifyOtpLoading(true);
     setOtpError('');
     try {
-      await superuserService.verifySignupOtp(email, otp);
+      const token = await superuserService.verifySignupOtp(email, otp);
+      setVerifiedToken(token);
       setIsOtpVerified(true);
       setSuccessMessage('Email verified successfully!');
       setError('');
@@ -104,6 +106,7 @@ function SuperuserRegisterPageContent() {
         phone,
         password,
         role: 'superuser',
+        verifiedToken,
       };
       await authService.register(userData, adminKey);
       router.push('/superuser/login');

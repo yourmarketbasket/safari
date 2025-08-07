@@ -7,7 +7,7 @@ export type LoginCredentials = {
   password?: string;
 }
 
-export type SignupData = Omit<User, 'id'>;
+export type SignupData = Omit<User, 'id'> & { verifiedToken?: string };
 
 export type NewStaffData = Omit<User, 'id' | 'role'> & { role?: string };
 
@@ -58,8 +58,9 @@ export const sendSignupOtp = async (email: string): Promise<void> => {
 /**
  * Verifies the signup OTP.
  */
-export const verifySignupOtp = async (email: string, otp: string): Promise<void> => {
-  await api.post('/auth/verify-otp', { email, otp });
+export const verifySignupOtp = async (email: string, otp: string): Promise<string> => {
+  const response = await api.post('/auth/verify-otp', { email, otp });
+  return response.data.data.verifiedToken;
 };
 
 export const getSupportStaff = async (): Promise<User[]> => {

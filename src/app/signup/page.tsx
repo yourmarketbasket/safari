@@ -44,6 +44,7 @@ export default function SignupPage() {
   const [sendOtpLoading, setSendOtpLoading] = useState(false);
   const [verifyOtpLoading, setVerifyOtpLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [verifiedToken, setVerifiedToken] = useState('');
 
 
   const handleSendOtp = async () => {
@@ -73,7 +74,8 @@ export default function SignupPage() {
     setVerifyOtpLoading(true);
     setOtpError('');
     try {
-      await authService.verifySignupOtp(email, otp);
+      const token = await authService.verifySignupOtp(email, otp);
+      setVerifiedToken(token);
       setIsOtpVerified(true);
       setSuccessMessage('Email verified successfully!');
       setError('');
@@ -111,7 +113,7 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await signup({ name, email, phone, password, role });
+      await signup({ name, email, phone, password, role, verifiedToken });
     } catch (err) {
       setError('Failed to create account. Please try again.');
       console.error(err);

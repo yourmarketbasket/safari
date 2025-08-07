@@ -8,7 +8,7 @@ export type LoginCredentials = {
   // mfaCode is removed from initial login
 }
 
-export type SignupData = Omit<User, 'id'>;
+export type SignupData = Omit<User, 'id'> & { verifiedToken?: string };
 
 export type ForgotPasswordData = {
     emailOrPhone: string;
@@ -83,8 +83,9 @@ export const sendSignupOtp = async (email: string): Promise<void> => {
 /**
  * Verifies the signup OTP.
  */
-export const verifySignupOtp = async (email: string, otp: string): Promise<void> => {
-  await api.post('/auth/verify-otp', { email, otp });
+export const verifySignupOtp = async (email: string, otp: string): Promise<string> => {
+  const response = await api.post('/auth/verify-otp', { email, otp });
+  return response.data.data.verifiedToken;
 };
 
 /**
