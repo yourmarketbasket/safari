@@ -240,12 +240,12 @@ export default function PermissionManagementPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {paginatedPermissions.map((permission) => (
                 <tr key={permission.permissionNumber}>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-900">{permission.permissionNumber}</td>
-                  <td className="px-6 py-4 whitespace-normal text-gray-900">{permission.description}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-900 text-xs">{permission.permissionNumber}</td>
+                  <td className="px-6 py-4 whitespace-normal text-gray-900 text-xs">{permission.description}</td>
                   <td className="px-6 py-4 whitespace-normal">
                     <div className="flex flex-wrap gap-1">
                       {permission.roles.map(role => (
-                        <span key={role} className={`px-2 py-1 text-xs font-semibold rounded-full ${getRoleColor(role)}`}>{role}</span>
+                        <span key={role} className={`px-2 py-1 text-xs font-light rounded-full ${getRoleColor(role)}`}>{role}</span>
                       ))}
                     </div>
                   </td>
