@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     setIsLoading(false);
   }, []);
+  // force
 
   const redirectUser = (role: string) => {
     switch (role) {
