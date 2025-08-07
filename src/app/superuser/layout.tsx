@@ -4,6 +4,7 @@ import SuperuserDashboardLayout from '../components/SuperuserDashboardLayout';
 import { SuperuserAuthProvider } from '../lib/SuperuserAuthContext';
 import SuperuserPrivateRoute from '../components/SuperuserPrivateRoute';
 import { usePathname } from 'next/navigation';
+import QueryProvider from '../components/QueryProvider';
 
 export default function LayoutForSuperuserDashboards({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -14,11 +15,13 @@ export default function LayoutForSuperuserDashboards({ children }: { children: R
       {isAuthPage ? (
         children
       ) : (
-        <SuperuserPrivateRoute>
-          <SuperuserDashboardLayout>
-            {children}
-          </SuperuserDashboardLayout>
-        </SuperuserPrivateRoute>
+        <QueryProvider>
+          <SuperuserPrivateRoute>
+            <SuperuserDashboardLayout>
+              {children}
+            </SuperuserDashboardLayout>
+          </SuperuserPrivateRoute>
+        </QueryProvider>
       )}
     </SuperuserAuthProvider>
   );
