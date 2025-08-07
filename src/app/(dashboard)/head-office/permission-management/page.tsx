@@ -176,16 +176,16 @@ export default function PermissionManagementPage() {
             <div>
                 <h2 className="text-2xl font-semibold mb-4 text-gray-900">Add New Permission</h2>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <input name="description" value={newPermission.description} onChange={handleInputChange} placeholder="Description" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500" />
-                    <input name="roles" value={rolesInput} onChange={handleRolesChange} placeholder="Roles (comma-separated)" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500" />
-                    <input name="modulePage" value={newPermission.modulePage} onChange={handleInputChange} placeholder="Module/Page" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500" />
-                    <select name="httpMethod" value={newPermission.httpMethod} onChange={handleInputChange} className="p-2 border rounded focus:ring-2 focus:ring-blue-500">
+                    <input name="description" value={newPermission.description} onChange={handleInputChange} placeholder="Description" className="p-2 border border-gray-400 rounded text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500" />
+                    <input name="roles" value={rolesInput} onChange={handleRolesChange} placeholder="Roles (comma-separated)" className="p-2 border border-gray-400 rounded text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500" />
+                    <input name="modulePage" value={newPermission.modulePage} onChange={handleInputChange} placeholder="Module/Page" className="p-2 border border-gray-400 rounded text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500" />
+                    <select name="httpMethod" value={newPermission.httpMethod} onChange={handleInputChange} className="p-2 border border-gray-400 rounded text-black focus:ring-2 focus:ring-blue-500">
                         <option>GET</option>
                         <option>POST</option>
                         <option>PUT</option>
                         <option>DELETE</option>
                     </select>
-                    <input name="constraints" value={newPermission.constraints} onChange={handleInputChange} placeholder="Constraints" className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500 md:col-span-2" />
+                    <input name="constraints" value={newPermission.constraints} onChange={handleInputChange} placeholder="Constraints" className="p-2 border border-gray-400 rounded text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500 md:col-span-2" />
                     <button type="submit" disabled={isAdding} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400 md:col-span-2">
                         {isAdding ? 'Adding...' : 'Add Permission'}
                     </button>
@@ -215,9 +215,9 @@ export default function PermissionManagementPage() {
             placeholder="Search descriptions..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 border rounded placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
+            className="p-2 border border-gray-400 rounded text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500"
         />
-        <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className="p-2 border rounded focus:ring-2 focus:ring-blue-500">
+        <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className="p-2 border border-gray-400 rounded text-black focus:ring-2 focus:ring-blue-500">
             <option value="">Filter by Role</option>
             {allRoles.map(role => <option key={role} value={role}>{role}</option>)}
         </select>

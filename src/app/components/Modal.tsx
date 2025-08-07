@@ -27,7 +27,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-25 transition-opacity"
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
