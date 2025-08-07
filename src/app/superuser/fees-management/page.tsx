@@ -30,17 +30,17 @@ export default function FeesManagementPage() {
         />
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
-            <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
               <tr>
-                <th className="py-3 px-6 text-left">Name</th>
-                <th className="py-3 px-6 text-left">Type</th>
-                <th className="py-3 px-6 text-left">Value</th>
+                <th className="py-3 px-6 text-left font-light">Name</th>
+                <th className="py-3 px-6 text-left font-light">Type</th>
+                <th className="py-3 px-6 text-left font-light">Value</th>
               </tr>
             </thead>
-            <tbody className="text-gray-800 text-sm font-light">
+            <tbody className="text-gray-800 text-xs font-light">
               {filteredFees.map((fee) => (
                 <tr key={fee.id} className="border-b border-gray-200 hover:bg-gray-100">
-                  <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{fee.name}</td>
+                  <td className="py-4 px-6 text-left whitespace-nowrap">{fee.name}</td>
                   <td className="py-4 px-6 text-left">{fee.type}</td>
                   <td className="py-4 px-6 text-left">{fee.value}</td>
                 </tr>

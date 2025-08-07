@@ -30,16 +30,16 @@ export default function WalletManagementPage() {
         />
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
-            <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
               <tr>
-                <th className="py-3 px-6 text-left">User ID</th>
-                <th className="py-3 px-6 text-left">Balance</th>
+                <th className="py-3 px-6 text-left font-light">User ID</th>
+                <th className="py-3 px-6 text-left font-light">Balance</th>
               </tr>
             </thead>
-            <tbody className="text-gray-800 text-sm font-light">
+            <tbody className="text-gray-800 text-xs font-light">
               {filteredWallets.map((wallet) => (
                 <tr key={wallet.id} className="border-b border-gray-200 hover:bg-gray-100">
-                  <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{wallet.userId}</td>
+                  <td className="py-4 px-6 text-left whitespace-nowrap">{wallet.userId}</td>
                   <td className="py-4 px-6 text-left">{wallet.balance}</td>
                 </tr>
               ))}

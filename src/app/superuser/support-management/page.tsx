@@ -31,17 +31,17 @@ export default function SupportManagementPage() {
         />
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
-            <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
               <tr>
-                <th className="py-3 px-6 text-left">Subject</th>
-                <th className="py-3 px-6 text-left">User</th>
-                <th className="py-3 px-6 text-left">Status</th>
+                <th className="py-3 px-6 text-left font-light">Subject</th>
+                <th className="py-3 px-6 text-left font-light">User</th>
+                <th className="py-3 px-6 text-left font-light">Status</th>
               </tr>
             </thead>
-            <tbody className="text-gray-800 text-sm font-light">
+            <tbody className="text-gray-800 text-xs font-light">
               {filteredTickets.map((ticket) => (
                 <tr key={ticket.id} className="border-b border-gray-200 hover:bg-gray-100">
-                  <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{ticket.subject}</td>
+                  <td className="py-4 px-6 text-left whitespace-nowrap">{ticket.subject}</td>
                   <td className="py-4 px-6 text-left">{ticket.user}</td>
                   <td className="py-4 px-6 text-left">{ticket.status}</td>
                 </tr>

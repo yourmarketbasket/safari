@@ -46,23 +46,23 @@ export default function RoutesDashboardPage() {
 
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
-              <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
                 <tr>
-                  <th className="py-3 px-6 text-left">From</th>
-                  <th className="py-3 px-6 text-left">To</th>
-                  <th className="py-3 px-6 text-left">Sacco</th>
-                  <th className="py-3 px-6 text-left">Vehicle Type</th>
-                  <th className="py-3 px-6 text-right">Price</th>
+                  <th className="py-3 px-6 text-left font-light">From</th>
+                  <th className="py-3 px-6 text-left font-light">To</th>
+                  <th className="py-3 px-6 text-left font-light">Sacco</th>
+                  <th className="py-3 px-6 text-left font-light">Vehicle Type</th>
+                  <th className="py-3 px-6 text-right font-light">Price</th>
                 </tr>
               </thead>
-              <tbody className="text-gray-800 text-sm font-light">
+              <tbody className="text-gray-800 text-xs font-light">
                 {filteredRoutes.map((route) => (
                   <tr key={route.id} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{route.from}</td>
+                    <td className="py-4 px-6 text-left whitespace-nowrap">{route.from}</td>
                     <td className="py-4 px-6 text-left">{route.to}</td>
                     <td className="py-4 px-6 text-left">{route.sacco}</td>
                     <td className="py-4 px-6 text-left">{route.vehicleType}</td>
-                    <td className="py-4 px-6 text-right font-semibold">Ksh {route.price.toLocaleString()}</td>
+                    <td className="py-4 px-6 text-right">Ksh {route.price.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>

@@ -5,6 +5,7 @@ import PrivateRoute from '@/app/components/PrivateRoute';
 import TicketDialog from '@/app/components/TicketDialog';
 import Rating from '@/app/components/Rating';
 import { FiMessageSquare } from 'react-icons/fi';
+import Pagination from '@/app/components/Pagination';
 
 // Mock Data
 const mockTicketsData = [
@@ -39,7 +40,7 @@ export default function PassengerDashboardPage() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortConfig, setSortConfig] = useState<{ key: keyof typeof mockTicketsData[0]; direction: string } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const itemsPerPage = 10;
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const filteredTickets = useMemo(() => {
@@ -128,28 +129,28 @@ export default function PassengerDashboardPage() {
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
-              <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
                 <tr>
-                  <th className="py-3 px-6 text-left cursor-pointer" onClick={() => requestSort('route')}>Route</th>
-                  <th className="py-3 px-6 text-left cursor-pointer" onClick={() => requestSort('date')}>Date</th>
-                  <th className="py-3 px-6 text-center cursor-pointer" onClick={() => requestSort('status')}>Status</th>
-                  <th className="py-3 px-6 text-right cursor-pointer" onClick={() => requestSort('totalCost')}>Total Cost</th>
-                  <th className="py-3 px-6 text-left">Comments</th>
-                  <th className="py-3 px-6 text-center">Rating</th>
-                  <th className="py-3 px-6 text-center">Actions</th>
+                  <th className="py-3 px-6 text-left cursor-pointer font-light" onClick={() => requestSort('route')}>Route</th>
+                  <th className="py-3 px-6 text-left cursor-pointer font-light" onClick={() => requestSort('date')}>Date</th>
+                  <th className="py-3 px-6 text-center cursor-pointer font-light" onClick={() => requestSort('status')}>Status</th>
+                  <th className="py-3 px-6 text-right cursor-pointer font-light" onClick={() => requestSort('totalCost')}>Total Cost</th>
+                  <th className="py-3 px-6 text-left font-light">Comments</th>
+                  <th className="py-3 px-6 text-center font-light">Rating</th>
+                  <th className="py-3 px-6 text-center font-light">Actions</th>
                 </tr>
               </thead>
-              <tbody className="text-gray-800 text-sm font-light">
+              <tbody className="text-gray-800 text-xs font-light">
                 {paginatedTickets.map((ticket) => (
                   <tr key={ticket.id} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{ticket.route}</td>
+                    <td className="py-4 px-6 text-left whitespace-nowrap">{ticket.route}</td>
                     <td className="py-4 px-6 text-left">{ticket.date}</td>
                     <td className="py-4 px-6 text-center">
-                      <span className={`px-3 py-1 text-[10px] rounded-full ${getStatusClasses(ticket.status)}`}>
+                      <span className={`px-3 py-1 text-xs font-light rounded-full ${getStatusClasses(ticket.status)}`}>
                         {ticket.status}
                       </span>
                     </td>
-                    <td className="py-4 px-6 text-right font-semibold">Ksh {ticket.totalCost.toLocaleString()}</td>
+                    <td className="py-4 px-6 text-right">Ksh {ticket.totalCost.toLocaleString()}</td>
                     <td className="py-4 px-6 text-left">{ticket.comments || '-'}</td>
                     <td className="py-4 px-6 text-center">
                       <Rating rating={ticket.rating} readOnly={ticket.status !== 'completed'} />
@@ -165,33 +166,11 @@ export default function PassengerDashboardPage() {
             </table>
           </div>
           <TicketDialog ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />
-          <div className="flex justify-between items-center mt-6">
-            <select
-              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-              value={itemsPerPage}
-              onChange={(e) => setItemsPerPage(Number(e.target.value))}
-            >
-              <option value={10}>10 per page</option>
-              <option value={20}>20 per page</option>
-              <option value={50}>50 per page</option>
-            </select>
-            <div>
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-                className="px-4 py-2 font-bold border-2 border-gray-300 rounded-lg mr-2 hover:bg-gray-200 disabled:opacity-50 text-gray-900"
-              >
-                Previous
-              </button>
-              <button
-                disabled={currentPage * itemsPerPage >= filteredTickets.length}
-                onClick={() => setCurrentPage(currentPage + 1)}
-                className="px-4 py-2 font-bold border-2 border-gray-300 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-900"
-              >
-                Next
-              </button>
-            </div>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(filteredTickets.length / itemsPerPage)}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </PrivateRoute>

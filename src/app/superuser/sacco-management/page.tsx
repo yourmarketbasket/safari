@@ -30,16 +30,16 @@ export default function SaccoManagementPage() {
         />
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
-            <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
               <tr>
-                <th className="py-3 px-6 text-left">Name</th>
-                <th className="py-3 px-6 text-left">Status</th>
+                <th className="py-3 px-6 text-left font-light">Name</th>
+                <th className="py-3 px-6 text-left font-light">Status</th>
               </tr>
             </thead>
-            <tbody className="text-gray-800 text-sm font-light">
+            <tbody className="text-gray-800 text-xs font-light">
               {filteredSaccos.map((sacco) => (
                 <tr key={sacco.id} className="border-b border-gray-200 hover:bg-gray-100">
-                  <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{sacco.name}</td>
+                  <td className="py-4 px-6 text-left whitespace-nowrap">{sacco.name}</td>
                   <td className="py-4 px-6 text-left">{sacco.status}</td>
                 </tr>
               ))}

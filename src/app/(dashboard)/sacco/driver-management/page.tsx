@@ -41,23 +41,23 @@ export default function DriverManagementPage() {
 
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
-              <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+              <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
                 <tr>
-                  <th className="py-3 px-6 text-left">Name</th>
-                  <th className="py-3 px-6 text-left">License</th>
-                  <th className="py-3 px-6 text-left">Phone</th>
-                  <th className="py-3 px-6 text-left">NTSA Compliance</th>
-                  <th className="py-3 px-6 text-center">Actions</th>
+                  <th className="py-3 px-6 text-left font-light">Name</th>
+                  <th className="py-3 px-6 text-left font-light">License</th>
+                  <th className="py-3 px-6 text-left font-light">Phone</th>
+                  <th className="py-3 px-6 text-left font-light">NTSA Compliance</th>
+                  <th className="py-3 px-6 text-center font-light">Actions</th>
                 </tr>
               </thead>
-              <tbody className="text-gray-800 text-sm font-light">
+              <tbody className="text-gray-800 text-xs font-light">
                 {filteredDrivers.map((driver) => (
                   <tr key={driver.id} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{driver.name}</td>
+                    <td className="py-4 px-6 text-left whitespace-nowrap">{driver.name}</td>
                     <td className="py-4 px-6 text-left">{driver.license}</td>
                     <td className="py-4 px-6 text-left">{driver.phone}</td>
                     <td className="py-4 px-6 text-left">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${driver.ntsaCompliance ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-light rounded-full ${driver.ntsaCompliance ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                         {driver.ntsaCompliance ? 'Compliant' : 'Non-Compliant'}
                       </span>
                     </td>

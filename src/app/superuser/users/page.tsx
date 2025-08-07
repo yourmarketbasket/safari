@@ -32,17 +32,17 @@ export default function SuperuserUsersPage() {
         />
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
-            <thead className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
               <tr>
-                <th className="py-3 px-6 text-left">Name</th>
-                <th className="py-3 px-6 text-left">Email</th>
-                <th className="py-3 px-6 text-left">Role</th>
+                <th className="py-3 px-6 text-left font-light">Name</th>
+                <th className="py-3 px-6 text-left font-light">Email</th>
+                <th className="py-3 px-6 text-left font-light">Role</th>
               </tr>
             </thead>
-            <tbody className="text-gray-800 text-sm font-light">
+            <tbody className="text-gray-800 text-xs font-light">
               {filteredUsers.map((user) => (
                 <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-100">
-                  <td className="py-4 px-6 text-left whitespace-nowrap font-medium">{user.name}</td>
+                  <td className="py-4 px-6 text-left whitespace-nowrap">{user.name}</td>
                   <td className="py-4 px-6 text-left">{user.email}</td>
                   <td className="py-4 px-6 text-left">{user.role}</td>
                 </tr>
