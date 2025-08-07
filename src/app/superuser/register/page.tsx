@@ -8,7 +8,7 @@ import authService, { SignupData } from '../../services/superuser.service';
 import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 import OtpInput from '@/app/components/OtpInput';
 import superuserService from '@/app/services/superuser.service';
-import { FiSend } from 'react-icons/fi';
+import { FiSend, FiCheck } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -158,12 +158,12 @@ function SuperuserRegisterPageContent() {
             {!isOtpVerified && (
               <div className="space-y-4">
                 {isOtpSent && !isOtpVerified && (
-                  <>
+                  <div className="flex items-center space-x-2">
                     <OtpInput onComplete={setOtp} />
-                    <button type="button" onClick={handleVerifyOtp} disabled={verifyOtpLoading || otp.length !== 6} className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-400">
-                      {verifyOtpLoading ? 'Verifying...' : 'Verify OTP'}
+                    <button type="button" onClick={handleVerifyOtp} disabled={verifyOtpLoading || otp.length !== 6} className="flex items-center justify-center w-12 h-12 border-2 border-cyan-600 text-cyan-600 rounded-lg hover:bg-cyan-600 hover:text-white disabled:border-gray-600 disabled:text-gray-600 disabled:hover:bg-transparent">
+                      {verifyOtpLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <FiCheck className="h-6 w-6" />}
                     </button>
-                  </>
+                  </div>
                 )}
               </div>
             )}
