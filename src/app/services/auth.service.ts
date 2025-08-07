@@ -50,8 +50,8 @@ export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
     const response = await api.post<AuthResponse>('/auth/login', loginData);
     return response.data.data;
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 500) {
-      throw new Error('Could not login');
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || 'Could not login');
     }
     throw error;
   }

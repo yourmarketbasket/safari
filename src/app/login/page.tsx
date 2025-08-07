@@ -32,8 +32,12 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login({ emailOrPhone, password });
-    } catch (err) {
-      setError('Failed to login. Please check your credentials.');
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message || 'Failed to login. Please check your credentials.');
+        } else {
+            setError('An unknown error occurred.');
+        }
       console.error(err);
     } finally {
       setLoading(false);
