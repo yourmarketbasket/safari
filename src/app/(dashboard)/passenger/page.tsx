@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import PrivateRoute from '@/app/components/PrivateRoute';
 import TicketDialog from '@/app/components/TicketDialog';
 import Rating from '@/app/components/Rating';
 import { FiMessageSquare } from 'react-icons/fi';
 import Pagination from '@/app/components/Pagination';
+import { usePageTitleStore } from '@/app/store/pageTitle.store';
 
 // Mock Data
 const mockTicketsData = [
@@ -36,6 +37,11 @@ const getStatusClasses = (status: string) => {
 };
 
 export default function PassengerDashboardPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("My Dashboard");
+  }, [setTitle]);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [sortConfig, setSortConfig] = useState<{ key: keyof typeof mockTicketsData[0]; direction: string } | null>(null);
@@ -83,9 +89,7 @@ export default function PassengerDashboardPage() {
   return (
     <PrivateRoute allowedRoles={['passenger']}>
       <div className="container mx-auto px-6 py-8">
-        <h1 className="text-xl font-bold text-gray-800 mb-4">My Dashboard</h1>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Loyalty Points */}
           <div className="p-6 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-2xl shadow-xl">
             <h2 className="text-lg font-bold">Loyalty Points</h2>

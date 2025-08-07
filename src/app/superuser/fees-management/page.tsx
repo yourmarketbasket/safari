@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 
 const mockFees = [
   { id: '1', name: 'Platform Fee', type: 'Percentage', value: '2.5%' },
@@ -9,6 +10,11 @@ const mockFees = [
 ];
 
 export default function FeesManagementPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("Fees Management");
+  }, [setTitle]);
+
   const fees = mockFees;
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -20,7 +26,6 @@ export default function FeesManagementPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-800 mb-4">Fees Management</h1>
       <div className="bg-white p-8 rounded-2xl shadow-xl">
         <input
           type="text"

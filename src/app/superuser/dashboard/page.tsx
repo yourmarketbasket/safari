@@ -1,9 +1,17 @@
 "use client";
 
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
+
 export default function SuperuserDashboardPage() {
+    const { setTitle } = usePageTitleStore();
+    useEffect(() => {
+        setTitle("Superuser Dashboard");
+    }, [setTitle]);
+
     return (
         <div>
-            <h1 className="text-xl font-bold text-gray-800 mb-4">Superuser Dashboard</h1>
+            {/* Content goes here */}
         </div>
     );
 }

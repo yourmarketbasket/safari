@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/lib/AuthContext';
 import PrivateRoute from '@/app/components/PrivateRoute';
+import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import FileUpload from '@/app/components/FileUpload';
 import { FaUserCircle } from 'react-icons/fa';
 import { FiEdit, FiSave, FiX } from 'react-icons/fi';
 import Image from 'next/image';
 
 export default function ProfilePage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("My Profile");
+  }, [setTitle]);
+
   const { user } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
@@ -29,7 +35,6 @@ export default function ProfilePage() {
   return (
     <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice', 'queue_manager']}>
       <div className="container mx-auto px-6 py-8">
-        <h1 className="text-xl font-bold text-gray-800 mb-4">My Profile</h1>
         {user && (
           <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
             {isEditing ? (

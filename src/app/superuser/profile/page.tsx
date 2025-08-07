@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSuperuserAuth } from '@/app/lib/SuperuserAuthContext';
 import FileUpload from '@/app/components/FileUpload';
+import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import { FaUserCircle } from 'react-icons/fa';
 import { FiEdit, FiSave, FiX } from 'react-icons/fi';
 import Image from 'next/image';
 
 export default function SuperuserProfilePage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("My Profile");
+  }, [setTitle]);
+
   const { user } = useSuperuserAuth();
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
@@ -27,7 +33,6 @@ export default function SuperuserProfilePage() {
 
   return (
     <div className="container mx-auto px-6 py-8">
-      <h1 className="text-xl font-bold text-gray-800 mb-4">My Profile</h1>
       {user && (
         <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
           {isEditing ? (

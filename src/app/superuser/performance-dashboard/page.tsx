@@ -2,6 +2,8 @@
 
 import { Bar, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { useEffect } from 'react';
+import { usePageTitleStore } from '@/app/store/pageTitle.store';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -32,9 +34,13 @@ const barChartData = {
 };
 
 export default function PerformanceDashboardPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("Performance Dashboard");
+  }, [setTitle]);
+
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-800 mb-4">Performance Dashboard</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-8 rounded-2xl shadow-xl">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Revenue Over Time</h2>

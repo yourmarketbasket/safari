@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import PrivateRoute from '@/app/components/PrivateRoute';
 import { FiPlus, FiEdit, FiTrash, FiCheckCircle } from 'react-icons/fi';
+import { usePageTitleStore } from '@/app/store/pageTitle.store';
 
 const mockSaccos = [
   { id: 's-1', name: 'Prestige', status: 'approved' },
@@ -13,6 +14,11 @@ const mockSaccos = [
 // force
 
 export default function SaccoManagementPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("Sacco Management");
+  }, [setTitle]);
+
   const saccos = mockSaccos;
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -38,8 +44,8 @@ export default function SaccoManagementPage() {
   return (
     <PrivateRoute allowedRoles={['support_staff']}>
       <div className="container mx-auto px-6 py-8">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold text-gray-800">Sacco Management</h1>
+        <div className="flex justify-between items-center mb-6">
+          <div></div> {/* Placeholder for alignment */}
           <button className="flex items-center px-4 py-2 font-bold text-white bg-purple-600 rounded-lg hover:bg-purple-700">
             <FiPlus className="mr-2" />
             Register Sacco

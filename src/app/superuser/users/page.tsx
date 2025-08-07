@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 
 const mockUsers = [
   { id: '1', name: 'John Doe', email: 'john.doe@example.com', role: 'admin' },
@@ -10,6 +11,11 @@ const mockUsers = [
 ];
 
 export default function SuperuserUsersPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("User Management");
+  }, [setTitle]);
+
   const users = mockUsers;
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -22,7 +28,6 @@ export default function SuperuserUsersPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-800 mb-4">User Management</h1>
       <div className="bg-white p-8 rounded-2xl shadow-xl">
         <input
           type="text"

@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 
 export default function SuperuserSettingsPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("System Settings");
+  }, [setTitle]);
+
   const [siteName, setSiteName] = useState('Safary');
   const [supportEmail, setSupportEmail] = useState('support@safary.com');
 
@@ -14,7 +20,6 @@ export default function SuperuserSettingsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-800 mb-4">System Settings</h1>
       <div className="bg-white p-8 rounded-2xl shadow-xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>

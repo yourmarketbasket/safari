@@ -2,13 +2,15 @@
 
 import SuperuserSidebar from './SuperuserSidebar';
 import { useSuperuserAuth } from '../lib/SuperuserAuthContext';
+import { usePageTitleStore } from '../store/pageTitle.store';
 
 function Header() {
     const { user } = useSuperuserAuth();
+    const { title } = usePageTitleStore();
     return (
         <header className="bg-white shadow-sm">
             <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-                <h1 className="text-xl font-semibold text-gray-900">Superuser Dashboard</h1>
+                <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
                 {user && (
                     <div className="flex items-center space-x-4">
                         <span className="font-semibold text-gray-800">Welcome, {user.name || 'Superuser'}</span>

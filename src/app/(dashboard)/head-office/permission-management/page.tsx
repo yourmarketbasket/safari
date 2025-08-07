@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
 import { permissions as initialPermissions, Permission } from '../../../data/permissions';
 import Modal from '../../../components/Modal';
 import SearchAndFilter from '../../../components/SearchAndFilter';
 import Pagination from '../../../components/Pagination';
+import { usePageTitleStore } from '../../../store/pageTitle.store';
 
 // Mock API functions
 const getPermissions = async (): Promise<Permission[]> => {
@@ -49,6 +50,11 @@ const getRoleColor = (role: string) => {
 };
 
 export default function PermissionManagementPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle('Permission Management');
+  }, [setTitle]);
+
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('single');
@@ -161,8 +167,7 @@ export default function PermissionManagementPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Permission Management</h1>
+      <div className="flex justify-end items-center mb-4">
         <button onClick={() => setIsModalOpen(true)} className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
             <FiPlus className="mr-2" />
             Add Permissions

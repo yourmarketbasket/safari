@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 
 const mockSaccos = [
   { id: '1', name: 'Prestige Shuttle', status: 'Active' },
@@ -9,6 +10,11 @@ const mockSaccos = [
 ];
 
 export default function SaccoManagementPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("Sacco Management");
+  }, [setTitle]);
+
   const saccos = mockSaccos;
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -20,7 +26,6 @@ export default function SaccoManagementPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-800 mb-4">Sacco Management</h1>
       <div className="bg-white p-8 rounded-2xl shadow-xl">
         <input
           type="text"

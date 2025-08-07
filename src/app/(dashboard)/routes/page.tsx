@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import PrivateRoute from '@/app/components/PrivateRoute';
+import { usePageTitleStore } from '@/app/store/pageTitle.store';
 
 const mockRoutesData = [
   { id: 'r-1', from: 'Nairobi', to: 'Nakuru', sacco: 'Prestige', vehicleType: '14-seater', price: 500 },
@@ -12,6 +13,11 @@ const mockRoutesData = [
 ];
 
 export default function RoutesDashboardPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("Routes");
+  }, [setTitle]);
+
   const [fromFilter, setFromFilter] = useState('');
   const [toFilter, setToFilter] = useState('');
 
@@ -26,8 +32,6 @@ export default function RoutesDashboardPage() {
   return (
     <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice']}>
       <div className="container mx-auto px-6 py-8">
-        <h1 className="text-xl font-bold text-gray-800 mb-4">Routes</h1>
-
         <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <input

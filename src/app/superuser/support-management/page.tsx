@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 
 const mockTickets = [
   { id: '1', subject: 'Login Issue', user: 'john.doe@example.com', status: 'Open' },
@@ -9,6 +10,11 @@ const mockTickets = [
 ];
 
 export default function SupportManagementPage() {
+  const { setTitle } = usePageTitleStore();
+  useEffect(() => {
+    setTitle("Support Management");
+  }, [setTitle]);
+
   const tickets = mockTickets;
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -21,7 +27,6 @@ export default function SupportManagementPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-800 mb-4">Support Management</h1>
       <div className="bg-white p-8 rounded-2xl shadow-xl">
         <input
           type="text"
