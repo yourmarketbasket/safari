@@ -15,10 +15,10 @@ const navLinks = [
     name: 'Head Office',
     icon: <FiBriefcase />,
     children: [
-      { name: 'Manage Admins', href: '/head-office/manage-admins', icon: <FiUserCheck /> },
-      { name: 'Manage Support Staff', href: '/head-office/support-staff', icon: <FiUsers /> },
-      { name: 'Managers and Supervisors', href: '/head-office/managers-and-supervisors', icon: <FiUsers /> },
-      { name: 'Permission Management', href: '/head-office/permission-management', icon: <FiShield /> },
+      { name: 'Manage Admins', href: '/superuser/head-office/manage-admins', icon: <FiUserCheck /> },
+      { name: 'Manage Support Staff', href: '/superuser/head-office/support-staff', icon: <FiUsers /> },
+      { name: 'Managers and Supervisors', href: '/superuser/head-office/managers-and-supervisors', icon: <FiUsers /> },
+      { name: 'Permission Management', href: '/superuser/head-office/permission-management', icon: <FiShield /> },
     ]
   },
   { name: 'Users', href: '/superuser/users', icon: <FiUsers /> },
