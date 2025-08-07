@@ -126,6 +126,11 @@ function SuperuserRegisterPageContent() {
               <h1 className="text-3xl font-bold text-white">Superuser Registration</h1>
               <p className="mt-2 text-gray-400">Create a new superuser account</p>
           </div>
+          <div className="my-4">
+            {error && <Message message={error} type="error" />}
+            {otpError && <Message message={otpError} type="error" />}
+            {successMessage && <Message message={successMessage} type="success" />}
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6 pt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
@@ -148,28 +153,21 @@ function SuperuserRegisterPageContent() {
                   <label htmlFor="email" className={labelClasses}>Email Address</label>
                   {isEmailValid && !isOtpSent && (
                     <button type="button" onClick={handleSendOtp} disabled={sendOtpLoading} className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white disabled:text-gray-600">
-                      <FiSend className="h-5 w-5" />
+                      {sendOtpLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-cyan-400"></div> : <FiSend className="h-5 w-5" />}
                     </button>
                   )}
                 </div>
               )}
             </div>
 
-            {!isOtpVerified && (
-              <div className="space-y-4">
-                {isOtpSent && !isOtpVerified && (
-                  <div className="flex items-center space-x-2">
-                    <OtpInput onComplete={setOtp} />
-                    <button type="button" onClick={handleVerifyOtp} disabled={verifyOtpLoading || otp.length !== 6} className="flex items-center justify-center w-12 h-12 border-2 border-cyan-600 text-cyan-600 rounded-lg hover:bg-cyan-600 hover:text-white disabled:border-gray-600 disabled:text-gray-600 disabled:hover:bg-transparent">
-                      {verifyOtpLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <FiCheck className="h-6 w-6" />}
-                    </button>
-                  </div>
-                )}
+            {!isOtpVerified && isOtpSent && (
+              <div className="flex items-center space-x-2">
+                <OtpInput onComplete={setOtp} />
+                <button type="button" onClick={handleVerifyOtp} disabled={verifyOtpLoading || otp.length !== 6} className="flex items-center justify-center w-full px-4 py-3 font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:bg-green-400">
+                  {verifyOtpLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <><FiCheck className="h-6 w-6 mr-2" /> Verify</>}
+                </button>
               </div>
             )}
-
-            {otpError && <Message message={otpError} type="error" />}
-            {successMessage && <Message message={successMessage} type="success" />}
 
             {isOtpVerified && (
               <>
@@ -203,11 +201,9 @@ function SuperuserRegisterPageContent() {
                 </div>
               </>
             )}
-
-            {error && <Message message={error} type="error" />}
             <div>
               <button type="submit" disabled={loading || !isOtpVerified} className="w-full px-4 py-3 font-bold text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-400 transition-all duration-300">
-                {loading ? 'Registering...' : 'Register'}
+                {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div> : 'Register'}
               </button>
             </div>
           </form>
