@@ -154,6 +154,19 @@ export default function SignupPage() {
               Log in
             </Link>
           </div>
+          <div className="relative flex items-center justify-center">
+            <div className="flex-grow border-t border-gray-300"></div>
+            <span className="flex-shrink mx-4 text-gray-400">Or</span>
+            <div className="flex-grow border-t border-gray-300"></div>
+          </div>
+          <div>
+            <button
+              onClick={() => signup()}
+              className="w-full px-4 py-3 font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-red-400 transition-all duration-300"
+            >
+              Sign up with Google
+            </button>
+          </div>
         </div>
       </div>
     </PublicRoute>

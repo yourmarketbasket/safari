@@ -7,13 +7,45 @@ import FileUpload from '@/app/components/FileUpload';
 import { FaUserCircle } from 'react-icons/fa';
 import { FiEdit, FiSave, FiX } from 'react-icons/fi';
 import Image from 'next/image';
+import QRCode from 'qrcode.react';
+import api from '@/app/lib/api';
+import Message from '@/app/components/Message';
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
   const [avatar, setAvatar] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [mfaSetup, setMfaSetup] = useState<{ secret: string; qrCodeUrl: string } | null>(null);
+  const [mfaCode, setMfaCode] = useState('');
+  const [mfaError, setMfaError] = useState('');
+
+  const handleEnableMfa = async () => {
+    try {
+      const response = await api.post('/auth/enable-mfa');
+      setMfaSetup(response.data);
+    } catch (error) {
+      setMfaError('Failed to start MFA setup. Please try again.');
+    }
+  };
+
+  const handleVerifyMfa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMfaError('');
+    try {
+      await api.post('/auth/verify-mfa-setup', { mfaCode });
+      // Update user context or refetch user to reflect MFA status
+      if(user) {
+        const updatedUser = { ...user, mfaEnabled: true };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+      setMfaSetup(null);
+    } catch (error) {
+      setMfaError('Invalid MFA code. Please try again.');
+    }
+  };
 
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,6 +131,51 @@ export default function ProfilePage() {
             )}
           </div>
         )}
+        <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Multi-Factor Authentication</h2>
+          {!user?.mfaEnabled ? (
+            mfaSetup ? (
+              <form onSubmit={handleVerifyMfa} className="space-y-4">
+                <p>Scan the QR code with your authenticator app and enter the code below.</p>
+                <div className="flex justify-center">
+                  <QRCode value={mfaSetup.qrCodeUrl} size={256} />
+                </div>
+                <div>
+                  <label htmlFor="mfaCode" className="block text-sm font-medium text-gray-700 mb-1">Verification Code</label>
+                  <input
+                    type="text"
+                    id="mfaCode"
+                    value={mfaCode}
+                    onChange={(e) => setMfaCode(e.target.value)}
+                    className="block w-full px-4 py-3 bg-gray-100 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+                {mfaError && <Message message={mfaError} type="error" />}
+                <button
+                  type="submit"
+                  className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Verify and Enable
+                </button>
+              </form>
+            ) : (
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-700">Google Authenticator</h3>
+                  <p className="text-gray-600">Secure your account with Google Authenticator.</p>
+                </div>
+                <button
+                  onClick={handleEnableMfa}
+                  className="px-4 py-2 font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Enable
+                </button>
+              </div>
+            )
+          ) : (
+            <p className="text-green-600">MFA is enabled on your account.</p>
+          )}
+        </div>
       </div>
     </PrivateRoute>
   );

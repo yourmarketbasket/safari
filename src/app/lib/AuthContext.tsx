@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { SessionProvider, useSession, signIn } from 'next-auth/react';
 import authService, { LoginCredentials, SignupData, VerifyMfaData } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
@@ -15,18 +16,20 @@ interface AuthContextType {
   signup: (signupData: SignupData) => Promise<void>;
   verifyMfa: (mfaCode: string) => Promise<void>;
   cancelMfa: () => void;
+  signInWithGoogle: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+const AuthProviderContent = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [mfaToken, setMfaToken] = useState<string | null>(null);
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   const isMfaRequired = !!mfaToken;
-  const router = useRouter();
 
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
@@ -37,6 +40,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (status === 'authenticated' && session) {
+      const { user: sessionUser, accessToken } = session;
+      if (sessionUser) {
+        // Here you would typically call your backend to get your internal user representation
+        // and JWT token. For now, we'll simulate it.
+        const internalUser: User = {
+          id: sessionUser.id,
+          name: sessionUser.name || '',
+          email: sessionUser.email || '',
+          avatar: sessionUser.image || '',
+          role: 'passenger', // default role
+        };
+        setUser(internalUser);
+        setToken(accessToken as string);
+        localStorage.setItem('authToken', accessToken as string);
+        localStorage.setItem('user', JSON.stringify(internalUser));
+        if (!internalUser.role) {
+          router.push('/role-selection');
+        } else {
+          redirectUser(internalUser.role);
+        }
+      }
+    }
+  }, [session, status, router]);
 
   const redirectUser = (role: string) => {
     switch (role) {
@@ -72,7 +101,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (responseData.mfaRequired) {
       setMfaToken(responseData.mfaToken);
     } else {
-      // Clear superuser data
       localStorage.removeItem('superuserAuthToken');
       localStorage.removeItem('superuser');
 
@@ -91,7 +119,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const responseData = await authService.verifyMfa(verifyData);
 
     if (responseData.mfaRequired) {
-        // This would be an error case, e.g., invalid code
         throw new Error("MFA verification failed.");
     }
 
@@ -99,7 +126,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(responseData.user);
     localStorage.setItem('authToken', responseData.token);
     localStorage.setItem('user', JSON.stringify(responseData.user));
-    setMfaToken(null); // Clear MFA token
+    setMfaToken(null);
     redirectUser(responseData.user.role);
   };
 
@@ -116,13 +143,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setToken(null);
     setMfaToken(null);
-    setIsLoading(true); // Reset loading state
+    setIsLoading(true);
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     localStorage.removeItem('superuserAuthToken');
     localStorage.removeItem('superuser');
     authService.logout();
     router.push('/login');
+  };
+
+  const signInWithGoogle = () => {
+    signIn('google');
   };
 
   useEffect(() => {
@@ -143,13 +174,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     user,
     token,
-    isLoading,
+    isLoading: isLoading || status === 'loading',
     isMfaRequired,
     login: handleLogin,
     logout: handleLogout,
     signup: handleSignup,
     verifyMfa: handleVerifyMfa,
     cancelMfa: handleCancelMfa,
+    signInWithGoogle,
   };
 
   return (
@@ -158,6 +190,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => (
+  <SessionProvider>
+    <AuthProviderContent>{children}</AuthProviderContent>
+  </SessionProvider>
+);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
