@@ -24,12 +24,12 @@ export default function SearchAndFilter({
         placeholder="Search..."
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
-        className="p-2 border rounded-md flex-grow focus:ring-2 focus:ring-blue-500"
+        className="p-2 border border-gray-400 rounded-md flex-grow text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500"
       />
       <select
         value={filterValue}
         onChange={(e) => onFilterChange(e.target.value)}
-        className="p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+        className="p-2 border border-gray-400 rounded-md text-black focus:ring-2 focus:ring-blue-500"
       >
         <option value="">{filterPlaceholder}</option>
         {filterOptions.map((option) => (
