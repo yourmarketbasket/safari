@@ -12,7 +12,7 @@ import SearchAndFilter from "@/app/components/SearchAndFilter";
 import Pagination from "@/app/components/Pagination";
 import ToggleSwitch from "@/app/components/ToggleSwitch";
 import UserDetailCard from "@/app/components/UserDetailCard";
-import { FiLoader, FiRefreshCw, FiMail, FiPhone } from "react-icons/fi";
+import { FiLoader, FiRefreshCw, FiCheckCircle, FiXCircle, FiUsers, FiUserCheck, FiUserX } from "react-icons/fi";
 import { AxiosError } from "axios";
 
 const ranks: UserRank[] = [
@@ -33,15 +33,26 @@ const StatusChip = ({ status }: { status: UserStatus }) => {
     return <span className={`px-2 py-1 text-xs font-medium rounded-full ${colorMap[status] || 'bg-gray-200'}`}>{status}</span>;
 };
 
-const VerifiedChip = ({ verified, type }: { verified: boolean, type: 'email' | 'phone' }) => {
-    const Icon = type === 'email' ? FiMail : FiPhone;
+const VerifiedChip = ({ verified }: { verified: boolean }) => {
+    const Icon = verified ? FiCheckCircle : FiXCircle;
     return (
-        <span className={`flex items-center px-2 py-1 text-xs font-medium rounded-full ${verified ? 'bg-green-200 text-green-800' : 'bg-gray-200 text-gray-800'}`}>
-            <Icon className="mr-1" />
-            {verified ? 'Verified' : 'Not Verified'}
+        <span className={`flex items-center justify-center h-6 w-6 rounded-full ${verified ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+            <Icon />
         </span>
     );
 };
+
+const SummaryCard = ({ title, value, icon, isLoading }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean }) => (
+    <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+        <div className="flex justify-between items-start">
+            <h3 className="text-xl font-semibold text-gray-700">{title}</h3>
+            <div className="text-3xl text-gray-400">{icon}</div>
+        </div>
+        <div className="mt-4">
+            <p className="text-5xl font-bold text-gray-900">{isLoading ? <FiLoader className="animate-spin" /> : value}</p>
+        </div>
+    </div>
+);
 
 export default function SuperuserUsersPage() {
   const { setTitle } = usePageTitleStore();
@@ -69,6 +80,37 @@ export default function SuperuserUsersPage() {
     queryKey: ["users"],
     queryFn: () => superuserService.getAllUsers(),
   });
+
+  const userStats = useMemo(() => {
+    if (!users) {
+        return {
+            totalUsers: 0,
+            byRole: {},
+            byRank: {},
+            verifiedEmails: 0,
+            verifiedPhones: 0,
+        };
+    }
+    const byRole: Record<string, number> = {};
+    const byRank: Record<string, number> = {};
+    let verifiedEmails = 0;
+    let verifiedPhones = 0;
+
+    users.forEach(user => {
+        byRole[user.role] = (byRole[user.role] || 0) + 1;
+        if(user.rank) byRank[user.rank] = (byRank[user.rank] || 0) + 1;
+        if(user.verified?.email) verifiedEmails++;
+        if(user.verified?.phone) verifiedPhones++;
+    });
+
+    return {
+        totalUsers: users.length,
+        byRole,
+        byRank,
+        verifiedEmails,
+        verifiedPhones,
+    };
+  }, [users]);
 
   const handleApiError = (error: Error, defaultMessage: string) => {
     const axiosError = error as AxiosError<{ message?: string; error?: string }>;
@@ -218,9 +260,15 @@ export default function SuperuserUsersPage() {
           <td className="py-4 px-6 text-left">{user.rank || "N/A"}</td>
           <td className="py-4 px-6 text-left">{user.approvedStatus ? <StatusChip status={user.approvedStatus} /> : "N/A"}</td>
           <td className="py-4 px-6 text-left">
-            <div className="flex flex-col gap-1">
-                {user.verified ? <VerifiedChip verified={user.verified.email} type="email" /> : <VerifiedChip verified={false} type="email" />}
-                {user.verified ? <VerifiedChip verified={user.verified.phone} type="phone" /> : <VerifiedChip verified={false} type="phone" />}
+            <div className="flex items-center gap-2">
+                <div className="flex flex-col items-center">
+                    <span className="text-gray-500 text-xs">Email</span>
+                    <VerifiedChip verified={!!user.verified?.email} />
+                </div>
+                <div className="flex flex-col items-center">
+                    <span className="text-gray-500 text-xs">Phone</span>
+                    <VerifiedChip verified={!!user.verified?.phone} />
+                </div>
             </div>
           </td>
           <td className="py-4 px-6 text-left">
@@ -241,6 +289,14 @@ export default function SuperuserUsersPage() {
         {notification && <Message message={notification.message} type={notification.type} />}
         {updateUserMutation.isPending && <LoadingOverlay />}
         {updateBlockStatusMutation.isPending && <LoadingOverlay />}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <SummaryCard title="Total Users" value={userStats.totalUsers} icon={<FiUsers />} isLoading={isLoading} />
+            <SummaryCard title="Verified Emails" value={userStats.verifiedEmails} icon={<FiUserCheck />} isLoading={isLoading} />
+            <SummaryCard title="Verified Phones" value={userStats.verifiedPhones} icon={<FiUserCheck />} isLoading={isLoading} />
+            <SummaryCard title="Blocked Users" value={Object.values(users || []).filter(u => u.approvedStatus === 'blocked').length} icon={<FiUserX />} isLoading={isLoading} />
+        </div>
+
       <div className="bg-white p-8 rounded-2xl shadow-xl mt-4">
         <SearchAndFilter
             searchTerm={searchTerm}
