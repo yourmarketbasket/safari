@@ -7,7 +7,11 @@ const api = axios.create({
 // Request interceptor for encrypting data
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    let token = localStorage.getItem('superuserAuthToken');
+    if (!token) {
+      token = localStorage.getItem('authToken');
+    }
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
