@@ -12,7 +12,13 @@ import SearchAndFilter from "@/app/components/SearchAndFilter";
 import Pagination from "@/app/components/Pagination";
 import ToggleSwitch from "@/app/components/ToggleSwitch";
 import UserDetailCard from "@/app/components/UserDetailCard";
-import { FiLoader, FiRefreshCw, FiCheckCircle, FiXCircle, FiUsers, FiUserCheck, FiUserX } from "react-icons/fi";
+import {
+    FiLoader, FiRefreshCw, FiMail, FiPhone, FiCheckCircle, FiXCircle,
+    FiUsers, FiUserX, FiBriefcase
+} from "react-icons/fi";
+import { FaUsers, FaUserTie, FaCar, FaUser, FaClipboardList, FaUserShield } from "react-icons/fa";
+import { RiAdminLine } from "react-icons/ri";
+import { BiSupport } from "react-icons/bi";
 import { AxiosError } from "axios";
 
 const ranks: UserRank[] = [
@@ -24,32 +30,47 @@ const statuses: UserStatus[] = ['pending', 'approved', 'suspended', 'blocked'];
 const roles: UserRole[] = ["passenger", "sacco", "owner", "queue_manager", "driver", "support_staff", "admin", "superuser", "headoffice"];
 
 const StatusChip = ({ status }: { status: UserStatus }) => {
-    const colorMap: Record<UserStatus, string> = {
-        pending: 'bg-yellow-200 text-yellow-800',
-        approved: 'bg-green-200 text-green-800',
-        suspended: 'bg-orange-200 text-orange-800',
-        blocked: 'bg-red-200 text-red-800',
+    const statusMap: Record<UserStatus, { icon: React.ElementType, color: string }> = {
+        pending: { icon: FiLoader, color: 'text-yellow-600 animate-spin' },
+        approved: { icon: FiCheckCircle, color: 'text-green-600' },
+        suspended: { icon: FiUserX, color: 'text-orange-600' },
+        blocked: { icon: FiXCircle, color: 'text-red-600' },
     };
-    return <span className={`px-2 py-1 text-xs font-medium rounded-full ${colorMap[status] || 'bg-gray-200'}`}>{status}</span>;
+    const { icon: Icon, color } = statusMap[status] || { icon: FiUsers, color: 'text-gray-600' };
+    return <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 ${color}`}><Icon /></div>;
 };
 
-const VerifiedChip = ({ verified }: { verified: boolean }) => {
-    const Icon = verified ? FiCheckCircle : FiXCircle;
+const VerifiedChip = ({ verified, type }: { verified: boolean, type: 'email' | 'phone' }) => {
+    const TypeIcon = type === 'email' ? FiMail : FiPhone;
+    const StatusIcon = verified ? FiCheckCircle : FiXCircle;
     return (
-        <span className={`flex items-center justify-center h-6 w-6 rounded-full ${verified ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-            <Icon />
-        </span>
+        <div className={`flex items-center gap-1 p-1 rounded-full ${verified ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+            <TypeIcon />
+            <StatusIcon />
+        </div>
     );
 };
 
-const SummaryCard = ({ title, value, icon, isLoading }: { title: string, value: number, icon: React.ReactNode, isLoading: boolean }) => (
-    <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+const roleUIConfig: Record<UserRole, { icon: React.ElementType, color: string }> = {
+    passenger: { icon: FaUser, color: "from-blue-400 to-blue-600" },
+    driver: { icon: FaCar, color: "from-green-400 to-green-600" },
+    sacco: { icon: FaUsers, color: "from-purple-400 to-purple-600" },
+    owner: { icon: FaUserTie, color: "from-indigo-400 to-indigo-600" },
+    queue_manager: { icon: FaClipboardList, color: "from-pink-400 to-pink-600" },
+    admin: { icon: RiAdminLine, color: "from-yellow-400 to-yellow-600" },
+    support_staff: { icon: BiSupport, color: "from-teal-400 to-teal-600" },
+    superuser: { icon: FaUserShield, color: "from-red-400 to-red-600" },
+    headoffice: { icon: FiBriefcase, color: "from-gray-400 to-gray-600" },
+};
+
+const SummaryCard = ({ title, value, icon, color, isLoading }: { title: string, value: number, icon: React.ReactNode, color: string, isLoading: boolean }) => (
+    <div className={`bg-gradient-to-br ${color} text-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300`}>
         <div className="flex justify-between items-start">
-            <h3 className="text-xl font-semibold text-gray-700">{title}</h3>
-            <div className="text-3xl text-gray-400">{icon}</div>
+            <h3 className="text-xl font-bold">{title}</h3>
+            <div className="text-4xl opacity-80">{icon}</div>
         </div>
         <div className="mt-4">
-            <p className="text-5xl font-bold text-gray-900">{isLoading ? <FiLoader className="animate-spin" /> : value}</p>
+            <p className="text-6xl font-bold">{isLoading ? <FiLoader className="animate-spin" /> : value}</p>
         </div>
     </div>
 );
@@ -83,33 +104,18 @@ export default function SuperuserUsersPage() {
 
   const userStats = useMemo(() => {
     if (!users) {
-        return {
-            totalUsers: 0,
-            byRole: {},
-            byRank: {},
-            verifiedEmails: 0,
-            verifiedPhones: 0,
-        };
+        return { totalUsers: 0, byRole: {} };
     }
     const byRole: Record<string, number> = {};
-    const byRank: Record<string, number> = {};
-    let verifiedEmails = 0;
-    let verifiedPhones = 0;
+    roles.forEach(role => byRole[role] = 0);
 
     users.forEach(user => {
-        byRole[user.role] = (byRole[user.role] || 0) + 1;
-        if(user.rank) byRank[user.rank] = (byRank[user.rank] || 0) + 1;
-        if(user.verified?.email) verifiedEmails++;
-        if(user.verified?.phone) verifiedPhones++;
+        if (byRole.hasOwnProperty(user.role)) {
+            byRole[user.role]++;
+        }
     });
 
-    return {
-        totalUsers: users.length,
-        byRole,
-        byRank,
-        verifiedEmails,
-        verifiedPhones,
-    };
+    return { totalUsers: users.length, byRole };
   }, [users]);
 
   const handleApiError = (error: Error, defaultMessage: string) => {
@@ -258,17 +264,11 @@ export default function SuperuserUsersPage() {
           <td className="py-4 px-6 text-left">{user.phone || "N/A"}</td>
           <td className="py-4 px-6 text-left">{user.role}</td>
           <td className="py-4 px-6 text-left">{user.rank || "N/A"}</td>
-          <td className="py-4 px-6 text-left">{user.approvedStatus ? <StatusChip status={user.approvedStatus} /> : "N/A"}</td>
+          <td className="py-4 px-6 text-left">{user.approvedStatus ? <StatusChip status={user.approvedStatus} /> : null}</td>
           <td className="py-4 px-6 text-left">
             <div className="flex items-center gap-2">
-                <div className="flex flex-col items-center">
-                    <span className="text-gray-500 text-xs">Email</span>
-                    <VerifiedChip verified={!!user.verified?.email} />
-                </div>
-                <div className="flex flex-col items-center">
-                    <span className="text-gray-500 text-xs">Phone</span>
-                    <VerifiedChip verified={!!user.verified?.phone} />
-                </div>
+                <VerifiedChip verified={!!user.verified?.email} type="email" />
+                <VerifiedChip verified={!!user.verified?.phone} type="phone" />
             </div>
           </td>
           <td className="py-4 px-6 text-left">
@@ -290,11 +290,11 @@ export default function SuperuserUsersPage() {
         {updateUserMutation.isPending && <LoadingOverlay />}
         {updateBlockStatusMutation.isPending && <LoadingOverlay />}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <SummaryCard title="Total Users" value={userStats.totalUsers} icon={<FiUsers />} isLoading={isLoading} />
-            <SummaryCard title="Verified Emails" value={userStats.verifiedEmails} icon={<FiUserCheck />} isLoading={isLoading} />
-            <SummaryCard title="Verified Phones" value={userStats.verifiedPhones} icon={<FiUserCheck />} isLoading={isLoading} />
-            <SummaryCard title="Blocked Users" value={Object.values(users || []).filter(u => u.approvedStatus === 'blocked').length} icon={<FiUserX />} isLoading={isLoading} />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+            {Object.entries(userStats.byRole).map(([role, count]) => {
+                const config = roleUIConfig[role as UserRole] || { icon: FiUsers, color: "from-gray-400 to-gray-600" };
+                return <SummaryCard key={role} title={role} value={count} icon={<config.icon />} color={config.color} isLoading={isLoading} />
+            })}
         </div>
 
       <div className="bg-white p-8 rounded-2xl shadow-xl mt-4">
