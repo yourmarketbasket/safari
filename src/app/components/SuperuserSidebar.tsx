@@ -61,7 +61,7 @@ export default function SuperuserSidebar() {
                 {!isCollapsed && <span className="ml-3 flex-1 text-left">{link.name}</span>}
                 {!isCollapsed && <FiChevronDown className={`w-5 h-5 transition-transform ${openMenu === link.name ? 'rotate-180' : ''}`} />}
               </button>
-              {openMenu === link.name && !isCollapsed && (
+              {openMenu === link.name && !isCollapsed && link.children && (
                 <div className="pl-8 py-2 space-y-2">
                   {link.children.map((child) => (
                     <Link
