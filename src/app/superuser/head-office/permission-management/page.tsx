@@ -193,11 +193,14 @@ export default function PermissionManagementPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {Object.entries(permissionStats).map(([role, count]) => {
                 const Icon = roleIconMap[role] || FaUser;
+                const roleColors = getRoleColor(role);
+                const textColor = roleColors.split(' ')[1] || 'text-gray-800';
+
                 return (
                     <div key={role} className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 h-40 flex flex-col justify-between">
                         <div className="flex justify-between items-start">
-                            <h3 className="text-xl font-semibold text-gray-700">{role}</h3>
-                            <Icon className="text-3xl text-gray-400" />
+                            <h3 className={`text-xl font-semibold ${textColor}`}>{role}</h3>
+                            <Icon className={`text-3xl ${textColor}`} />
                         </div>
                         <div>
                             <p className="text-5xl font-bold text-gray-900">{count}</p>
