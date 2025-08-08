@@ -20,7 +20,8 @@ export type UserRank =
   | "Supervisor"
   | "Team Lead"
   | "Staff"
-  | "Intern";
+  | "Intern"
+  | "Ordinary";
 
 export type UserStatus = 'pending' | 'approved' | 'suspended' | 'blocked';
 

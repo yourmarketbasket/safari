@@ -11,12 +11,13 @@ import LoadingOverlay from "@/app/components/LoadingOverlay";
 import SearchAndFilter from "@/app/components/SearchAndFilter";
 import Pagination from "@/app/components/Pagination";
 import ToggleSwitch from "@/app/components/ToggleSwitch";
-import { FiEdit, FiLoader, FiRefreshCw, FiMail, FiPhone } from "react-icons/fi";
+import UserDetailCard from "@/app/components/UserDetailCard";
+import { FiLoader, FiRefreshCw, FiMail, FiPhone } from "react-icons/fi";
 import { AxiosError } from "axios";
 
 const ranks: UserRank[] = [
   "CEO", "CFO", "COO", "CTO", "VP", "Director", "Manager",
-  "Supervisor", "Team Lead", "Staff", "Intern"
+  "Supervisor", "Team Lead", "Staff", "Intern", "Ordinary"
 ];
 
 const statuses: UserStatus[] = ['pending', 'approved', 'suspended', 'blocked'];
@@ -54,6 +55,7 @@ export default function SuperuserUsersPage() {
   const itemsPerPage = 10;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [updatedRank, setUpdatedRank] = useState<UserRank | undefined>(undefined);
   const [updatedStatus, setUpdatedStatus] = useState<UserStatus | undefined>(undefined);
@@ -94,6 +96,7 @@ export default function SuperuserUsersPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setIsModalOpen(false);
+      setIsEditMode(false);
       setSelectedUser(null);
       setNotification({ message: "User updated successfully!", type: 'success' });
     },
@@ -113,13 +116,13 @@ export default function SuperuserUsersPage() {
 
   const sortedAndFilteredUsers = useMemo(() => {
     if (!users) return [];
-    const filtered = users
+    let filtered = users
         .filter(user => user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase()))
         .filter(user => filterRole ? user.role === filterRole : true)
         .filter(user => filterStatus ? user.approvedStatus === filterStatus : true);
 
     if (sortConfig !== null) {
-        filtered.sort((a, b) => {
+        filtered = [...filtered].sort((a, b) => {
             const aValue = a[sortConfig.key];
             const bValue = b[sortConfig.key];
             if (aValue === undefined || aValue === null) return 1;
@@ -151,12 +154,13 @@ export default function SuperuserUsersPage() {
     setSortConfig({ key, direction });
   };
 
-  const handleEdit = (user: User) => {
+  const openUserModal = (user: User) => {
     setSelectedUser(user);
     setUpdatedRank(user.rank);
     setUpdatedStatus(user.approvedStatus);
     setNotification(null);
     setIsModalOpen(true);
+    setIsEditMode(false);
   };
 
   const handleUpdate = () => {
@@ -206,7 +210,7 @@ export default function SuperuserUsersPage() {
       }
 
       return paginatedUsers.map((user) => (
-        <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-100">
+        <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onClick={() => openUserModal(user)}>
           <td className="py-4 px-6 text-left whitespace-nowrap">{user.name}</td>
           <td className="py-4 px-6 text-left">{user.email}</td>
           <td className="py-4 px-6 text-left">{user.role}</td>
@@ -219,10 +223,7 @@ export default function SuperuserUsersPage() {
             </div>
           </td>
           <td className="py-4 px-6 text-left">
-            <div className="flex items-center gap-4">
-                <button onClick={() => handleEdit(user)} className="text-indigo-600 hover:text-indigo-900">
-                  <FiEdit size={18} />
-                </button>
+            <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
                 <ToggleSwitch
                     isOn={user.approvedStatus === 'blocked'}
                     onToggle={() => handleToggleBlock(user)}
@@ -276,46 +277,66 @@ export default function SuperuserUsersPage() {
       </div>
       {isModalOpen && selectedUser && (
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <div className="p-4">
-                <h2 className="text-2xl font-semibold mb-4 text-gray-900">Edit User: {selectedUser.name}</h2>
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Rank</label>
-                    <select
-                        value={updatedRank || ''}
-                        onChange={(e) => setUpdatedRank(e.target.value as UserRank)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                        <option value="" disabled>Select a rank</option>
-                        {ranks.map(rank => <option key={rank} value={rank}>{rank}</option>)}
-                    </select>
+            {isEditMode ? (
+                <div className="p-4">
+                    <h2 className="text-2xl font-semibold mb-4 text-gray-900">Edit User: {selectedUser.name}</h2>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">Rank</label>
+                        <select
+                            value={updatedRank || ''}
+                            onChange={(e) => setUpdatedRank(e.target.value as UserRank)}
+                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        >
+                            <option value="" disabled>Select a rank</option>
+                            {ranks.map(rank => <option key={rank} value={rank}>{rank}</option>)}
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700">Status</label>
+                        <select
+                            value={updatedStatus || ''}
+                            onChange={(e) => setUpdatedStatus(e.target.value as UserStatus)}
+                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        >
+                             <option value="" disabled>Select a status</option>
+                            {statuses.map(status => <option key={status} value={status}>{status}</option>)}
+                        </select>
+                    </div>
+                    <div className="flex justify-end gap-2 mt-6">
+                        <button
+                            onClick={() => setIsEditMode(false)}
+                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleUpdate}
+                            disabled={updateUserMutation.isPending}
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
                 </div>
-                <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Status</label>
-                    <select
-                        value={updatedStatus || ''}
-                        onChange={(e) => setUpdatedStatus(e.target.value as UserStatus)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                         <option value="" disabled>Select a status</option>
-                        {statuses.map(status => <option key={status} value={status}>{status}</option>)}
-                    </select>
+            ) : (
+                <div>
+                    <UserDetailCard user={selectedUser} />
+                    <div className="flex justify-end gap-2 p-4 bg-gray-50 rounded-b-xl">
+                        <button
+                            onClick={() => setIsModalOpen(false)}
+                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
+                        >
+                            Close
+                        </button>
+                        <button
+                            onClick={() => setIsEditMode(true)}
+                            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700"
+                        >
+                            Edit User
+                        </button>
+                    </div>
                 </div>
-                <div className="flex justify-end">
-                    <button
-                        onClick={() => setIsModalOpen(false)}
-                        className="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleUpdate}
-                        disabled={updateUserMutation.isPending}
-                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Update
-                    </button>
-                </div>
-            </div>
+            )}
         </Modal>
       )}
     </div>
