@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlus, FiLoader } from 'react-icons/fi';
 import { FaUserShield, FaUsers, FaUserTie, FaCar, FaUser, FaClipboardList } from 'react-icons/fa';
 import { RiAdminLine } from 'react-icons/ri';
 import { BiSupport } from 'react-icons/bi';
@@ -10,8 +10,11 @@ import { Permission } from '../../../models/Permission.model';
 import Modal from '../../../components/Modal';
 import SearchAndFilter from '../../../components/SearchAndFilter';
 import Pagination from '../../../components/Pagination';
+import Message from '../../../components/Message';
+import LoadingOverlay from '../../../components/LoadingOverlay';
 import { usePageTitleStore } from '../../../store/pageTitle.store';
 import superuserService from '@/app/services/superuser.service';
+import { AxiosError } from 'axios';
 
 const roleColorMap: { [key: string]: string } = {
   Superuser: 'bg-red-200 text-red-800',
@@ -64,18 +67,27 @@ export default function PermissionManagementPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const { data: permissions, isLoading, error } = useQuery<Permission[], Error>({
     queryKey: ['permissions'],
     queryFn: superuserService.getAllPermissions,
   });
 
+  const handleApiError = (error: Error, defaultMessage: string) => {
+    const axiosError = error as AxiosError<{ message: string }>;
+    const errorMessage = axiosError.response?.data?.message || defaultMessage;
+    setNotification({ message: errorMessage, type: 'error' });
+  };
+
   const createPermissionMutation = useMutation<Permission, Error, Omit<Permission, 'permissionNumber'>>({
     mutationFn: superuserService.createPermission,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
       setIsModalOpen(false);
+      setNotification({ message: 'Permission created successfully!', type: 'success' });
     },
+    onError: (error) => handleApiError(error, 'Failed to create permission.'),
   });
 
   const bulkCreatePermissionsMutation = useMutation<Permission[], Error, Omit<Permission, 'permissionNumber'>[]>({
@@ -83,7 +95,9 @@ export default function PermissionManagementPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
       setIsModalOpen(false);
+      setNotification({ message: 'Permissions created successfully!', type: 'success' });
     },
+    onError: (error) => handleApiError(error, 'Failed to create permissions.'),
   });
 
   const updatePermissionMutation = useMutation<Permission, Error, Permission>({
@@ -91,14 +105,18 @@ export default function PermissionManagementPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
       setIsModalOpen(false);
+      setNotification({ message: 'Permission updated successfully!', type: 'success' });
     },
+    onError: (error) => handleApiError(error, 'Failed to update permission.'),
   });
 
-    const deletePermissionMutation = useMutation<void, Error, string>({
+  const deletePermissionMutation = useMutation<void, Error, string>({
     mutationFn: (permissionNumber) => superuserService.deletePermission(permissionNumber),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
+      setNotification({ message: 'Permission deleted successfully!', type: 'success' });
     },
+    onError: (error) => handleApiError(error, 'Failed to delete permission.'),
   });
 
   const allRoles = useMemo(() => {
@@ -168,6 +186,7 @@ export default function PermissionManagementPage() {
     setSelectedPermission(permission);
     setNewPermission(permission);
     setRolesInput(permission.roles.join(', '));
+    setNotification(null);
     setIsModalOpen(true);
   };
 
@@ -206,12 +225,32 @@ export default function PermissionManagementPage() {
       constraints: '',
     });
     setRolesInput('');
+    setNotification(null);
     setIsModalOpen(true);
   };
 
+  const isMutationLoading = createPermissionMutation.isPending ||
+                            updatePermissionMutation.isPending ||
+                            deletePermissionMutation.isPending ||
+                            bulkCreatePermissionsMutation.isPending;
+
+  if (isLoading) return (
+    <div className="flex justify-center items-center h-64">
+        <FiLoader className="animate-spin text-purple-600 text-4xl" />
+    </div>
+  );
+
+  if (error) return (
+    <div className="p-4">
+        <Message message={`Error: ${error.message}`} type="error" />
+    </div>
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+        {notification && <Message message={notification.message} type={notification.type} />}
+        {isMutationLoading && <LoadingOverlay />}
+      <div className="bg-white p-6 rounded-lg shadow-md mb-8 mt-4">
         <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold text-gray-800">Permissions Dashboard</h2>
             <button onClick={openAddModal} className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
@@ -293,10 +332,8 @@ export default function PermissionManagementPage() {
         onSortChange={setSortOrder}
       />
 
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+      <div className="bg-white shadow-md rounded-lg overflow-hidden mt-4">
         <div className="overflow-x-auto">
-          {isLoading && <p className="p-4">Loading permissions...</p>}
-          {error && <p className="p-4 text-red-500">Error loading permissions: {error.message}</p>}
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>

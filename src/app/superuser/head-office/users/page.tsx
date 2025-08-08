@@ -6,7 +6,10 @@ import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import superuserService from "@/app/services/superuser.service";
 import { User, UserRank, UserStatus } from "@/app/models/User.model";
 import Modal from "@/app/components/Modal";
-import { FiEdit } from "react-icons/fi";
+import Message from "@/app/components/Message";
+import LoadingOverlay from "@/app/components/LoadingOverlay";
+import { FiEdit, FiLoader } from "react-icons/fi";
+import { AxiosError } from "axios";
 
 const ranks: UserRank[] = [
   "CEO", "CFO", "COO", "CTO", "VP", "Director", "Manager",
@@ -23,6 +26,7 @@ export default function SuperuserUsersPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [updatedRank, setUpdatedRank] = useState<UserRank | undefined>(undefined);
   const [updatedStatus, setUpdatedStatus] = useState<UserStatus | undefined>(undefined);
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     setTitle("User Management");
@@ -39,11 +43,14 @@ export default function SuperuserUsersPage() {
             throw new Error("User ID is missing");
         }
         const promises = [];
-        if (updatedRank) {
+        if (updatedRank && updatedRank !== user.rank) {
             promises.push(superuserService.updateUserRank(user.id, updatedRank));
         }
-        if (updatedStatus) {
+        if (updatedStatus && updatedStatus !== user.status) {
             promises.push(superuserService.updateUserStatus(user.id, updatedStatus));
+        }
+        if (promises.length === 0) {
+            return Promise.resolve([]);
         }
         return Promise.all(promises);
     },
@@ -51,7 +58,13 @@ export default function SuperuserUsersPage() {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setIsModalOpen(false);
       setSelectedUser(null);
+      setNotification({ message: "User updated successfully!", type: 'success' });
     },
+    onError: (error: Error) => {
+        const axiosError = error as AxiosError<{ message: string }>;
+        const errorMessage = axiosError.response?.data?.message || "An unexpected error occurred.";
+        setNotification({ message: errorMessage, type: 'error' });
+    }
   });
 
   const filteredUsers = useMemo(() => {
@@ -67,6 +80,7 @@ export default function SuperuserUsersPage() {
     setSelectedUser(user);
     setUpdatedRank(user.rank);
     setUpdatedStatus(user.status);
+    setNotification(null);
     setIsModalOpen(true);
   };
 
@@ -76,12 +90,23 @@ export default function SuperuserUsersPage() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (isLoading) return (
+    <div className="flex justify-center items-center h-64">
+        <FiLoader className="animate-spin text-purple-600 text-4xl" />
+    </div>
+  );
+
+  if (error) return (
+    <div className="p-4">
+        <Message message={`Error: ${error.message}`} type="error" />
+    </div>
+  );
 
   return (
     <div>
-      <div className="bg-white p-8 rounded-2xl shadow-xl">
+        {notification && <Message message={notification.message} type={notification.type} />}
+        {updateUserMutation.isPending && <LoadingOverlay />}
+      <div className="bg-white p-8 rounded-2xl shadow-xl mt-4">
         <input
           type="text"
           placeholder="Search by name or email..."
@@ -126,20 +151,22 @@ export default function SuperuserUsersPage() {
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700">Rank</label>
                     <select
-                        value={updatedRank}
+                        value={updatedRank || ''}
                         onChange={(e) => setUpdatedRank(e.target.value as UserRank)}
                         className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                     >
+                        <option value="" disabled>Select a rank</option>
                         {ranks.map(rank => <option key={rank} value={rank}>{rank}</option>)}
                     </select>
                 </div>
                 <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700">Status</label>
                     <select
-                        value={updatedStatus}
+                        value={updatedStatus || ''}
                         onChange={(e) => setUpdatedStatus(e.target.value as UserStatus)}
                         className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                     >
+                         <option value="" disabled>Select a status</option>
                         {statuses.map(status => <option key={status} value={status}>{status}</option>)}
                     </select>
                 </div>
@@ -155,7 +182,7 @@ export default function SuperuserUsersPage() {
                         disabled={updateUserMutation.isPending}
                         className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                        {updateUserMutation.isPending ? "Updating..." : "Update"}
+                        Update
                     </button>
                 </div>
             </div>
