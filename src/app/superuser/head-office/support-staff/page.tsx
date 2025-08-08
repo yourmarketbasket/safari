@@ -66,7 +66,7 @@ export default function SupportStaffPage() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {(staffList || []).map((staff: User) => (
-                <tr key={staff.id}>
+                <tr key={staff._id}>
                   <td className="px-6 py-4 whitespace-nowrap"><div className="text-xs text-gray-900">{staff.name}</div></td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-xs text-gray-900">{staff.email}</div>

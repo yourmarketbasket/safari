@@ -10,7 +10,6 @@ import Message from "@/app/components/Message";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import SearchAndFilter from "@/app/components/SearchAndFilter";
 import Pagination from "@/app/components/Pagination";
-import ToggleSwitch from "@/app/components/ToggleSwitch";
 import UserDetailCard from "@/app/components/UserDetailCard";
 import { FiLoader, FiRefreshCw, FiMail, FiPhone } from "react-icons/fi";
 import { AxiosError } from "axios";
@@ -78,15 +77,15 @@ export default function SuperuserUsersPage() {
 
   const updateUserMutation = useMutation({
     mutationFn: (user: User) => {
-        if (!user || !user.id) {
+        if (!user || !user._id) {
             throw new Error("User ID is missing");
         }
         const promises = [];
         if (updatedRank && updatedRank !== user.rank) {
-            promises.push(superuserService.updateUserRank(user.id, updatedRank));
+            promises.push(superuserService.updateUserRank(user._id, updatedRank));
         }
         if (updatedStatus && updatedStatus !== user.approvedStatus) {
-            promises.push(superuserService.updateUserStatus(user.id, updatedStatus));
+            promises.push(superuserService.updateUserStatus(user._id, updatedStatus));
         }
         if (promises.length === 0) {
             return Promise.resolve([]);
@@ -171,7 +170,7 @@ export default function SuperuserUsersPage() {
 
   const handleToggleBlock = (user: User) => {
     const newStatus = user.approvedStatus === 'blocked' ? 'approved' : 'blocked';
-    updateBlockStatusMutation.mutate({ userId: user.id, status: newStatus });
+    updateBlockStatusMutation.mutate({ userId: user._id, status: newStatus });
   };
 
   const renderTableContent = () => {
@@ -210,9 +209,10 @@ export default function SuperuserUsersPage() {
       }
 
       return paginatedUsers.map((user) => (
-        <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onClick={() => openUserModal(user)}>
+        <tr key={user._id} className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onClick={() => openUserModal(user)}>
           <td className="py-4 px-6 text-left whitespace-nowrap">{user.name}</td>
           <td className="py-4 px-6 text-left">{user.email}</td>
+          <td className="py-4 px-6 text-left">{user.phone || "N/A"}</td>
           <td className="py-4 px-6 text-left">{user.role}</td>
           <td className="py-4 px-6 text-left">{user.rank || "N/A"}</td>
           <td className="py-4 px-6 text-left">{user.approvedStatus ? <StatusChip status={user.approvedStatus} /> : "N/A"}</td>
@@ -220,15 +220,6 @@ export default function SuperuserUsersPage() {
             <div className="flex flex-col gap-1">
                 {user.verified ? <VerifiedChip verified={user.verified.email} type="email" /> : <VerifiedChip verified={false} type="email" />}
                 {user.verified ? <VerifiedChip verified={user.verified.phone} type="phone" /> : <VerifiedChip verified={false} type="phone" />}
-            </div>
-          </td>
-          <td className="py-4 px-6 text-left">
-            <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
-                <ToggleSwitch
-                    isOn={user.approvedStatus === 'blocked'}
-                    onToggle={() => handleToggleBlock(user)}
-                    disabled={updateBlockStatusMutation.isPending}
-                />
             </div>
           </td>
         </tr>
@@ -257,11 +248,11 @@ export default function SuperuserUsersPage() {
               <tr>
                 <th className="py-3 px-6 text-left font-light cursor-pointer" onClick={() => requestSort('name')}>Name</th>
                 <th className="py-3 px-6 text-left font-light cursor-pointer" onClick={() => requestSort('email')}>Email</th>
+                <th className="py-3 px-6 text-left font-light cursor-pointer" onClick={() => requestSort('phone')}>Phone</th>
                 <th className="py-3 px-6 text-left font-light cursor-pointer" onClick={() => requestSort('role')}>Role</th>
                 <th className="py-3 px-6 text-left font-light cursor-pointer" onClick={() => requestSort('rank')}>Rank</th>
                 <th className="py-3 px-6 text-left font-light cursor-pointer" onClick={() => requestSort('approvedStatus')}>Status</th>
                 <th className="py-3 px-6 text-left font-light">Verified</th>
-                <th className="py-3 px-6 text-left font-light">Actions</th>
               </tr>
             </thead>
             <tbody className="text-gray-800 text-xs font-light">
@@ -320,7 +311,11 @@ export default function SuperuserUsersPage() {
                 </div>
             ) : (
                 <div>
-                    <UserDetailCard user={selectedUser} />
+                    <UserDetailCard
+                        user={selectedUser}
+                        onToggleBlock={handleToggleBlock}
+                        isToggling={updateBlockStatusMutation.isPending}
+                    />
                     <div className="flex justify-end gap-2 p-4 bg-gray-50 rounded-b-xl">
                         <button
                             onClick={() => setIsModalOpen(false)}

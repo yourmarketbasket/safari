@@ -15,9 +15,42 @@ export type LoginCredentials = {
   password?: string;
 }
 
-export type SignupData = Omit<User, 'id'> & { verifiedToken?: string };
+import { UserRole } from '../models/User.model';
 
-export type NewStaffData = Omit<User, 'id' | 'role'> & { role?: string };
+export type SignupData = {
+  name: string;
+  email: string;
+  phone?: string;
+  avatar?: string;
+  password?: string;
+  role?: UserRole;
+  mfaSecret?: string;
+  rank?: UserRank;
+  approvedStatus?: UserStatus;
+  permissions?: string[];
+  verified?: {
+    email: boolean;
+    phone: boolean;
+  };
+  verifiedToken?: string;
+};
+
+export type NewStaffData = {
+  name: string;
+  email: string;
+  phone?: string;
+  avatar?: string;
+  password?: string;
+  mfaSecret?: string;
+  rank?: UserRank;
+  approvedStatus?: UserStatus;
+  permissions?: string[];
+  verified?: {
+    email: boolean;
+    phone: boolean;
+  };
+  role?: string;
+};
 
 export type AuthData = {
     token: string;

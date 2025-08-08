@@ -8,7 +8,7 @@ export type LoginCredentials = {
   // mfaCode is removed from initial login
 }
 
-export type SignupData = Omit<User, 'id'> & { verifiedToken?: string };
+export type SignupData = Omit<User, '_id'> & { verifiedToken?: string };
 
 export type ForgotPasswordData = {
     emailOrPhone: string;
