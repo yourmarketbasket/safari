@@ -10,6 +10,7 @@ import Message from "@/app/components/Message";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import SearchAndFilter from "@/app/components/SearchAndFilter";
 import Pagination from "@/app/components/Pagination";
+import ToggleSwitch from "@/app/components/ToggleSwitch";
 import UserDetailCard from "@/app/components/UserDetailCard";
 import { FiLoader, FiRefreshCw, FiMail, FiPhone } from "react-icons/fi";
 import { AxiosError } from "axios";
@@ -177,7 +178,7 @@ export default function SuperuserUsersPage() {
       if (isLoading) {
           return (
               <tr>
-                  <td colSpan={7} className="text-center py-8">
+                  <td colSpan={8} className="text-center py-8">
                       <FiLoader className="animate-spin text-purple-600 text-4xl mx-auto" />
                   </td>
               </tr>
@@ -187,7 +188,7 @@ export default function SuperuserUsersPage() {
       if (error) {
           return (
               <tr>
-                  <td colSpan={7} className="text-center py-8">
+                  <td colSpan={8} className="text-center py-8">
                       <div className="text-red-500 mb-4">{`Error: ${error.message}`}</div>
                       <button onClick={() => refetch()} className="flex items-center mx-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                           <FiRefreshCw className="mr-2" />
@@ -201,7 +202,7 @@ export default function SuperuserUsersPage() {
       if (paginatedUsers.length === 0) {
           return (
               <tr>
-                  <td colSpan={7} className="text-center py-8 text-gray-500">
+                  <td colSpan={8} className="text-center py-8 text-gray-500">
                       No users found.
                   </td>
               </tr>
@@ -220,6 +221,15 @@ export default function SuperuserUsersPage() {
             <div className="flex flex-col gap-1">
                 {user.verified ? <VerifiedChip verified={user.verified.email} type="email" /> : <VerifiedChip verified={false} type="email" />}
                 {user.verified ? <VerifiedChip verified={user.verified.phone} type="phone" /> : <VerifiedChip verified={false} type="phone" />}
+            </div>
+          </td>
+          <td className="py-4 px-6 text-left">
+            <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+                <ToggleSwitch
+                    isOn={user.approvedStatus === 'blocked'}
+                    onToggle={() => handleToggleBlock(user)}
+                    disabled={updateBlockStatusMutation.isPending}
+                />
             </div>
           </td>
         </tr>
@@ -253,6 +263,7 @@ export default function SuperuserUsersPage() {
                 <th className="py-3 px-6 text-left font-light cursor-pointer" onClick={() => requestSort('rank')}>Rank</th>
                 <th className="py-3 px-6 text-left font-light cursor-pointer" onClick={() => requestSort('approvedStatus')}>Status</th>
                 <th className="py-3 px-6 text-left font-light">Verified</th>
+                <th className="py-3 px-6 text-left font-light">Actions</th>
               </tr>
             </thead>
             <tbody className="text-gray-800 text-xs font-light">
@@ -311,11 +322,7 @@ export default function SuperuserUsersPage() {
                 </div>
             ) : (
                 <div>
-                    <UserDetailCard
-                        user={selectedUser}
-                        onToggleBlock={handleToggleBlock}
-                        isToggling={updateBlockStatusMutation.isPending}
-                    />
+                    <UserDetailCard user={selectedUser} />
                     <div className="flex justify-end gap-2 p-4 bg-gray-50 rounded-b-xl">
                         <button
                             onClick={() => setIsModalOpen(false)}

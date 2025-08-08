@@ -4,17 +4,14 @@ import React from 'react';
 import Image from 'next/image';
 import { User } from '../models/User.model';
 import { FiMail, FiPhone, FiShield, FiBriefcase, FiUser } from 'react-icons/fi';
-import ToggleSwitch from './ToggleSwitch';
 
 interface UserDetailCardProps {
   user: User;
-  onToggleBlock: (user: User) => void;
-  isToggling: boolean;
 }
 
-const UserDetailCard: React.FC<UserDetailCardProps> = ({ user, onToggleBlock, isToggling }) => {
+const UserDetailCard: React.FC<UserDetailCardProps> = ({ user }) => {
   return (
-    <div className="bg-white rounded-xl p-6">
+    <div className="bg-white rounded-xl p-6 max-h-96 overflow-y-auto">
         <div className="flex items-center space-x-4 mb-6">
             <div className="relative h-20 w-20 rounded-full flex items-center justify-center bg-gray-200 border-4 border-gray-300">
                 {user.avatar ? (
@@ -46,17 +43,6 @@ const UserDetailCard: React.FC<UserDetailCardProps> = ({ user, onToggleBlock, is
             <div className="flex items-center text-gray-600">
               <FiBriefcase className="w-5 h-5 mr-3 text-gray-400" />
               <span>Rank: {user.rank || 'N/A'}</span>
-            </div>
-            <div className="flex items-center justify-between text-gray-600">
-                <div className="flex items-center">
-                    <FiShield className="w-5 h-5 mr-3 text-gray-400" />
-                    <span className="font-semibold text-gray-700">Block User</span>
-                </div>
-                <ToggleSwitch
-                    isOn={user.approvedStatus === 'blocked'}
-                    onToggle={() => onToggleBlock(user)}
-                    disabled={isToggling}
-                />
             </div>
             <div className="flex items-start text-gray-600">
               <FiShield className="w-5 h-5 mr-3 text-gray-400 flex-shrink-0 mt-1" />
