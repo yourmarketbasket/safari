@@ -95,6 +95,21 @@ export default function PermissionManagementPage() {
     return Array.from(roles).sort();
   }, [permissions]);
 
+  const permissionStats = useMemo(() => {
+    if (!permissions) return {};
+    const stats: { [key: string]: number } = {};
+    permissions.forEach(permission => {
+      permission.roles.forEach(role => {
+        if (stats[role]) {
+          stats[role]++;
+        } else {
+          stats[role] = 1;
+        }
+      });
+    });
+    return stats;
+  }, [permissions]);
+
   const filteredAndSortedPermissions = useMemo(() => {
     let filtered = permissions || [];
 
@@ -106,7 +121,10 @@ export default function PermissionManagementPage() {
       filtered = filtered.filter(p => p.roles.includes(filterRole));
     }
 
-    filtered.sort((a, b) => {
+    // Create a new array to avoid sorting the original one in place
+    const sortedPermissions = [...filtered];
+
+    sortedPermissions.sort((a, b) => {
       if (sortOrder === 'asc') {
         return a.description.localeCompare(b.description);
       } else {
@@ -114,7 +132,7 @@ export default function PermissionManagementPage() {
       }
     });
 
-    return filtered;
+    return sortedPermissions;
   }, [permissions, searchTerm, filterRole, sortOrder]);
 
   const paginatedPermissions = useMemo(() => {
@@ -150,11 +168,22 @@ export default function PermissionManagementPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-end items-center mb-4">
-        <button onClick={() => setIsModalOpen(true)} className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            <FiPlus className="mr-2" />
-            Add Permissions
-        </button>
+      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+        <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-gray-800">Permissions Dashboard</h2>
+            <button onClick={() => setIsModalOpen(true)} className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <FiPlus className="mr-2" />
+                Add Permissions
+            </button>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {Object.entries(permissionStats).map(([role, count]) => (
+                <div key={role} className={`p-4 rounded-lg shadow ${getRoleColor(role)}`}>
+                    <h3 className="text-lg font-semibold">{role}</h3>
+                    <p className="text-3xl font-bold">{count}</p>
+                </div>
+            ))}
+        </div>
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
