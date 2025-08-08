@@ -19,11 +19,11 @@ const navLinks = [
       { name: 'Manage Support Staff', href: '/superuser/head-office/support-staff', icon: <FiUsers /> },
       { name: 'Managers and Supervisors', href: '/superuser/head-office/managers-and-supervisors', icon: <FiUsers /> },
       { name: 'Permission Management', href: '/superuser/head-office/permission-management', icon: <FiShield /> },
+      { name: 'Users', href: '/superuser/head-office/users', icon: <FiUsers /> },
+      { name: 'Saccos', href: '/superuser/head-office/sacco-management', icon: <FiBriefcase /> },
+      { name: 'Support', href: '/superuser/head-office/support-management', icon: <FiHelpCircle /> },
     ]
   },
-  { name: 'Users', href: '/superuser/users', icon: <FiUsers /> },
-  { name: 'Saccos', href: '/superuser/sacco-management', icon: <FiBriefcase /> },
-  { name: 'Support', href: '/superuser/support-management', icon: <FiHelpCircle /> },
   { name: 'Fees', href: '/superuser/fees-management', icon: <FiDollarSign /> },
   { name: 'Wallets', href: '/superuser/wallet-management', icon: <FiDollarSign /> },
   { name: 'Settings', href: '/superuser/settings', icon: <FiSettings /> },
@@ -61,7 +61,7 @@ export default function SuperuserSidebar() {
                 {!isCollapsed && <span className="ml-3 flex-1 text-left">{link.name}</span>}
                 {!isCollapsed && <FiChevronDown className={`w-5 h-5 transition-transform ${openMenu === link.name ? 'rotate-180' : ''}`} />}
               </button>
-              {openMenu === link.name && !isCollapsed && (
+              {openMenu === link.name && !isCollapsed && link.children && (
                 <div className="pl-8 py-2 space-y-2">
                   {link.children.map((child) => (
                     <Link
