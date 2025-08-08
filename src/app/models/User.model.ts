@@ -9,6 +9,21 @@ export type UserRole =
   | "superuser"
   | "headoffice";
 
+export type UserRank =
+  | "CEO"
+  | "CFO"
+  | "COO"
+  | "CTO"
+  | "VP"
+  | "Director"
+  | "Manager"
+  | "Supervisor"
+  | "Team Lead"
+  | "Staff"
+  | "Intern";
+
+export type UserStatus = "pending" | "approved" | "rejected" | "active" | "inactive";
+
 export interface User {
   id: string;
   name: string;
@@ -18,4 +33,7 @@ export interface User {
   password?: string; // Password should typically not be exposed on the frontend
   role: UserRole;
   mfaSecret?: string; // Optional, for Superuser/support staff
+  rank?: UserRank;
+  status?: UserStatus;
+  permissions?: string[];
 }

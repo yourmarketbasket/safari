@@ -6,31 +6,12 @@ import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
 import { FaUserShield, FaUsers, FaUserTie, FaCar, FaUser, FaClipboardList } from 'react-icons/fa';
 import { RiAdminLine } from 'react-icons/ri';
 import { BiSupport } from 'react-icons/bi';
-import { permissions as initialPermissions, Permission } from '../../../data/permissions';
+import { Permission } from '../../../models/Permission.model';
 import Modal from '../../../components/Modal';
 import SearchAndFilter from '../../../components/SearchAndFilter';
 import Pagination from '../../../components/Pagination';
 import { usePageTitleStore } from '../../../store/pageTitle.store';
-
-// Mock API functions
-const getPermissions = async (): Promise<Permission[]> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return initialPermissions;
-};
-
-const addPermission = async (newPermission: Omit<Permission, 'permissionNumber'>): Promise<Permission> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const permission = { ...newPermission, permissionNumber: `P${Math.floor(Math.random() * 1000)}` };
-  console.log('Adding permission:', permission);
-  return permission;
-};
-
-const bulkAddPermissions = async (newPermissions: Omit<Permission, 'permissionNumber'>[]): Promise<Permission[]> => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const permissionsWithIds = newPermissions.map(p => ({ ...p, permissionNumber: `P${Math.floor(Math.random() * 1000)}` }));
-    console.log('Bulk adding permissions:', permissionsWithIds);
-    return permissionsWithIds;
-  };
+import superuserService from '@/app/services/superuser.service';
 
 const roleColorMap: { [key: string]: string } = {
   Superuser: 'bg-red-200 text-red-800',
@@ -66,6 +47,8 @@ export default function PermissionManagementPage() {
 
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedPermission, setSelectedPermission] = useState<Permission | null>(null);
   const [activeTab, setActiveTab] = useState('single');
   const [newPermission, setNewPermission] = useState<Omit<Permission, 'permissionNumber'>>({
     description: '',
@@ -84,22 +67,37 @@ export default function PermissionManagementPage() {
 
   const { data: permissions, isLoading, error } = useQuery<Permission[], Error>({
     queryKey: ['permissions'],
-    queryFn: getPermissions,
+    queryFn: superuserService.getAllPermissions,
   });
 
-  const { mutate: createPermission, isPending: isAdding } = useMutation<Permission, Error, Omit<Permission, 'permissionNumber'>>({
-    mutationFn: addPermission,
+  const createPermissionMutation = useMutation<Permission, Error, Omit<Permission, 'permissionNumber'>>({
+    mutationFn: superuserService.createPermission,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
       setIsModalOpen(false);
     },
   });
 
-  const { mutate: bulkCreatePermissions, isPending: isBulkAdding } = useMutation<Permission[], Error, Omit<Permission, 'permissionNumber'>[]>({
-    mutationFn: bulkAddPermissions,
+  const bulkCreatePermissionsMutation = useMutation<Permission[], Error, Omit<Permission, 'permissionNumber'>[]>({
+    mutationFn: superuserService.createPermissions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
       setIsModalOpen(false);
+    },
+  });
+
+  const updatePermissionMutation = useMutation<Permission, Error, Permission>({
+    mutationFn: (permission) => superuserService.updatePermission(permission.permissionNumber, permission),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['permissions'] });
+      setIsModalOpen(false);
+    },
+  });
+
+    const deletePermissionMutation = useMutation<void, Error, string>({
+    mutationFn: (permissionNumber) => superuserService.deletePermission(permissionNumber),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['permissions'] });
     },
   });
 
@@ -135,7 +133,6 @@ export default function PermissionManagementPage() {
       filtered = filtered.filter(p => p.roles.includes(filterRole));
     }
 
-    // Create a new array to avoid sorting the original one in place
     const sortedPermissions = [...filtered];
 
     sortedPermissions.sort((a, b) => {
@@ -166,18 +163,50 @@ export default function PermissionManagementPage() {
     setNewPermission(prev => ({ ...prev, roles: e.target.value.split(',').map(r => r.trim()) }));
   };
 
+  const handleEdit = (permission: Permission) => {
+    setIsEditMode(true);
+    setSelectedPermission(permission);
+    setNewPermission(permission);
+    setRolesInput(permission.roles.join(', '));
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (permissionNumber: string) => {
+    if (window.confirm('Are you sure you want to delete this permission?')) {
+      deletePermissionMutation.mutate(permissionNumber);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createPermission(newPermission);
+    if (isEditMode && selectedPermission) {
+        updatePermissionMutation.mutate({ ...newPermission, permissionNumber: selectedPermission.permissionNumber });
+    } else {
+        createPermissionMutation.mutate(newPermission);
+    }
   };
 
   const handleBulkSubmit = () => {
     try {
       const parsedPermissions = JSON.parse(bulkJson);
-      bulkCreatePermissions(parsedPermissions);
+      bulkCreatePermissionsMutation.mutate(parsedPermissions);
     } catch {
       alert('Invalid JSON format.');
     }
+  };
+
+  const openAddModal = () => {
+    setIsEditMode(false);
+    setSelectedPermission(null);
+    setNewPermission({
+      description: '',
+      roles: [],
+      modulePage: '',
+      httpMethod: 'GET',
+      constraints: '',
+    });
+    setRolesInput('');
+    setIsModalOpen(true);
   };
 
   return (
@@ -185,7 +214,7 @@ export default function PermissionManagementPage() {
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold text-gray-800">Permissions Dashboard</h2>
-            <button onClick={() => setIsModalOpen(true)} className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button onClick={openAddModal} className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                 <FiPlus className="mr-2" />
                 Add Permissions
             </button>
@@ -219,7 +248,7 @@ export default function PermissionManagementPage() {
         </div>
         {activeTab === 'single' && (
             <div>
-                <h2 className="text-2xl font-semibold mb-4 text-gray-900">Add New Permission</h2>
+                <h2 className="text-2xl font-semibold mb-4 text-gray-900">{isEditMode ? 'Edit Permission' : 'Add New Permission'}</h2>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <input name="description" value={newPermission.description} onChange={handleInputChange} placeholder="Description" className="p-2 border border-gray-400 rounded text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500" />
                     <input name="roles" value={rolesInput} onChange={handleRolesChange} placeholder="Roles (comma-separated)" className="p-2 border border-gray-400 rounded text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500" />
@@ -231,8 +260,8 @@ export default function PermissionManagementPage() {
                         <option>DELETE</option>
                     </select>
                     <input name="constraints" value={newPermission.constraints} onChange={handleInputChange} placeholder="Constraints" className="p-2 border border-gray-400 rounded text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500 md:col-span-2" />
-                    <button type="submit" disabled={isAdding} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400 md:col-span-2">
-                        {isAdding ? 'Adding...' : 'Add Permission'}
+                    <button type="submit" disabled={createPermissionMutation.isPending || updatePermissionMutation.isPending} className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400 md:col-span-2">
+                        {createPermissionMutation.isPending || updatePermissionMutation.isPending ? 'Saving...' : 'Save Permission'}
                     </button>
                 </form>
             </div>
@@ -246,8 +275,8 @@ export default function PermissionManagementPage() {
                 placeholder="Paste JSON array of permissions here..."
                 className="w-full h-32 p-2 border rounded mb-4"
                 />
-                <button onClick={handleBulkSubmit} disabled={isBulkAdding} className="bg-green-500 text-white p-2 rounded hover:bg-green-600 disabled:bg-gray-400">
-                {isBulkAdding ? 'Adding...' : 'Bulk Add Permissions'}
+                <button onClick={handleBulkSubmit} disabled={bulkCreatePermissionsMutation.isPending} className="bg-green-500 text-white p-2 rounded hover:bg-green-600 disabled:bg-gray-400">
+                {bulkCreatePermissionsMutation.isPending ? 'Adding...' : 'Bulk Add Permissions'}
                 </button>
             </div>
         )}
@@ -264,7 +293,6 @@ export default function PermissionManagementPage() {
         onSortChange={setSortOrder}
       />
 
-      {/* Permissions Table */}
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           {isLoading && <p className="p-4">Loading permissions...</p>}
@@ -291,8 +319,8 @@ export default function PermissionManagementPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-normal">
-                    <button className="text-indigo-600 hover:text-indigo-900"><FiEdit size={18} /></button>
-                    <button className="text-red-600 hover:text-red-900 ml-4"><FiTrash2 size={18} /></button>
+                    <button onClick={() => handleEdit(permission)} className="text-indigo-600 hover:text-indigo-900"><FiEdit size={18} /></button>
+                    <button onClick={() => handleDelete(permission.permissionNumber)} className="text-red-600 hover:text-red-900 ml-4"><FiTrash2 size={18} /></button>
                   </td>
                 </tr>
               ))}
