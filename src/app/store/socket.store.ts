@@ -10,6 +10,8 @@ interface SocketState {
   disconnect: () => void;
 }
 
+// export const useSocketStore = create<SocketState>((set) => ({}));
+
 const useSocketStore = create<SocketState>((set, get) => ({
   socket: null,
   isConnected: false,
