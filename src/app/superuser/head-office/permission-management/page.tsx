@@ -29,11 +29,6 @@ const bulkAddPermissions = async (newPermissions: Omit<Permission, 'permissionNu
     return permissionsWithIds;
   };
 
-type SortConfig = {
-    key: keyof Permission;
-    direction: 'ascending' | 'descending';
-};
-
 const roleColorMap: { [key: string]: string } = {
   Superuser: 'bg-red-200 text-red-800',
   Admin: 'bg-blue-200 text-blue-800',
@@ -69,7 +64,7 @@ export default function PermissionManagementPage() {
   const [rolesInput, setRolesInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
-  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -111,20 +106,16 @@ export default function PermissionManagementPage() {
       filtered = filtered.filter(p => p.roles.includes(filterRole));
     }
 
-    if (sortConfig !== null) {
-      filtered.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
+    filtered.sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.description.localeCompare(b.description);
+      } else {
+        return b.description.localeCompare(a.description);
+      }
+    });
 
     return filtered;
-  }, [permissions, searchTerm, filterRole, sortConfig]);
+  }, [permissions, searchTerm, filterRole, sortOrder]);
 
   const paginatedPermissions = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -132,14 +123,6 @@ export default function PermissionManagementPage() {
   }, [filteredAndSortedPermissions, currentPage, itemsPerPage]);
 
   const totalPages = Math.ceil(filteredAndSortedPermissions.length / itemsPerPage);
-
-  const requestSort = (key: keyof Permission) => {
-    let direction: 'ascending' | 'descending' = 'ascending';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -222,6 +205,8 @@ export default function PermissionManagementPage() {
         onFilterChange={setFilterRole}
         filterOptions={allRoles}
         filterPlaceholder="Filter by Role"
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
       />
 
       {/* Permissions Table */}
@@ -232,8 +217,8 @@ export default function PermissionManagementPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th onClick={() => requestSort('permissionNumber')} className="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                <th onClick={() => requestSort('description')} className="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                <th className="cursor-pointer px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Roles</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
