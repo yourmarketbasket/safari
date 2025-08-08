@@ -3,6 +3,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
+import { FaUserShield, FaUsers, FaUserTie, FaCar, FaUser, FaClipboardList } from 'react-icons/fa';
+import { RiAdminLine } from 'react-icons/ri';
+import { BiSupport } from 'react-icons/bi';
 import { permissions as initialPermissions, Permission } from '../../../data/permissions';
 import Modal from '../../../components/Modal';
 import SearchAndFilter from '../../../components/SearchAndFilter';
@@ -42,6 +45,17 @@ const roleColorMap: { [key: string]: string } = {
 
 const getRoleColor = (role: string) => {
   return roleColorMap[role] || 'bg-gray-200 text-gray-800';
+};
+
+const roleIconMap: { [key: string]: React.ElementType } = {
+    Superuser: FaUserShield,
+    Admin: RiAdminLine,
+    'Support Staff': BiSupport,
+    Sacco: FaUsers,
+    Owner: FaUserTie,
+    'Queue Manager': FaClipboardList,
+    Driver: FaCar,
+    Passenger: FaUser,
 };
 
 export default function PermissionManagementPage() {
@@ -177,12 +191,21 @@ export default function PermissionManagementPage() {
             </button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {Object.entries(permissionStats).map(([role, count]) => (
-                <div key={role} className={`p-4 rounded-lg shadow ${getRoleColor(role)}`}>
-                    <h3 className="text-lg font-semibold">{role}</h3>
-                    <p className="text-3xl font-bold">{count}</p>
-                </div>
-            ))}
+            {Object.entries(permissionStats).map(([role, count]) => {
+                const Icon = roleIconMap[role] || FaUser;
+                return (
+                    <div key={role} className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 h-40 flex flex-col justify-between">
+                        <div className="flex justify-between items-start">
+                            <h3 className="text-xl font-semibold text-gray-700">{role}</h3>
+                            <Icon className="text-3xl text-gray-400" />
+                        </div>
+                        <div>
+                            <p className="text-5xl font-bold text-gray-900">{count}</p>
+                            <p className="text-sm text-gray-500">Permissions</p>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
       </div>
 
