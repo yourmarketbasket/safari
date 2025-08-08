@@ -3,6 +3,13 @@ import { User, UserRank, UserStatus } from '../models/User.model';
 import { Permission } from '../models/Permission.model';
 import axios from 'axios';
 
+export type ApiResponse<T> = {
+  success: boolean;
+  data: T;
+  message?: string;
+  error?: string;
+}
+
 export type LoginCredentials = {
   emailOrPhone: string;
   password?: string;
@@ -60,7 +67,7 @@ export const sendSignupOtp = async (email: string): Promise<void> => {
  * Verifies the signup OTP.
  */
 export const verifySignupOtp = async (email: string, otp: string): Promise<string> => {
-  const response = await api.post('/auth/verify-otp', { email, otp });
+  const response = await api.post<ApiResponse<{ verifiedToken: string }>>('/auth/verify-otp', { email, otp });
   return response.data.data.verifiedToken;
 };
 
@@ -77,68 +84,68 @@ export const addSupportStaff = async (staffData: NewStaffData): Promise<User> =>
 
 // User Management
 export const getAllUsers = async (): Promise<User[]> => {
-  const response = await api.get('/users');
-  return response.data;
+  const response = await api.get<ApiResponse<User[]>>('/users');
+  return response.data.data;
 };
 
 export const getUserById = async (id: string): Promise<User> => {
-  const response = await api.get(`/users/${id}`);
-  return response.data;
+  const response = await api.get<ApiResponse<User>>(`/users/${id}`);
+  return response.data.data;
 };
 
 export const updateUserStatus = async (id: string, status: UserStatus): Promise<User> => {
-  const response = await api.put(`/users/${id}/status`, { status });
-  return response.data;
+  const response = await api.put<ApiResponse<User>>(`/users/${id}/status`, { status });
+  return response.data.data;
 };
 
 export const updateUserRank = async (id: string, rank: UserRank): Promise<User> => {
-  const response = await api.put(`/users/${id}/rank`, { rank });
-  return response.data;
+  const response = await api.put<ApiResponse<User>>(`/users/${id}/rank`, { rank });
+  return response.data.data;
 };
 
 export const addUserPermission = async (id: string, permission: string): Promise<User> => {
-  const response = await api.post(`/users/${id}/permissions`, { permission });
-  return response.data;
+  const response = await api.post<ApiResponse<User>>(`/users/${id}/permissions`, { permission });
+  return response.data.data;
 };
 
 export const addUserPermissions = async (id: string, permissions: string[]): Promise<User> => {
-    const response = await api.post(`/users/${id}/permissions`, { permissions });
-    return response.data;
+    const response = await api.post<ApiResponse<User>>(`/users/${id}/permissions`, { permissions });
+    return response.data.data;
 };
 
 export const removeUserPermission = async (id: string, permission: string): Promise<User> => {
-  const response = await api.delete(`/users/${id}/permissions/${permission}`);
-  return response.data;
+  const response = await api.delete<ApiResponse<User>>(`/users/${id}/permissions/${permission}`);
+  return response.data.data;
 };
 
 // Permission Management
 export const createPermission = async (permission: Omit<Permission, 'permissionNumber'>): Promise<Permission> => {
-  const response = await api.post('/permissions', permission);
-  return response.data;
+  const response = await api.post<ApiResponse<Permission>>('/permissions', permission);
+  return response.data.data;
 };
 
 export const createPermissions = async (permissions: Omit<Permission, 'permissionNumber'>[]): Promise<Permission[]> => {
-    const response = await api.post('/permissions', permissions);
-    return response.data;
+    const response = await api.post<ApiResponse<Permission[]>>('/permissions', permissions);
+    return response.data.data;
 };
 
 export const getAllPermissions = async (): Promise<Permission[]> => {
-  const response = await api.get('/permissions');
-  return response.data;
+  const response = await api.get<ApiResponse<Permission[]>>('/permissions');
+  return response.data.data;
 };
 
 export const getPermissionById = async (id: string): Promise<Permission> => {
-  const response = await api.get(`/permissions/${id}`);
-  return response.data;
+  const response = await api.get<ApiResponse<Permission>>(`/permissions/${id}`);
+  return response.data.data;
 };
 
 export const updatePermission = async (id: string, permission: Partial<Permission>): Promise<Permission> => {
-  const response = await api.put(`/permissions/${id}`, permission);
-  return response.data;
+  const response = await api.put<ApiResponse<Permission>>(`/permissions/${id}`, permission);
+  return response.data.data;
 };
 
 export const deletePermission = async (id: string): Promise<void> => {
-  await api.delete(`/permissions/${id}`);
+  await api.delete<ApiResponse<object>>(`/permissions/${id}`);
 };
 
 const superuserService = {
