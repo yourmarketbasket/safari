@@ -22,7 +22,7 @@ export type UserRank =
   | "Staff"
   | "Intern";
 
-export type UserStatus = "pending" | "approved" | "rejected" | "active" | "inactive";
+export type UserStatus = "pending" | "approved" | "rejected" | "active" | "inactive" | "suspended";
 
 export interface User {
   id: string;
@@ -34,6 +34,10 @@ export interface User {
   role: UserRole;
   mfaSecret?: string; // Optional, for Superuser/support staff
   rank?: UserRank;
-  status?: UserStatus;
+  approvedStatus?: UserStatus;
   permissions?: string[];
+  verified?: {
+    email: boolean;
+    phone: boolean;
+  };
 }

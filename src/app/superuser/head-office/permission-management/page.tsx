@@ -372,10 +372,9 @@ export default function PermissionManagementPage() {
       <SearchAndFilter
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
-        filterValue={filterRole}
-        onFilterChange={setFilterRole}
-        filterOptions={allRoles}
-        filterPlaceholder="Filter by Role"
+        filters={[
+            { value: filterRole, onChange: setFilterRole, options: allRoles, placeholder: "Filter by Role" }
+        ]}
         sortOrder={sortOrder}
         onSortChange={setSortOrder}
       />
