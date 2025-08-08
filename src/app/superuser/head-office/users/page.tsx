@@ -10,6 +10,7 @@ import Message from "@/app/components/Message";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import SearchAndFilter from "@/app/components/SearchAndFilter";
 import Pagination from "@/app/components/Pagination";
+import ToggleSwitch from "@/app/components/ToggleSwitch";
 import { FiEdit, FiLoader, FiRefreshCw, FiMail, FiPhone } from "react-icons/fi";
 import { AxiosError } from "axios";
 
@@ -18,17 +19,15 @@ const ranks: UserRank[] = [
   "Supervisor", "Team Lead", "Staff", "Intern"
 ];
 
-const statuses: UserStatus[] = ["pending", "approved", "rejected", "active", "inactive", "suspended"];
+const statuses: UserStatus[] = ['pending', 'approved', 'suspended', 'blocked'];
 const roles: UserRole[] = ["passenger", "sacco", "owner", "queue_manager", "driver", "support_staff", "admin", "superuser", "headoffice"];
 
 const StatusChip = ({ status }: { status: UserStatus }) => {
     const colorMap: Record<UserStatus, string> = {
         pending: 'bg-yellow-200 text-yellow-800',
         approved: 'bg-green-200 text-green-800',
-        rejected: 'bg-red-200 text-red-800',
-        active: 'bg-blue-200 text-blue-800',
-        inactive: 'bg-gray-200 text-gray-800',
         suspended: 'bg-orange-200 text-orange-800',
+        blocked: 'bg-red-200 text-red-800',
     };
     return <span className={`px-2 py-1 text-xs font-medium rounded-full ${colorMap[status] || 'bg-gray-200'}`}>{status}</span>;
 };
@@ -69,6 +68,12 @@ export default function SuperuserUsersPage() {
     queryFn: () => superuserService.getAllUsers(),
   });
 
+  const handleApiError = (error: Error, defaultMessage: string) => {
+    const axiosError = error as AxiosError<{ message?: string; error?: string }>;
+    const errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || defaultMessage;
+    setNotification({ message: errorMessage, type: 'error' });
+  };
+
   const updateUserMutation = useMutation({
     mutationFn: (user: User) => {
         if (!user || !user.id) {
@@ -92,11 +97,18 @@ export default function SuperuserUsersPage() {
       setSelectedUser(null);
       setNotification({ message: "User updated successfully!", type: 'success' });
     },
-    onError: (error: Error) => {
-        const axiosError = error as AxiosError<{ message?: string; error?: string }>;
-        const errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred.";
-        setNotification({ message: errorMessage, type: 'error' });
-    }
+    onError: (error: Error) => handleApiError(error, "Failed to update user."),
+  });
+
+  const updateBlockStatusMutation = useMutation({
+    mutationFn: ({ userId, status }: { userId: string, status: UserStatus }) => {
+        return superuserService.updateUserStatus(userId, status);
+    },
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+        setNotification({ message: "User status updated successfully!", type: 'success' });
+    },
+    onError: (error: Error) => handleApiError(error, "Failed to update user status."),
   });
 
   const sortedAndFilteredUsers = useMemo(() => {
@@ -153,6 +165,11 @@ export default function SuperuserUsersPage() {
     }
   };
 
+  const handleToggleBlock = (user: User) => {
+    const newStatus = user.approvedStatus === 'blocked' ? 'approved' : 'blocked';
+    updateBlockStatusMutation.mutate({ userId: user.id, status: newStatus });
+  };
+
   const renderTableContent = () => {
       if (isLoading) {
           return (
@@ -202,9 +219,16 @@ export default function SuperuserUsersPage() {
             </div>
           </td>
           <td className="py-4 px-6 text-left">
-            <button onClick={() => handleEdit(user)} className="text-indigo-600 hover:text-indigo-900">
-              <FiEdit size={18} />
-            </button>
+            <div className="flex items-center gap-4">
+                <button onClick={() => handleEdit(user)} className="text-indigo-600 hover:text-indigo-900">
+                  <FiEdit size={18} />
+                </button>
+                <ToggleSwitch
+                    isOn={user.approvedStatus === 'blocked'}
+                    onToggle={() => handleToggleBlock(user)}
+                    disabled={updateBlockStatusMutation.isPending}
+                />
+            </div>
           </td>
         </tr>
       ));
@@ -214,6 +238,7 @@ export default function SuperuserUsersPage() {
     <div>
         {notification && <Message message={notification.message} type={notification.type} />}
         {updateUserMutation.isPending && <LoadingOverlay />}
+        {updateBlockStatusMutation.isPending && <LoadingOverlay />}
       <div className="bg-white p-8 rounded-2xl shadow-xl mt-4">
         <SearchAndFilter
             searchTerm={searchTerm}
@@ -258,7 +283,7 @@ export default function SuperuserUsersPage() {
                     <select
                         value={updatedRank || ''}
                         onChange={(e) => setUpdatedRank(e.target.value as UserRank)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                     >
                         <option value="" disabled>Select a rank</option>
                         {ranks.map(rank => <option key={rank} value={rank}>{rank}</option>)}
@@ -269,7 +294,7 @@ export default function SuperuserUsersPage() {
                     <select
                         value={updatedStatus || ''}
                         onChange={(e) => setUpdatedStatus(e.target.value as UserStatus)}
-                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                     >
                          <option value="" disabled>Select a status</option>
                         {statuses.map(status => <option key={status} value={status}>{status}</option>)}

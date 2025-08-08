@@ -22,7 +22,7 @@ export type UserRank =
   | "Staff"
   | "Intern";
 
-export type UserStatus = "pending" | "approved" | "rejected" | "active" | "inactive" | "suspended";
+export type UserStatus = 'pending' | 'approved' | 'suspended' | 'blocked';
 
 export interface User {
   id: string;
