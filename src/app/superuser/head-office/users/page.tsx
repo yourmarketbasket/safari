@@ -8,7 +8,7 @@ import { User, UserRank, UserStatus } from "@/app/models/User.model";
 import Modal from "@/app/components/Modal";
 import Message from "@/app/components/Message";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
-import { FiEdit, FiLoader } from "react-icons/fi";
+import { FiEdit, FiLoader, FiRefreshCw } from "react-icons/fi";
 import { AxiosError } from "axios";
 
 const ranks: UserRank[] = [
@@ -32,7 +32,7 @@ export default function SuperuserUsersPage() {
     setTitle("User Management");
   }, [setTitle]);
 
-  const { data: users, isLoading, error } = useQuery<User[], Error>({
+  const { data: users, isLoading, error, refetch } = useQuery<User[], Error>({
     queryKey: ["users"],
     queryFn: () => superuserService.getAllUsers(),
   });
@@ -61,8 +61,8 @@ export default function SuperuserUsersPage() {
       setNotification({ message: "User updated successfully!", type: 'success' });
     },
     onError: (error: Error) => {
-        const axiosError = error as AxiosError<{ message: string }>;
-        const errorMessage = axiosError.response?.data?.message || "An unexpected error occurred.";
+        const axiosError = error as AxiosError<{ message?: string; error?: string }>;
+        const errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred.";
         setNotification({ message: errorMessage, type: 'error' });
     }
   });
@@ -90,17 +90,56 @@ export default function SuperuserUsersPage() {
     }
   };
 
-  if (isLoading) return (
-    <div className="flex justify-center items-center h-64">
-        <FiLoader className="animate-spin text-purple-600 text-4xl" />
-    </div>
-  );
+  const renderTableContent = () => {
+      if (isLoading) {
+          return (
+              <tr>
+                  <td colSpan={6} className="text-center py-8">
+                      <FiLoader className="animate-spin text-purple-600 text-4xl mx-auto" />
+                  </td>
+              </tr>
+          );
+      }
 
-  if (error) return (
-    <div className="p-4">
-        <Message message={`Error: ${error.message}`} type="error" />
-    </div>
-  );
+      if (error) {
+          return (
+              <tr>
+                  <td colSpan={6} className="text-center py-8">
+                      <div className="text-red-500 mb-4">{`Error: ${error.message}`}</div>
+                      <button onClick={() => refetch()} className="flex items-center mx-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                          <FiRefreshCw className="mr-2" />
+                          Refresh
+                      </button>
+                  </td>
+              </tr>
+          );
+      }
+
+      if (filteredUsers.length === 0) {
+          return (
+              <tr>
+                  <td colSpan={6} className="text-center py-8 text-gray-500">
+                      No users found.
+                  </td>
+              </tr>
+          );
+      }
+
+      return filteredUsers.map((user) => (
+        <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-100">
+          <td className="py-4 px-6 text-left whitespace-nowrap">{user.name}</td>
+          <td className="py-4 px-6 text-left">{user.email}</td>
+          <td className="py-4 px-6 text-left">{user.role}</td>
+          <td className="py-4 px-6 text-left">{user.rank || "N/A"}</td>
+          <td className="py-4 px-6 text-left">{user.status || "N/A"}</td>
+          <td className="py-4 px-6 text-left">
+            <button onClick={() => handleEdit(user)} className="text-indigo-600 hover:text-indigo-900">
+              <FiEdit size={18} />
+            </button>
+          </td>
+        </tr>
+      ));
+  }
 
   return (
     <div>
@@ -126,20 +165,7 @@ export default function SuperuserUsersPage() {
               </tr>
             </thead>
             <tbody className="text-gray-800 text-xs font-light">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-100">
-                  <td className="py-4 px-6 text-left whitespace-nowrap">{user.name}</td>
-                  <td className="py-4 px-6 text-left">{user.email}</td>
-                  <td className="py-4 px-6 text-left">{user.role}</td>
-                  <td className="py-4 px-6 text-left">{user.rank || "N/A"}</td>
-                  <td className="py-4 px-6 text-left">{user.status || "N/A"}</td>
-                  <td className="py-4 px-6 text-left">
-                    <button onClick={() => handleEdit(user)} className="text-indigo-600 hover:text-indigo-900">
-                      <FiEdit size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {renderTableContent()}
             </tbody>
           </table>
         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FiEdit, FiTrash2, FiPlus, FiLoader } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlus, FiLoader, FiRefreshCw } from 'react-icons/fi';
 import { FaUserShield, FaUsers, FaUserTie, FaCar, FaUser, FaClipboardList } from 'react-icons/fa';
 import { RiAdminLine } from 'react-icons/ri';
 import { BiSupport } from 'react-icons/bi';
@@ -42,6 +42,9 @@ const roleIconMap: { [key: string]: React.ElementType } = {
     Passenger: FaUser,
 };
 
+const ALL_ROLES = ['Superuser', 'Admin', 'Support Staff', 'Sacco', 'Owner', 'Queue Manager', 'Driver', 'Passenger'];
+
+
 export default function PermissionManagementPage() {
   const { setTitle } = usePageTitleStore();
   useEffect(() => {
@@ -69,14 +72,14 @@ export default function PermissionManagementPage() {
   const itemsPerPage = 10;
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  const { data: permissions, isLoading, error } = useQuery<Permission[], Error>({
+  const { data: permissions, isLoading, error, refetch } = useQuery<Permission[], Error>({
     queryKey: ['permissions'],
     queryFn: superuserService.getAllPermissions,
   });
 
   const handleApiError = (error: Error, defaultMessage: string) => {
-    const axiosError = error as AxiosError<{ message: string }>;
-    const errorMessage = axiosError.response?.data?.message || defaultMessage;
+    const axiosError = error as AxiosError<{ message?: string; error?: string }>;
+    const errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || defaultMessage;
     setNotification({ message: errorMessage, type: 'error' });
   };
 
@@ -120,28 +123,31 @@ export default function PermissionManagementPage() {
   });
 
   const allRoles = useMemo(() => {
+    if (!permissions) return ALL_ROLES;
     const roles = new Set<string>();
     permissions?.forEach(p => p.roles.forEach(r => roles.add(r)));
     return Array.from(roles).sort();
   }, [permissions]);
 
   const permissionStats = useMemo(() => {
-    if (!permissions) return {};
     const stats: { [key: string]: number } = {};
-    permissions.forEach(permission => {
-      permission.roles.forEach(role => {
-        if (stats[role]) {
-          stats[role]++;
-        } else {
-          stats[role] = 1;
-        }
-      });
-    });
+    ALL_ROLES.forEach(role => stats[role] = 0);
+
+    if (permissions) {
+        permissions.forEach(permission => {
+            permission.roles.forEach(role => {
+                if (stats.hasOwnProperty(role)) {
+                    stats[role]++;
+                }
+            });
+        });
+    }
     return stats;
   }, [permissions]);
 
   const filteredAndSortedPermissions = useMemo(() => {
-    let filtered = permissions || [];
+    if (!permissions) return [];
+    let filtered = permissions;
 
     if (searchTerm) {
       filtered = filtered.filter(p => p.description.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -234,17 +240,59 @@ export default function PermissionManagementPage() {
                             deletePermissionMutation.isPending ||
                             bulkCreatePermissionsMutation.isPending;
 
-  if (isLoading) return (
-    <div className="flex justify-center items-center h-64">
-        <FiLoader className="animate-spin text-purple-600 text-4xl" />
-    </div>
-  );
+  const renderTableContent = () => {
+    if (isLoading) {
+        return (
+            <tr>
+                <td colSpan={4} className="text-center py-8">
+                    <FiLoader className="animate-spin text-purple-600 text-4xl mx-auto" />
+                </td>
+            </tr>
+        );
+    }
 
-  if (error) return (
-    <div className="p-4">
-        <Message message={`Error: ${error.message}`} type="error" />
-    </div>
-  );
+    if (error) {
+        return (
+            <tr>
+                <td colSpan={4} className="text-center py-8">
+                    <div className="text-red-500 mb-4">{`Error: ${error.message}`}</div>
+                    <button onClick={() => refetch()} className="flex items-center mx-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        <FiRefreshCw className="mr-2" />
+                        Refresh
+                    </button>
+                </td>
+            </tr>
+        );
+    }
+
+    if (paginatedPermissions.length === 0) {
+        return (
+            <tr>
+                <td colSpan={4} className="text-center py-8 text-gray-500">
+                    No permissions found.
+                </td>
+            </tr>
+        );
+    }
+
+    return paginatedPermissions.map((permission) => (
+        <tr key={permission.permissionNumber}>
+          <td className="px-6 py-4 whitespace-nowrap text-gray-900 text-xs">{permission.permissionNumber}</td>
+          <td className="px-6 py-4 whitespace-normal text-gray-900 text-xs">{permission.description}</td>
+          <td className="px-6 py-4 whitespace-normal">
+            <div className="flex flex-wrap gap-1">
+              {permission.roles.map(role => (
+                <span key={role} className={`px-2 py-1 text-xs font-light rounded-full ${getRoleColor(role)}`}>{role}</span>
+              ))}
+            </div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap text-sm font-normal">
+            <button onClick={() => handleEdit(permission)} className="text-indigo-600 hover:text-indigo-900"><FiEdit size={18} /></button>
+            <button onClick={() => handleDelete(permission.permissionNumber)} className="text-red-600 hover:text-red-900 ml-4"><FiTrash2 size={18} /></button>
+          </td>
+        </tr>
+      ));
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -271,7 +319,7 @@ export default function PermissionManagementPage() {
                             <Icon className={`text-3xl ${textColor}`} />
                         </div>
                         <div>
-                            <p className="text-5xl font-bold text-gray-900">{count}</p>
+                            <p className="text-5xl font-bold text-gray-900">{isLoading ? <FiLoader className="animate-spin" /> : count}</p>
                             <p className="text-sm text-gray-500">Permissions</p>
                         </div>
                     </div>
@@ -344,23 +392,7 @@ export default function PermissionManagementPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {paginatedPermissions.map((permission) => (
-                <tr key={permission.permissionNumber}>
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-900 text-xs">{permission.permissionNumber}</td>
-                  <td className="px-6 py-4 whitespace-normal text-gray-900 text-xs">{permission.description}</td>
-                  <td className="px-6 py-4 whitespace-normal">
-                    <div className="flex flex-wrap gap-1">
-                      {permission.roles.map(role => (
-                        <span key={role} className={`px-2 py-1 text-xs font-light rounded-full ${getRoleColor(role)}`}>{role}</span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-normal">
-                    <button onClick={() => handleEdit(permission)} className="text-indigo-600 hover:text-indigo-900"><FiEdit size={18} /></button>
-                    <button onClick={() => handleDelete(permission.permissionNumber)} className="text-red-600 hover:text-red-900 ml-4"><FiTrash2 size={18} /></button>
-                  </td>
-                </tr>
-              ))}
+              {renderTableContent()}
             </tbody>
           </table>
         </div>
