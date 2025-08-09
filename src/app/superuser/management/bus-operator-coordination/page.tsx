@@ -43,7 +43,7 @@ const columns: ColumnDef<BusOperator>[] = [
    {
       header: "Actions",
       accessorKey: "_id",
-      cell: (_row) => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Details</button>
+      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Details</button>
   }
 ];
 

@@ -30,7 +30,7 @@ const columns: ColumnDef<Report>[] = [
   {
       header: "Actions",
       accessorKey: "_id",
-      cell: (_row) => (
+      cell: () => (
           <div className="flex gap-2">
               <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
               <button className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Download</button>

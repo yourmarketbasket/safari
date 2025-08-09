@@ -2,12 +2,7 @@
 
 import { Chip } from './Chip';
 
-interface Ticket {
-  _id: string;
-  route: string;
-  date: string;
-  status: string;
-}
+import { Ticket } from "@/app/models/Ticket.model";
 
 interface TicketDialogProps {
   ticket: Ticket | null;
@@ -22,17 +17,18 @@ export default function TicketDialog({ ticket, onClose }: TicketDialogProps) {
       <div className="bg-white p-8 rounded-lg shadow-2xl max-w-md w-full text-gray-900">
         <h2 className="text-2xl font-bold mb-6 text-blue-600">Ticket Details</h2>
         <div className="space-y-3">
-          <p><strong>ID:</strong> {ticket._id}</p>
-          <p><strong>Route:</strong> {ticket.route}</p>
-          <p><strong>Date:</strong> {ticket.date}</p>
+          <p><strong>Ticket ID:</strong> {ticket.ticketId || ticket._id}</p>
+          <p><strong>Trip ID:</strong> {ticket.tripId}</p>
+          <p><strong>Registration Date:</strong> {new Date(ticket.registrationTimestamp).toLocaleString()}</p>
+          <p><strong>Class:</strong> {ticket.class}</p>
           <div className="flex items-center">
             <strong className="mr-2">Status:</strong>
             <Chip
               text={ticket.status}
               type={
-                ticket.status === 'completed' ? 'success' :
-                ticket.status === 'cancelled' ? 'error' :
-                ticket.status === 'upcoming' ? 'info' :
+                ticket.status === 'boarded' ? 'success' :
+                ticket.status === 'canceled' ? 'error' :
+                ticket.status === 'paid' || ticket.status === 'registered' ? 'info' :
                 'default'
               }
             />

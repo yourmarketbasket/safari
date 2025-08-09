@@ -8,14 +8,15 @@ import { FiMessageSquare } from 'react-icons/fi';
 import Pagination from '@/app/components/Pagination';
 import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import { Chip } from '@/app/components/Chip';
+import { Ticket } from '@/app/models/Ticket.model';
 
 // Mock Data
-const mockTicketsData = [
-  { _id: 't-1', route: 'Nairobi - Nakuru', date: '2024-10-26', status: 'upcoming', totalCost: 500, comments: 'Window seat preferred', rating: 0 },
-  { _id: 't-2', route: 'Mombasa - Nairobi', date: '2024-10-22', status: 'completed', totalCost: 1200, comments: '', rating: 4 },
-  { _id: 't-3', route: 'Kisumu - Nairobi', date: '2024-11-01', status: 'upcoming', totalCost: 800, comments: '', rating: 0 },
-  { _id: 't-4', route: 'Eldoret - Nairobi', date: '2024-09-15', status: 'completed', totalCost: 750, comments: 'Extra luggage', rating: 5 },
-  { _id: 't-5', route: 'Nairobi - Kisumu', date: '2024-08-20', status: 'cancelled', totalCost: 800, comments: 'User cancelled', rating: 0 },
+const mockTicketsData: (Omit<Ticket, 'passengerId' | 'tripId' | 'routeId'> & { route: string, rating: number, comments: string, totalCost: number })[] = [
+  { _id: 't-1', route: 'Nairobi - Nakuru', registrationTimestamp: new Date('2024-10-26'), status: 'paid', class: 'economy', systemFee: 50, comments: 'Window seat preferred', rating: 0, totalCost: 500 },
+  { _id: 't-2', route: 'Mombasa - Nairobi', registrationTimestamp: new Date('2024-10-22'), status: 'boarded', class: 'business', systemFee: 100, comments: '', rating: 4, totalCost: 1200 },
+  { _id: 't-3', route: 'Kisumu - Nairobi', registrationTimestamp: new Date('2024-11-01'), status: 'registered', class: 'economy', systemFee: 75, comments: '', rating: 0, totalCost: 800 },
+  { _id: 't-4', route: 'Eldoret - Nairobi', registrationTimestamp: new Date('2024-09-15'), status: 'boarded', class: 'first_class', systemFee: 100, comments: 'Extra luggage', rating: 5, totalCost: 750 },
+  { _id: 't-5', route: 'Nairobi - Kisumu', registrationTimestamp: new Date('2024-08-20'), status: 'canceled', class: 'economy', systemFee: 75, comments: 'User cancelled', rating: 0, totalCost: 800 },
 ];
 
 const mockLoyalty = { points: 450 };
@@ -46,12 +47,16 @@ export default function PassengerDashboardPage() {
       tickets = tickets.filter((ticket) => ticket.status === filterStatus);
     }
 
-    if (sortConfig !== null) {
+    if (sortConfig) {
       tickets.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
+        const valA = a[sortConfig.key];
+        const valB = b[sortConfig.key];
+        if (valA == null) return 1;
+        if (valB == null) return -1;
+        if (valA < valB) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
+        if (valA > valB) {
           return sortConfig.direction === 'ascending' ? 1 : -1;
         }
         return 0;
@@ -114,9 +119,10 @@ export default function PassengerDashboardPage() {
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <option value="all">All Statuses</option>
-              <option value="upcoming">Upcoming</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="registered">Registered</option>
+              <option value="paid">Paid</option>
+              <option value="boarded">Boarded</option>
+              <option value="canceled">Canceled</option>
             </select>
           </div>
           <div className="overflow-x-auto">
@@ -124,10 +130,10 @@ export default function PassengerDashboardPage() {
               <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
                 <tr>
                   <th className="py-3 px-6 text-left cursor-pointer font-light" onClick={() => requestSort('route')}>Route</th>
-                  <th className="py-3 px-6 text-left cursor-pointer font-light" onClick={() => requestSort('date')}>Date</th>
+                  <th className="py-3 px-6 text-left cursor-pointer font-light" onClick={() => requestSort('registrationTimestamp')}>Date</th>
                   <th className="py-3 px-6 text-center cursor-pointer font-light" onClick={() => requestSort('status')}>Status</th>
                   <th className="py-3 px-6 text-right cursor-pointer font-light" onClick={() => requestSort('totalCost')}>Total Cost</th>
-                  <th className="py-3 px-6 text-left font-light">Comments</th>
+                  <th className="py-3 px-6 text-left font-light">Class</th>
                   <th className="py-3 px-6 text-center font-light">Rating</th>
                   <th className="py-3 px-6 text-center font-light">Actions</th>
                 </tr>
@@ -136,22 +142,22 @@ export default function PassengerDashboardPage() {
                 {paginatedTickets.map((ticket) => (
                   <tr key={ticket._id} className="border-b border-gray-200 hover:bg-gray-100">
                     <td className="py-4 px-6 text-left whitespace-nowrap">{ticket.route}</td>
-                    <td className="py-4 px-6 text-left">{ticket.date}</td>
+                    <td className="py-4 px-6 text-left">{new Date(ticket.registrationTimestamp).toLocaleDateString()}</td>
                     <td className="py-4 px-6 text-center">
                       <Chip
                         text={ticket.status}
                         type={
-                          ticket.status === 'completed' ? 'success' :
-                          ticket.status === 'cancelled' ? 'error' :
-                          ticket.status === 'upcoming' ? 'info' :
+                          ticket.status === 'boarded' ? 'success' :
+                          ticket.status === 'canceled' ? 'error' :
+                          ticket.status === 'paid' || ticket.status === 'registered' ? 'info' :
                           'default'
                         }
                       />
                     </td>
                     <td className="py-4 px-6 text-right">Ksh {ticket.totalCost.toLocaleString()}</td>
-                    <td className="py-4 px-6 text-left">{ticket.comments || '-'}</td>
+                    <td className="py-4 px-6 text-left">{ticket.class}</td>
                     <td className="py-4 px-6 text-center">
-                      <Rating rating={ticket.rating} readOnly={ticket.status !== 'completed'} />
+                      <Rating rating={ticket.rating} readOnly={ticket.status !== 'boarded'} />
                     </td>
                     <td className="py-4 px-6 text-center">
                       <button className="text-purple-600 hover:text-purple-800">

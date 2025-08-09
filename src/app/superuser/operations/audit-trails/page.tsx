@@ -4,30 +4,30 @@ import { NextPage } from "next";
 import { useEffect } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
-
-// Type for Audit Log data
-type AuditLog = {
-  _id: string;
-  user: string;
-  action: string;
-  details: string;
-  timestamp: string;
-};
+import { AuditLog } from "@/app/models/AuditLog.model";
 
 // Dummy data for audit trails
 const dummyAuditLogs: AuditLog[] = [
-  { _id: "60d0fe4f5311236168a11301", user: "Admin User", action: "Updated Fare", details: "Route Nairobi-Mombasa fare changed to KES 1300", timestamp: "2023-10-27 11:00 AM" },
-  { _id: "60d0fe4f5311236168a11302", user: "Jane Doe", action: "Processed Refund", details: "Ticket #1234 refunded", timestamp: "2023-10-27 10:05 AM" },
-  { _id: "60d0fe4f5311236168a11303", user: "System", action: "Auto-reallocation", details: "35 passengers reallocated from Bus A to Bus B", timestamp: "2023-10-27 09:00 AM" },
-  { _id: "60d0fe4f5311236168a11304", user: "Superuser", action: "Blocked User", details: "User 'blocked@example.com' blocked", timestamp: "2023-10-26 05:00 PM" },
+  { _id: "60d0fe4f5311236168a11301", userId: "60d0fe4f5311236168a10b03", action: "fare_adjusted", details: { route: "Nairobi-Mombasa", newFare: 1300 }, timestamp: new Date("2023-10-27T11:00:00Z") },
+  { _id: "60d0fe4f5311236168a11302", userId: "60d0fe4f5311236168a10d02", action: "trip_completed", details: { tripId: "trip-123" }, timestamp: new Date("2023-10-27T10:05:00Z") },
+  { _id: "60d0fe4f5311236168a11303", userId: "system", action: "trip_canceled", details: { tripId: "trip-456", reason: "Mechanical issue" }, timestamp: new Date("2023-10-27T09:00:00Z") },
+  { _id: "60d0fe4f5311236168a11304", userId: "superuser-01", action: "staff_created", details: { newStaffId: "60d0fe4f5311236168a10d04" }, timestamp: new Date("2023-10-26T17:00:00Z") },
 ];
 
 // Column definitions for the audit log table
 const columns: ColumnDef<AuditLog>[] = [
-  { header: "Timestamp", accessorKey: "timestamp" },
-  { header: "User", accessorKey: "user" },
+  {
+    header: "Timestamp",
+    accessorKey: "timestamp",
+    cell: (row) => <span>{new Date(row.timestamp).toLocaleString()}</span>
+  },
+  { header: "User ID", accessorKey: "userId" },
   { header: "Action", accessorKey: "action" },
-  { header: "Details", accessorKey: "details" },
+  {
+    header: "Details",
+    accessorKey: "details",
+    cell: (row) => <pre className="text-xs bg-gray-100 p-2 rounded">{JSON.stringify(row.details, null, 2)}</pre>
+  },
 ];
 
 const AuditTrailsPage: NextPage = () => {

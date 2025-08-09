@@ -44,7 +44,7 @@ const columns: ColumnDef<Escalation>[] = [
    {
       header: "Actions",
       accessorKey: "_id",
-      cell: (_row) => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Review</button>
+      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Review</button>
   }
 ];
 

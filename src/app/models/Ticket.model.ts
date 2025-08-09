@@ -1,17 +1,18 @@
-import { VehicleClass } from "./Vehicle.model";
+import { VehicleClass } from './Vehicle.model';
 
-export type TicketStatus = "registered" | "paid" | "boarded" | "canceled";
+export type TicketStatus = 'registered' | 'paid' | 'boarded' | 'canceled';
 
 export interface Ticket {
-  id: string;
-  passengerId: string;
-  tripId: string;
-  routeId: string;
+  _id: string;
+  passengerId: string; // Corresponds to ObjectId, represented as string
+  tripId: string; // Corresponds to ObjectId, represented as string
+  routeId: string; // Corresponds to ObjectId, represented as string
   class: VehicleClass;
   registrationTimestamp: Date;
-  qrCode: string;
+  qrCode?: string;
+  ticketId?: string; // Short code for USSD
   status: TicketStatus;
-  paymentId: string;
+  paymentId?: string; // Corresponds to ObjectId, represented as string
   systemFee: number;
-  discountId?: string;
+  discountId?: string; // Corresponds to ObjectId, represented as string
 }

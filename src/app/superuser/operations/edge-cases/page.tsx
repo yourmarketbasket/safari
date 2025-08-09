@@ -42,7 +42,7 @@ const columns: ColumnDef<EdgeCase>[] = [
   {
       header: "Actions",
       accessorKey: "_id",
-      cell: (_row) => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View Log</button>
+      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View Log</button>
   }
 ];
 
