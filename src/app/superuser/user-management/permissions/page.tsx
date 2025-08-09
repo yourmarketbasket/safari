@@ -5,6 +5,7 @@ import { useEffect, useState, useMemo } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Permission } from "@/app/models/Permission.model";
+import { UserRole } from "@/app/models/User.model";
 import superuserService from "@/app/services/superuser.service";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import Message from "@/app/components/Message";
@@ -12,6 +13,8 @@ import { FiPlus, FiEdit, FiTrash2, FiShield, FiUser } from "react-icons/fi";
 import PermissionModal from "@/app/components/PermissionModal";
 import { Chip } from "@/app/components/Chip";
 import SummaryCard from "@/app/components/SummaryCard";
+
+const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "superuser"];
 
 const PermissionsPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -23,10 +26,8 @@ const PermissionsPage: NextPage = () => {
 
     const summaryStats = useMemo(() => {
         const total = permissions.length;
-        const rolesCount = permissions.reduce((acc, p) => {
-            p.roles.forEach(role => {
-                acc[role] = (acc[role] || 0) + 1;
-            });
+        const rolesCount = allRoles.reduce((acc, role) => {
+            acc[role] = permissions.filter(p => p.roles.includes(role)).length;
             return acc;
         }, {} as Record<string, number>);
         return { total, rolesCount };
