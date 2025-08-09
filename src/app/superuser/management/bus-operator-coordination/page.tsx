@@ -1,13 +1,64 @@
 "use client";
 
 import { NextPage } from "next";
+import { DataTable, ColumnDef } from "@/app/components/DataTable";
+
+// Type for Bus Operator data
+type BusOperator = {
+  id: number;
+  name: string;
+  contact: string;
+  activeRoutes: number;
+  performance: "Excellent" | "Good" | "Poor";
+};
+
+// Dummy data for bus operators
+const dummyOperators: BusOperator[] = [
+  { id: 1, name: "Modern Coast", contact: "contact@moderncoast.com", activeRoutes: 15, performance: "Good" },
+  { id: 2, name: "Easy Coach", contact: "support@easycoach.co.ke", activeRoutes: 25, performance: "Excellent" },
+  { id: 3, name: "Prestige Shuttles", contact: "bookings@prestige.com", activeRoutes: 8, performance: "Good" },
+  { id: 4, name: "North Rift", contact: "help@northrift.co", activeRoutes: 12, performance: "Poor" },
+];
+
+// Column definitions for the bus operator table
+const columns: ColumnDef<BusOperator>[] = [
+  { header: "Operator Name", accessorKey: "name" },
+  { header: "Contact", accessorKey: "contact" },
+  { header: "Active Routes", accessorKey: "activeRoutes" },
+  {
+    header: "Performance",
+    accessorKey: "performance",
+    cell: (performance) => {
+      const perfColor =
+        performance === "Excellent" ? "bg-blue-200 text-blue-800" :
+        performance === "Good" ? "bg-green-200 text-green-800" :
+        "bg-red-200 text-red-800";
+      return <span className={`px-2 py-1 rounded-full font-semibold text-xs ${perfColor}`}>{performance}</span>;
+    },
+  },
+   {
+      header: "Actions",
+      accessorKey: "id",
+      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Details</button>
+  }
+];
 
 const BusOperatorCoordinationPage: NextPage = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Bus Operator Coordination</h1>
-      <p>This is a placeholder for the Bus Operator Coordination page.</p>
-      <p>This page will be used to collaborate with bus operators, share performance data, and coordinate on major issues.</p>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Bus Operator Coordination</h1>
+
+      <div className="mb-8">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-bold mb-4">Onboard New Operator</h2>
+            <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Add Operator</button>
+        </div>
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Partner Operators</h2>
+        <DataTable data={dummyOperators} columns={columns} filterColumn="performance" />
+      </div>
     </div>
   );
 };
