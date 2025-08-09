@@ -258,14 +258,14 @@ const MyTripsPage = () => {
         <DataTable columns={myTripsColumns} data={registeredTrips} filterColumn="route" />
 
         {/* Search Modal */}
-        <Modal isOpen={isSearchModalOpen} onClose={() => setIsSearchModalOpen(false)} >
-            <div className="p-8 bg-white rounded-lg shadow-xl w-[60vw] overflow-y-auto" style={{ maxHeight: '90vh' }}>
+        <Modal isOpen={isSearchModalOpen} onClose={() => setIsSearchModalOpen(false)} widthClass="w-[60vw]">
+            <div className="p-8 bg-white rounded-lg shadow-xl overflow-y-auto" style={{ maxHeight: '90vh' }}>
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Search for a Trip</h2>
                     <input
                         type="text"
                         placeholder="Search by route or stop..."
                         onChange={(e) => handleSearch(e.target.value)}
-                        className="p-2 border border-gray-400 rounded-md flex-grow text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500"
+                        className="p-2 border border-gray-400 rounded-md flex-grow text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500 w-full"
                 />
                 <div className="mt-6">
                     <DataTable columns={searchColumns} data={filteredTrips} filterColumn="route" />

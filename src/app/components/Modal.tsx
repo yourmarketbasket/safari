@@ -6,9 +6,10 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  widthClass?: string;
 }
 
-export default function Modal({ isOpen, onClose, children }: ModalProps) {
+export default function Modal({ isOpen, onClose, children, widthClass = 'max-w-lg' }: ModalProps) {
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -39,7 +40,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
         aria-hidden="true"
       ></div>
 
-      <div className="relative w-full max-w-lg p-6 mx-auto bg-white rounded-lg shadow-xl">
+      <div className={`relative w-full ${widthClass} p-6 mx-auto bg-white rounded-lg shadow-xl`}>
         {children}
       </div>
     </div>
