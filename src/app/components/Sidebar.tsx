@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift } from 'react-icons/fi';
+import { FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift, FiMonitor, FiHelpCircle, FiTool, FiAlertTriangle, FiFileText, FiChevronsUp } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 import { UserRole } from '../models/User.model';
@@ -53,9 +53,13 @@ const allNavLinks: { [key in UserRole]?: NavLink[] } = {
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
   ],
   support_staff: [
-    { name: 'Dashboard', href: '/support', icon: <FiUsers /> },
-    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-    { name: 'Sacco Management', href: '/support/sacco-management', icon: <FiTruck /> },
+    { name: 'Dashboard', href: '/support/dashboard', icon: <FiMonitor /> },
+    { name: 'Passenger Inquiries', href: '/support/inquiries', icon: <FiHelpCircle /> },
+    { name: 'Driver Support', href: '/support/driver-support', icon: <FiTool /> },
+    { name: 'Cancellations', href: '/support/cancellations', icon: <FiAlertTriangle /> },
+    { name: 'System Errors', href: '/support/system-errors', icon: <FiAlertTriangle /> },
+    { name: 'Reports', href: '/support/reports', icon: <FiFileText /> },
+    { name: 'Escalations', href: '/support/escalations', icon: <FiChevronsUp /> },
   ],
   queue_manager: [
     { name: 'Dashboard', href: '/queue-manager', icon: <FiList /> },
