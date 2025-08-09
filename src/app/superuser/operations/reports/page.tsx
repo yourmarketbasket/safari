@@ -7,7 +7,7 @@ import { DataTable, ColumnDef } from "@/app/components/DataTable";
 
 // Type for Report data
 type Report = {
-  id: number;
+  _id: string;
   name: string;
   type: "Financial" | "Operational" | "Compliance";
   generatedBy: string;
@@ -16,9 +16,9 @@ type Report = {
 
 // Dummy data for reports
 const dummyReports: Report[] = [
-  { id: 1, name: "Q3 Financial Summary", type: "Financial", generatedBy: "Admin User", date: "2023-10-01" },
-  { id: 2, name: "October On-Time Performance", type: "Operational", generatedBy: "System", date: "2023-11-01" },
-  { id: 3, name: "GDPR Compliance Audit", type: "Compliance", generatedBy: "Admin User", date: "2023-09-15" },
+  { _id: "60d0fe4f5311236168a11001", name: "Q3 Financial Summary", type: "Financial", generatedBy: "Admin User", date: "2023-10-01" },
+  { _id: "60d0fe4f5311236168a11002", name: "October On-Time Performance", type: "Operational", generatedBy: "System", date: "2023-11-01" },
+  { _id: "60d0fe4f5311236168a11003", name: "GDPR Compliance Audit", type: "Compliance", generatedBy: "Admin User", date: "2023-09-15" },
 ];
 
 // Column definitions for the report table
@@ -29,8 +29,8 @@ const columns: ColumnDef<Report>[] = [
   { header: "Date", accessorKey: "date" },
   {
       header: "Actions",
-      accessorKey: "id",
-      cell: () => (
+      accessorKey: "_id",
+      cell: (_row) => (
           <div className="flex gap-2">
               <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
               <button className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Download</button>

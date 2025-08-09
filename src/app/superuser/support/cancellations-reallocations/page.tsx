@@ -8,7 +8,7 @@ import { Chip } from "@/app/components/Chip";
 
 // Types for the data
 type Cancellation = {
-  id: number;
+  _id: string;
   passenger: string;
   route: string;
   amount: string;
@@ -18,7 +18,7 @@ type Cancellation = {
 };
 
 type Reallocation = {
-  id: number;
+  _id: string;
   passenger: string;
   original: string;
   new: string;
@@ -28,16 +28,16 @@ type Reallocation = {
 
 // Dummy data
 const dummyCancellations: Cancellation[] = [
-  { id: 1, passenger: "Alice Johnson", route: "Nairobi - Mombasa", amount: "KES 1200", sacco: "Modern Coast", reason: "Mechanical Issue", status: "Refunded" },
-  { id: 2, passenger: "Bob Williams", route: "Kisumu - Nairobi", amount: "KES 1000", sacco: "Easy Coach", reason: "Driver Unavailability", status: "Refunded" },
-  { id: 3, passenger: "Diana Prince", route: "Mombasa - Malindi", amount: "KES 500", sacco: "Modern Coast", reason: "Passenger Request", status: "Completed" },
-  { id: 4, passenger: "Bruce Wayne", route: "Nairobi - Eldoret", amount: "KES 1500", sacco: "North Rift", reason: "Weather", status: "Pending" },
+  { _id: "60d0fe4f5311236168a109e1", passenger: "Alice Johnson", route: "Nairobi - Mombasa", amount: "KES 1200", sacco: "Modern Coast", reason: "Mechanical Issue", status: "Refunded" },
+  { _id: "60d0fe4f5311236168a109e2", passenger: "Bob Williams", route: "Kisumu - Nairobi", amount: "KES 1000", sacco: "Easy Coach", reason: "Driver Unavailability", status: "Refunded" },
+  { _id: "60d0fe4f5311236168a109e3", passenger: "Diana Prince", route: "Mombasa - Malindi", amount: "KES 500", sacco: "Modern Coast", reason: "Passenger Request", status: "Completed" },
+  { _id: "60d0fe4f5311236168a109e4", passenger: "Bruce Wayne", route: "Nairobi - Eldoret", amount: "KES 1500", sacco: "North Rift", reason: "Weather", status: "Pending" },
 ];
 
 const dummyReallocations: Reallocation[] = [
-  { id: 1, passenger: "Charlie Brown", original: "Nairobi - Nakuru (8 AM)", new: "Nairobi - Nakuru (9 AM)", sacco: "Prestige", status: "Completed" },
-  { id: 2, passenger: "David Rose", original: "Kisumu - Busia (10 AM)", new: "Kisumu - Busia (11 AM)", sacco: "Western Express", status: "Completed" },
-  { id: 3, passenger: "Alexis Rose", original: "Nairobi - Nanyuki (7 AM)", new: "Nairobi - Nanyuki (8 AM)", sacco: "2NK", status: "Pending" },
+  { _id: "60d0fe4f5311236168a109f1", passenger: "Charlie Brown", original: "Nairobi - Nakuru (8 AM)", new: "Nairobi - Nakuru (9 AM)", sacco: "Prestige", status: "Completed" },
+  { _id: "60d0fe4f5311236168a109f2", passenger: "David Rose", original: "Kisumu - Busia (10 AM)", new: "Kisumu - Busia (11 AM)", sacco: "Western Express", status: "Completed" },
+  { _id: "60d0fe4f5311236168a109f3", passenger: "Alexis Rose", original: "Nairobi - Nanyuki (7 AM)", new: "Nairobi - Nanyuki (8 AM)", sacco: "2NK", status: "Pending" },
 ];
 
 // Column definitions
@@ -50,7 +50,8 @@ const cancellationColumns: ColumnDef<Cancellation>[] = [
   {
     header: "Status",
     accessorKey: "status",
-    cell: (status) => {
+    cell: (row) => {
+      const status = row.status;
       const type =
         status === "Refunded" ? "success" :
         status === "Pending" ? "warning" :
@@ -68,7 +69,8 @@ const reallocationColumns: ColumnDef<Reallocation>[] = [
   {
     header: "Status",
     accessorKey: "status",
-    cell: (status) => {
+    cell: (row) => {
+      const status = row.status;
       const type =
         status === "Completed" ? "success" :
         "warning";

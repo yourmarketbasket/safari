@@ -5,24 +5,16 @@ import { useEffect } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
-
-// Type for User data
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: "Passenger" | "Driver" | "Admin" | "Support";
-  status: "Active" | "Suspended" | "Blocked";
-  lastLogin: string;
-};
+import { User } from "@/app/models/User.model";
 
 // Dummy data for users
 const dummyUsers: User[] = [
-  { id: 1, name: "John Doe", email: "john.doe@example.com", role: "Passenger", status: "Active", lastLogin: "2023-10-27" },
-  { id: 2, name: "Jane Smith", email: "jane.smith@example.com", role: "Driver", status: "Active", lastLogin: "2023-10-26" },
-  { id: 3, name: "Admin User", email: "admin@example.com", role: "Admin", status: "Active", lastLogin: "2023-10-27" },
-  { id: 4, name: "Suspended Driver", email: "suspend@example.com", role: "Driver", status: "Suspended", lastLogin: "2023-09-01" },
-  { id: 5, name: "Blocked User", email: "blocked@example.com", role: "Passenger", status: "Blocked", lastLogin: "2023-08-15" },
+  { _id: "60d0fe4f5311236168a10b01", name: "John Doe", email: "john.doe@example.com", phone: "123-456-7890", role: "passenger", rank: "Ordinary", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10b02", name: "Jane Smith", email: "jane.smith@example.com", phone: "123-456-7891", role: "driver", rank: "Staff", approvedStatus: "approved", permissions: ["view_manifest"], verified: { email: true, phone: true }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10b03", name: "Admin User", email: "admin@example.com", phone: "123-456-7892", role: "admin", rank: "Manager", approvedStatus: "approved", permissions: ["manage_users", "set_fares"], verified: { email: true, phone: true }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10b04", name: "Suspended Driver", email: "suspend@example.com", phone: "123-456-7893", role: "driver", rank: "Staff", approvedStatus: "suspended", permissions: [], verified: { email: true, phone: false }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10b05", name: "Blocked User", email: "blocked@example.com", phone: "123-456-7894", role: "passenger", rank: "Ordinary", approvedStatus: "blocked", permissions: [], verified: { email: false, phone: false }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10b06", name: "Pending Passenger", email: "pending@example.com", phone: "123-456-7895", role: "passenger", rank: "Ordinary", approvedStatus: "pending", permissions: [], verified: { email: false, phone: false }, createdAt: new Date() },
 ];
 
 // Column definitions for the user table
@@ -32,19 +24,21 @@ const columns: ColumnDef<User>[] = [
   { header: "Role", accessorKey: "role" },
   {
     header: "Status",
-    accessorKey: "status",
-    cell: (status) => {
+    accessorKey: "approvedStatus",
+    cell: (row) => {
+      const status = row.approvedStatus;
       const type =
-        status === "Active" ? "success" :
-        status === "Suspended" ? "warning" :
+        status === "approved" ? "success" :
+        status === "suspended" ? "warning" :
+        status === "pending" ? "info" :
         "error";
       return <Chip text={status} type={type} />;
     },
   },
-  { header: "Last Login", accessorKey: "lastLogin" },
+  { header: "Rank", accessorKey: "rank" },
   {
       header: "Actions",
-      accessorKey: "id",
+      accessorKey: "_id",
       cell: () => (
           <div className="flex gap-2">
               <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
@@ -83,7 +77,7 @@ const UsersPage: NextPage = () => {
       {/* Users Table */}
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Users List</h2>
-        <DataTable data={dummyUsers} columns={columns} filterColumn="status" />
+        <DataTable data={dummyUsers} columns={columns} filterColumn="approvedStatus" />
       </div>
     </div>
   );

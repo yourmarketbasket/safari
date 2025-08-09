@@ -11,17 +11,17 @@ import { Chip } from '@/app/components/Chip';
 
 // Mock Data
 const mockTicketsData = [
-  { id: 't-1', route: 'Nairobi - Nakuru', date: '2024-10-26', status: 'upcoming', totalCost: 500, comments: 'Window seat preferred', rating: 0 },
-  { id: 't-2', route: 'Mombasa - Nairobi', date: '2024-10-22', status: 'completed', totalCost: 1200, comments: '', rating: 4 },
-  { id: 't-3', route: 'Kisumu - Nairobi', date: '2024-11-01', status: 'upcoming', totalCost: 800, comments: '', rating: 0 },
-  { id: 't-4', route: 'Eldoret - Nairobi', date: '2024-09-15', status: 'completed', totalCost: 750, comments: 'Extra luggage', rating: 5 },
-  { id: 't-5', route: 'Nairobi - Kisumu', date: '2024-08-20', status: 'cancelled', totalCost: 800, comments: 'User cancelled', rating: 0 },
+  { _id: 't-1', route: 'Nairobi - Nakuru', date: '2024-10-26', status: 'upcoming', totalCost: 500, comments: 'Window seat preferred', rating: 0 },
+  { _id: 't-2', route: 'Mombasa - Nairobi', date: '2024-10-22', status: 'completed', totalCost: 1200, comments: '', rating: 4 },
+  { _id: 't-3', route: 'Kisumu - Nairobi', date: '2024-11-01', status: 'upcoming', totalCost: 800, comments: '', rating: 0 },
+  { _id: 't-4', route: 'Eldoret - Nairobi', date: '2024-09-15', status: 'completed', totalCost: 750, comments: 'Extra luggage', rating: 5 },
+  { _id: 't-5', route: 'Nairobi - Kisumu', date: '2024-08-20', status: 'cancelled', totalCost: 800, comments: 'User cancelled', rating: 0 },
 ];
 
 const mockLoyalty = { points: 450 };
 const mockPaymentMethods = [
-  { id: 'p-1', type: 'Visa', last4: '4242', isDefault: true },
-  { id: 'p-2', type: 'M-Pesa', last4: '7890', isDefault: false },
+  { _id: 'p-1', type: 'Visa', last4: '4242', isDefault: true },
+  { _id: 'p-2', type: 'M-Pesa', last4: '7890', isDefault: false },
 ];
 
 export default function PassengerDashboardPage() {
@@ -89,7 +89,7 @@ export default function PassengerDashboardPage() {
             <h2 className="text-xl font-bold text-gray-800">Payment Methods</h2>
             <div className="mt-4 space-y-3">
               {mockPaymentMethods.map((method) => (
-                <div key={method.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                <div key={method._id} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
                   <p className="text-gray-700 font-medium">{method.type} ending in {method.last4}</p>
                   {method.isDefault && <span className="text-xs font-semibold text-green-800 bg-green-200 px-3 py-1 rounded-full">Default</span>}
                 </div>
@@ -134,7 +134,7 @@ export default function PassengerDashboardPage() {
               </thead>
               <tbody className="text-gray-800 text-xs font-light">
                 {paginatedTickets.map((ticket) => (
-                  <tr key={ticket.id} className="border-b border-gray-200 hover:bg-gray-100">
+                  <tr key={ticket._id} className="border-b border-gray-200 hover:bg-gray-100">
                     <td className="py-4 px-6 text-left whitespace-nowrap">{ticket.route}</td>
                     <td className="py-4 px-6 text-left">{ticket.date}</td>
                     <td className="py-4 px-6 text-center">

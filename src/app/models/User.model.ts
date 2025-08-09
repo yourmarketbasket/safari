@@ -1,44 +1,38 @@
-export type UserRole =
-  | "passenger"
-  | "sacco"
-  | "owner"
-  | "queue_manager"
-  | "driver"
-  | "support_staff"
-  | "admin"
-  | "superuser"
-  | "headoffice";
+export type UserRole = 'passenger' | 'sacco' | 'owner' | 'queue_manager' | 'driver' | 'support_staff' | 'admin' | 'superuser';
 
 export type UserRank =
-  | "CEO"
-  | "CFO"
-  | "COO"
-  | "CTO"
-  | "VP"
-  | "Director"
-  | "Manager"
-  | "Supervisor"
-  | "Team Lead"
-  | "Staff"
-  | "Intern"
-  | "Ordinary";
+  | 'CEO'
+  | 'CFO'
+  | 'COO'
+  | 'CTO'
+  | 'VP'
+  | 'Director'
+  | 'Manager'
+  | 'Supervisor'
+  | 'Team Lead'
+  | 'Staff'
+  | 'Intern'
+  | 'Ordinary';
 
-export type UserStatus = 'pending' | 'approved' | 'suspended' | 'blocked';
+export type ApprovedStatus = 'pending' | 'approved' | 'suspended' | 'blocked';
 
 export interface User {
-  _id: string;
+  _id: string; // Using _id as the primary identifier
   name: string;
   email: string;
-  phone?: string;
-  avatar?: string;
-  password?: string; // Password should typically not be exposed on the frontend
+  phone: string;
+  password?: string; // Password should be optional on the frontend
   role: UserRole;
-  mfaSecret?: string; // Optional, for Superuser/support staff
-  rank?: UserRank;
-  approvedStatus?: UserStatus;
-  permissions?: string[];
-  verified?: {
+  rank: UserRank;
+  avatar?: string;
+  approvedStatus: ApprovedStatus;
+  permissions: string[];
+  verified: {
     email: boolean;
     phone: boolean;
   };
+  mfaSecret?: string;
+  passwordResetToken?: string;
+  passwordResetExpire?: Date;
+  createdAt: Date;
 }

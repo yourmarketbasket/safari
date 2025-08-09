@@ -8,7 +8,7 @@ import { Chip } from "@/app/components/Chip";
 
 // Type for Policy data
 type Policy = {
-  id: number;
+  _id: string;
   name: string;
   category: "Cancellations" | "Data Privacy" | "Driver Conduct";
   version: string;
@@ -17,10 +17,10 @@ type Policy = {
 
 // Dummy data for policies
 const dummyPolicies: Policy[] = [
-  { id: 1, name: "Refund Policy for Trip Cancellations", category: "Cancellations", version: "v2.1", status: "Active" },
-  { id: 2, name: "GDPR Data Handling", category: "Data Privacy", version: "v1.5", status: "Active" },
-  { id: 3, name: "Driver Code of Conduct", category: "Driver Conduct", version: "v3.0", status: "Draft" },
-  { id: 4, name: "Reallocation Procedure", category: "Cancellations", version: "v1.0", status: "Archived" },
+  { _id: "60d0fe4f5311236168a11101", name: "Refund Policy for Trip Cancellations", category: "Cancellations", version: "v2.1", status: "Active" },
+  { _id: "60d0fe4f5311236168a11102", name: "GDPR Data Handling", category: "Data Privacy", version: "v1.5", status: "Active" },
+  { _id: "60d0fe4f5311236168a11103", name: "Driver Code of Conduct", category: "Driver Conduct", version: "v3.0", status: "Draft" },
+  { _id: "60d0fe4f5311236168a11104", name: "Reallocation Procedure", category: "Cancellations", version: "v1.0", status: "Archived" },
 ];
 
 // Column definitions for the policy table
@@ -31,7 +31,8 @@ const columns: ColumnDef<Policy>[] = [
   {
     header: "Status",
     accessorKey: "status",
-    cell: (status) => {
+    cell: (row) => {
+      const status = row.status;
       const type =
         status === "Active" ? "success" :
         status === "Draft" ? "warning" :
@@ -41,8 +42,8 @@ const columns: ColumnDef<Policy>[] = [
   },
   {
       header: "Actions",
-      accessorKey: "id",
-      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Manage</button>
+      accessorKey: "_id",
+      cell: (_row) => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Manage</button>
   }
 ];
 

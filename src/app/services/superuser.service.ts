@@ -1,5 +1,5 @@
 import api from '../lib/api';
-import { User, UserRank, UserStatus } from '../models/User.model';
+import { User, UserRank, ApprovedStatus } from '../models/User.model';
 import { Permission } from '../models/Permission.model';
 import axios from 'axios';
 
@@ -26,7 +26,7 @@ export type SignupData = {
   role?: UserRole;
   mfaSecret?: string;
   rank?: UserRank;
-  approvedStatus?: UserStatus;
+  approvedStatus?: ApprovedStatus;
   permissions?: string[];
   verified?: {
     email: boolean;
@@ -43,7 +43,7 @@ export type NewStaffData = {
   password?: string;
   mfaSecret?: string;
   rank?: UserRank;
-  approvedStatus?: UserStatus;
+  approvedStatus?: ApprovedStatus;
   permissions?: string[];
   verified?: {
     email: boolean;
@@ -126,7 +126,7 @@ export const getUserById = async (id: string): Promise<User> => {
   return response.data.data;
 };
 
-export const updateUserStatus = async (id: string, status: UserStatus): Promise<User> => {
+export const updateUserStatus = async (id: string, status: ApprovedStatus): Promise<User> => {
   const response = await api.put<ApiResponse<User>>(`/users/${id}/status`, { status });
   return response.data.data;
 };

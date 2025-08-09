@@ -5,50 +5,33 @@ import { useEffect } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
+import { User } from "@/app/models/User.model";
 
-// Type for Staff data
-type Staff = {
-  id: number;
-  name: string;
-  role: "Support Lead" | "Support Agent" | "Technical Support";
-  status: "Active" | "On Leave";
-  performance: "Excellent" | "Good" | "Needs Improvement";
-};
-
-// Dummy data for staff
-const dummyStaff: Staff[] = [
-  { id: 1, name: "Manager Mike", role: "Support Lead", status: "Active", performance: "Excellent" },
-  { id: 2, name: "Agent Alice", role: "Support Agent", status: "Active", performance: "Good" },
-  { id: 3, name: "Tech Tom", role: "Technical Support", status: "On Leave", performance: "Excellent" },
-  { id: 4, name: "Agent Bob", role: "Support Agent", status: "Active", performance: "Needs Improvement" },
+// Dummy data for staff, conforming to the User model
+const dummyStaff: User[] = [
+  { _id: "60d0fe4f5311236168a10d01", name: "Manager Mike", email: "mike@example.com", phone: "234-567-8901", role: "admin", rank: "Manager", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10d02", name: "Agent Alice", email: "alice@example.com", phone: "234-567-8902", role: "support_staff", rank: "Staff", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10d03", name: "Tech Tom", email: "tom@example.com", phone: "234-567-8903", role: "support_staff", rank: "Staff", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10d04", name: "Agent Bob", email: "bob@example.com", phone: "234-567-8904", role: "support_staff", rank: "Staff", approvedStatus: "suspended", permissions: [], verified: { email: true, phone: false }, createdAt: new Date() },
 ];
 
 // Column definitions for the staff table
-const columns: ColumnDef<Staff>[] = [
+const columns: ColumnDef<User>[] = [
   { header: "Name", accessorKey: "name" },
   { header: "Role", accessorKey: "role" },
   {
     header: "Status",
-    accessorKey: "status",
-    cell: (status) => {
-      const type = status === "Active" ? "success" : "default";
+    accessorKey: "approvedStatus",
+    cell: (row) => {
+      const status = row.approvedStatus;
+      const type = status === "approved" ? "success" : "warning";
       return <Chip text={status} type={type} />;
     },
   },
-  {
-    header: "Performance",
-    accessorKey: "performance",
-     cell: (performance) => {
-      const type =
-        performance === "Excellent" ? "info" :
-        performance === "Good" ? "success" :
-        "warning";
-      return <Chip text={performance} type={type} />;
-    },
-  },
+  { header: "Rank", accessorKey: "rank" },
   {
       header: "Actions",
-      accessorKey: "id",
+      accessorKey: "_id",
       cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Manage</button>
   }
 ];

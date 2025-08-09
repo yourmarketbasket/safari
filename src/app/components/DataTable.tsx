@@ -3,14 +3,14 @@
 import { useState, useMemo, ReactNode } from "react";
 import { FiSearch, FiChevronDown, FiChevronUp } from "react-icons/fi";
 
-// A generic data object type that can be indexed with a string.
-type DataObject = { [key: string]: string | number | boolean | ReactNode };
+// A generic data object type that must have an _id property.
+type DataObject = { _id: string | number };
 
 // Type for defining a column in the table.
 export type ColumnDef<T extends DataObject> = {
   header: string;
   accessorKey: keyof T;
-  cell?: (value: T[keyof T]) => ReactNode; // Optional custom cell renderer
+  cell?: (row: T) => ReactNode; // Optional custom cell renderer
 };
 
 // Props for the DataTable component.
@@ -143,11 +143,11 @@ export function DataTable<T extends DataObject>({ data, columns, filterColumn }:
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((row, rowIndex) => (
-              <tr key={rowIndex}>
+            {paginatedData.map((row) => (
+              <tr key={row._id}>
                 {columns.map(col => (
                   <td key={String(col.accessorKey)} className="py-3 px-4 border-b border-gray-200 text-gray-800">
-                    {col.cell ? col.cell(row[col.accessorKey]) : row[col.accessorKey]}
+                    {col.cell ? col.cell(row) : row[col.accessorKey] as ReactNode}
                   </td>
                 ))}
               </tr>
@@ -159,7 +159,7 @@ export function DataTable<T extends DataObject>({ data, columns, filterColumn }:
       {/* Pagination */}
       <div className="flex justify-between items-center mt-4 flex-wrap gap-4">
         <div>
-          <span className="mr-2 text-gray-800">Items per page:</span>
+          <span className="mr-2 text-gray-700 text-xs">Items per page:</span>
           <select
             className="border border-gray-400 rounded-lg px-2 py-1 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             value={itemsPerPage}

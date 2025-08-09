@@ -7,7 +7,7 @@ import { DataTable, ColumnDef } from "@/app/components/DataTable";
 
 // Type for Audit Log data
 type AuditLog = {
-  id: number;
+  _id: string;
   user: string;
   action: string;
   details: string;
@@ -16,10 +16,10 @@ type AuditLog = {
 
 // Dummy data for audit trails
 const dummyAuditLogs: AuditLog[] = [
-  { id: 1, user: "Admin User", action: "Updated Fare", details: "Route Nairobi-Mombasa fare changed to KES 1300", timestamp: "2023-10-27 11:00 AM" },
-  { id: 2, user: "Jane Doe", action: "Processed Refund", details: "Ticket #1234 refunded", timestamp: "2023-10-27 10:05 AM" },
-  { id: 3, user: "System", action: "Auto-reallocation", details: "35 passengers reallocated from Bus A to Bus B", timestamp: "2023-10-27 09:00 AM" },
-  { id: 4, user: "Superuser", action: "Blocked User", details: "User 'blocked@example.com' blocked", timestamp: "2023-10-26 05:00 PM" },
+  { _id: "60d0fe4f5311236168a11301", user: "Admin User", action: "Updated Fare", details: "Route Nairobi-Mombasa fare changed to KES 1300", timestamp: "2023-10-27 11:00 AM" },
+  { _id: "60d0fe4f5311236168a11302", user: "Jane Doe", action: "Processed Refund", details: "Ticket #1234 refunded", timestamp: "2023-10-27 10:05 AM" },
+  { _id: "60d0fe4f5311236168a11303", user: "System", action: "Auto-reallocation", details: "35 passengers reallocated from Bus A to Bus B", timestamp: "2023-10-27 09:00 AM" },
+  { _id: "60d0fe4f5311236168a11304", user: "Superuser", action: "Blocked User", details: "User 'blocked@example.com' blocked", timestamp: "2023-10-26 05:00 PM" },
 ];
 
 // Column definitions for the audit log table

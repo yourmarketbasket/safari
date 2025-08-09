@@ -56,11 +56,6 @@ const allNavLinks: { [key in UserRole]?: NavLink[] } = {
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Sacco Management', href: '/support/sacco-management', icon: <FiTruck /> },
   ],
-  headoffice: [
-    { name: 'Dashboard', href: '/head-office', icon: <FiHome /> },
-    { name: 'Routes', href: '/routes', icon: <FiTruck /> },
-    { name: 'Policy Management', href: '/head-office/policy-management', icon: <FiList /> },
-  ],
   queue_manager: [
     { name: 'Dashboard', href: '/queue-manager', icon: <FiList /> },
     { name: 'Ticket Scanning', href: '/queue-manager/ticket-scanning', icon: <FiPocket /> },

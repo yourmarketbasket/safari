@@ -8,7 +8,7 @@ import { Chip } from "@/app/components/Chip";
 
 // Type for the data
 type SystemError = {
-  id: number;
+  _id: string;
   code: string;
   desc: string;
   time: string;
@@ -17,12 +17,12 @@ type SystemError = {
 
 // Dummy data
 const dummyErrors: SystemError[] = [
-  { id: 1, code: "E5001", desc: "Overbooking queue failure", time: "2023-10-27 10:00 AM", status: "New" },
-  { id: 2, code: "E4041", desc: "Route mismatch for Bus 12", time: "2023-10-27 09:30 AM", status: "In Progress" },
-  { id: 3, code: "E2003", desc: "Connectivity failure, server X", time: "2023-10-27 08:00 AM", status: "Resolved" },
-  { id: 4, code: "E5002", desc: "Payment gateway timeout", time: "2023-10-27 11:00 AM", status: "New" },
-  { id: 5, code: "E3010", desc: "GPS sync error on Bus 21", time: "2023-10-27 10:45 AM", status: "In Progress" },
-  { id: 6, code: "E2004", desc: "Database connection pool exhausted", time: "2023-10-27 10:30 AM", status: "Resolved" },
+  { _id: "60d0fe4f5311236168a10a01", code: "E5001", desc: "Overbooking queue failure", time: "2023-10-27 10:00 AM", status: "New" },
+  { _id: "60d0fe4f5311236168a10a02", code: "E4041", desc: "Route mismatch for Bus 12", time: "2023-10-27 09:30 AM", status: "In Progress" },
+  { _id: "60d0fe4f5311236168a10a03", code: "E2003", desc: "Connectivity failure, server X", time: "2023-10-27 08:00 AM", status: "Resolved" },
+  { _id: "60d0fe4f5311236168a10a04", code: "E5002", desc: "Payment gateway timeout", time: "2023-10-27 11:00 AM", status: "New" },
+  { _id: "60d0fe4f5311236168a10a05", code: "E3010", desc: "GPS sync error on Bus 21", time: "2023-10-27 10:45 AM", status: "In Progress" },
+  { _id: "60d0fe4f5311236168a10a06", code: "E2004", desc: "Database connection pool exhausted", time: "2023-10-27 10:30 AM", status: "Resolved" },
 ];
 
 // Column definitions
@@ -33,7 +33,8 @@ const columns: ColumnDef<SystemError>[] = [
   {
     header: "Status",
     accessorKey: "status",
-    cell: (status) => {
+    cell: (row) => {
+      const status = row.status;
       const type =
         status === "Resolved" ? "success" :
         status === "In Progress" ? "warning" :

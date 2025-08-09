@@ -8,7 +8,7 @@ import { Chip } from "@/app/components/Chip";
 
 // Define the type for a support ticket
 type SupportTicket = {
-  id: number;
+  _id: string;
   issue: string;
   handler: string;
   resolution: string;
@@ -17,18 +17,18 @@ type SupportTicket = {
 
 // Dummy data for the tables
 const dummyData: SupportTicket[] = [
-  { id: 1, issue: "Payment Failure #1234", handler: "Jane Doe", resolution: "Refund processed", status: "Resolved" },
-  { id: 2, issue: "Missed Boarding #5678", handler: "John Smith", resolution: "Reallocated to next bus", status: "In Progress" },
-  { id: 3, issue: "Unsuitable Stop #9101", handler: "Alice", resolution: "Pending passenger confirmation", status: "Open" },
-  { id: 4, issue: "Lost Luggage #B456", handler: "Jane Doe", resolution: "Investigating", status: "In Progress" },
-  { id: 5, issue: "Driver Dispute #C789", handler: "Bob Brown", resolution: "Awaiting driver report", status: "Open" },
-  { id: 6, issue: "App Crash on Booking", handler: "Tech Team", resolution: "Patch v1.2 deployed", status: "Resolved" },
-  { id: 7, issue: "Double Charge #D112", handler: "John Smith", resolution: "Second charge refunded", status: "Resolved" },
+  { _id: "60d0fe4f5311236168a109ca", issue: "Payment Failure #1234", handler: "Jane Doe", resolution: "Refund processed", status: "Resolved" },
+  { _id: "60d0fe4f5311236168a109cb", issue: "Missed Boarding #5678", handler: "John Smith", resolution: "Reallocated to next bus", status: "In Progress" },
+  { _id: "60d0fe4f5311236168a109cc", issue: "Unsuitable Stop #9101", handler: "Alice", resolution: "Pending passenger confirmation", status: "Open" },
+  { _id: "60d0fe4f5311236168a109cd", issue: "Lost Luggage #B456", handler: "Jane Doe", resolution: "Investigating", status: "In Progress" },
+  { _id: "60d0fe4f5311236168a109ce", issue: "Driver Dispute #C789", handler: "Bob Brown", resolution: "Awaiting driver report", status: "Open" },
+  { _id: "60d0fe4f5311236168a109cf", issue: "App Crash on Booking", handler: "Tech Team", resolution: "Patch v1.2 deployed", status: "Resolved" },
+  { _id: "60d0fe4f5311236168a109d0", issue: "Double Charge #D112", handler: "John Smith", resolution: "Second charge refunded", status: "Resolved" },
 ];
 
 const escalatedDummyData: SupportTicket[] = [
-    { id: 8, issue: "Repeated Cancellations on Route 5", handler: "Superuser", resolution: "Under review with operator", status: "Escalated" },
-    { id: 9, issue: "Large Refund Request #F999", handler: "Superuser", resolution: "Awaiting manager approval", status: "Escalated" },
+    { _id: "60d0fe4f5311236168a109d1", issue: "Repeated Cancellations on Route 5", handler: "Superuser", resolution: "Under review with operator", status: "Escalated" },
+    { _id: "60d0fe4f5311236168a109d2", issue: "Large Refund Request #F999", handler: "Superuser", resolution: "Awaiting manager approval", status: "Escalated" },
 ];
 
 // Define the columns for the data table
@@ -39,7 +39,8 @@ const columns: ColumnDef<SupportTicket>[] = [
   {
     header: "Status",
     accessorKey: "status",
-    cell: (status) => {
+    cell: (row) => {
+      const status = row.status;
       const type =
         status === "Resolved" ? "success" :
         status === "In Progress" ? "warning" :

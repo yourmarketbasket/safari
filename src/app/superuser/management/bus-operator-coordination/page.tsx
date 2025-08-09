@@ -8,7 +8,7 @@ import { Chip } from "@/app/components/Chip";
 
 // Type for Bus Operator data
 type BusOperator = {
-  id: number;
+  _id: string;
   name: string;
   contact: string;
   activeRoutes: number;
@@ -17,10 +17,10 @@ type BusOperator = {
 
 // Dummy data for bus operators
 const dummyOperators: BusOperator[] = [
-  { id: 1, name: "Modern Coast", contact: "contact@moderncoast.com", activeRoutes: 15, performance: "Good" },
-  { id: 2, name: "Easy Coach", contact: "support@easycoach.co.ke", activeRoutes: 25, performance: "Excellent" },
-  { id: 3, name: "Prestige Shuttles", contact: "bookings@prestige.com", activeRoutes: 8, performance: "Good" },
-  { id: 4, name: "North Rift", contact: "help@northrift.co", activeRoutes: 12, performance: "Poor" },
+  { _id: "60d0fe4f5311236168a10f01", name: "Modern Coast", contact: "contact@moderncoast.com", activeRoutes: 15, performance: "Good" },
+  { _id: "60d0fe4f5311236168a10f02", name: "Easy Coach", contact: "support@easycoach.co.ke", activeRoutes: 25, performance: "Excellent" },
+  { _id: "60d0fe4f5311236168a10f03", name: "Prestige Shuttles", contact: "bookings@prestige.com", activeRoutes: 8, performance: "Good" },
+  { _id: "60d0fe4f5311236168a10f04", name: "North Rift", contact: "help@northrift.co", activeRoutes: 12, performance: "Poor" },
 ];
 
 // Column definitions for the bus operator table
@@ -31,7 +31,8 @@ const columns: ColumnDef<BusOperator>[] = [
   {
     header: "Performance",
     accessorKey: "performance",
-    cell: (performance) => {
+    cell: (row) => {
+      const performance = row.performance;
       const type =
         performance === "Excellent" ? "info" :
         performance === "Good" ? "success" :
@@ -41,8 +42,8 @@ const columns: ColumnDef<BusOperator>[] = [
   },
    {
       header: "Actions",
-      accessorKey: "id",
-      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Details</button>
+      accessorKey: "_id",
+      cell: (_row) => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Details</button>
   }
 ];
 

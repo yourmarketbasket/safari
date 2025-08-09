@@ -8,7 +8,7 @@ import { Chip } from "@/app/components/Chip";
 
 // Type for Edge Case data
 type EdgeCase = {
-  id: number;
+  _id: string;
   scenario: string;
   description: string;
   lastOccurred: string;
@@ -17,9 +17,9 @@ type EdgeCase = {
 
 // Dummy data for edge cases
 const dummyEdgeCases: EdgeCase[] = [
-  { id: 1, scenario: "Support Staff Overload", description: "High volume of support tickets during peak hours", lastOccurred: "2023-10-27", status: "Monitored" },
-  { id: 2, scenario: "Reallocation Failures", description: "No available seats on subsequent buses for reallocation", lastOccurred: "2023-10-26", status: "Action Required" },
-  { id: 3, scenario: "System Downtime", description: "Main booking server offline for 30 minutes", lastOccurred: "2023-10-20", status: "Resolved" },
+  { _id: "60d0fe4f5311236168a11201", scenario: "Support Staff Overload", description: "High volume of support tickets during peak hours", lastOccurred: "2023-10-27", status: "Monitored" },
+  { _id: "60d0fe4f5311236168a11202", scenario: "Reallocation Failures", description: "No available seats on subsequent buses for reallocation", lastOccurred: "2023-10-26", status: "Action Required" },
+  { _id: "60d0fe4f5311236168a11203", scenario: "System Downtime", description: "Main booking server offline for 30 minutes", lastOccurred: "2023-10-20", status: "Resolved" },
 ];
 
 // Column definitions for the edge case table
@@ -30,7 +30,8 @@ const columns: ColumnDef<EdgeCase>[] = [
   {
     header: "Status",
     accessorKey: "status",
-    cell: (status) => {
+    cell: (row) => {
+      const status = row.status;
       const type =
         status === "Resolved" ? "success" :
         status === "Action Required" ? "error" :
@@ -40,8 +41,8 @@ const columns: ColumnDef<EdgeCase>[] = [
   },
   {
       header: "Actions",
-      accessorKey: "id",
-      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View Log</button>
+      accessorKey: "_id",
+      cell: (_row) => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View Log</button>
   }
 ];
 

@@ -7,7 +7,7 @@ import { DataTable, ColumnDef } from "@/app/components/DataTable";
 
 // Type for Permission data
 type Permission = {
-  id: number;
+  _id: string;
   role: "Admin" | "Support" | "Driver" | "Queue Manager";
   permission: string;
   description: string;
@@ -16,11 +16,11 @@ type Permission = {
 
 // Dummy data for permissions
 const dummyPermissions: Permission[] = [
-  { id: 1, role: "Admin", permission: "manage_users", description: "Can create, edit, and delete users", assigned: 5 },
-  { id: 2, role: "Support", permission: "handle_tickets", description: "Can respond to and resolve support tickets", assigned: 20 },
-  { id: 3, role: "Admin", permission: "set_fares", description: "Can adjust route pricing", assigned: 3 },
-  { id: 4, role: "Driver", permission: "view_manifest", description: "Can view passenger list for a trip", assigned: 150 },
-  { id: 5, role: "Queue Manager", permission: "manage_queues", description: "Can manage bus queues at stations", assigned: 15 },
+  { _id: "60d0fe4f5311236168a10c01", role: "Admin", permission: "manage_users", description: "Can create, edit, and delete users", assigned: 5 },
+  { _id: "60d0fe4f5311236168a10c02", role: "Support", permission: "handle_tickets", description: "Can respond to and resolve support tickets", assigned: 20 },
+  { _id: "60d0fe4f5311236168a10c03", role: "Admin", permission: "set_fares", description: "Can adjust route pricing", assigned: 3 },
+  { _id: "60d0fe4f5311236168a10c04", role: "Driver", permission: "view_manifest", description: "Can view passenger list for a trip", assigned: 150 },
+  { _id: "60d0fe4f5311236168a10c05", role: "Queue Manager", permission: "manage_queues", description: "Can manage bus queues at stations", assigned: 15 },
 ];
 
 // Column definitions for the permission table
@@ -31,8 +31,8 @@ const columns: ColumnDef<Permission>[] = [
   { header: "Users Assigned", accessorKey: "assigned" },
   {
       header: "Actions",
-      accessorKey: "id",
-      cell: () => (
+      accessorKey: "_id",
+      cell: (_row) => (
           <div className="flex gap-2">
               <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Edit</button>
               <button className="text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Revoke</button>

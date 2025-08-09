@@ -7,12 +7,11 @@ import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import { Chip } from '@/app/components/Chip';
 
 const mockSaccos = [
-  { id: 's-1', name: 'Prestige', status: 'approved' },
-  { id: 's-2', name: 'Climax', status: 'pending' },
-  { id: 's-3', name: 'Modern Coast', status: 'approved' },
-  { id: 's-4', name: 'Easy Coach', status: 'suspended' },
+  { _id: 's-1', name: 'Prestige', status: 'approved' },
+  { _id: 's-2', name: 'Climax', status: 'pending' },
+  { _id: 's-3', name: 'Modern Coast', status: 'approved' },
+  { _id: 's-4', name: 'Easy Coach', status: 'suspended' },
 ];
-// force
 
 export default function SaccoManagementPage() {
   const { setTitle } = usePageTitleStore();
@@ -59,7 +58,7 @@ export default function SaccoManagementPage() {
               </thead>
               <tbody className="text-gray-800 text-xs font-light">
                 {filteredSaccos.map((sacco) => (
-                  <tr key={sacco.id} className="border-b border-gray-200 hover:bg-gray-100">
+                  <tr key={sacco._id} className="border-b border-gray-200 hover:bg-gray-100">
                     <td className="py-4 px-6 text-left whitespace-nowrap">{sacco.name}</td>
                     <td className="py-4 px-6 text-center">
                       <Chip

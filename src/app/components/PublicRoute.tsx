@@ -29,9 +29,6 @@ export default function PublicRoute({ children }: { children: React.ReactNode })
         case 'support_staff':
           router.push('/support');
           break;
-        case 'headoffice':
-          router.push('/head-office');
-          break;
         default:
           router.push('/dashboard');
       }

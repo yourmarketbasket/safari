@@ -8,7 +8,7 @@ import { Chip } from "@/app/components/Chip";
 
 // Type for Escalation data
 type Escalation = {
-  id: number;
+  _id: string;
   issue: string;
   escalatedBy: string;
   department: "Technical" | "Payments" | "Operations";
@@ -18,9 +18,9 @@ type Escalation = {
 
 // Dummy data for escalations
 const dummyEscalations: Escalation[] = [
-  { id: 1, issue: "Repeated Cancellations on Route 5", escalatedBy: "Jane Doe", department: "Operations", date: "2023-10-26", status: "In Review" },
-  { id: 2, issue: "Large Refund Request #F999", escalatedBy: "John Smith", department: "Payments", date: "2023-10-25", status: "Resolved" },
-  { id: 3, issue: "System-wide login failures", escalatedBy: "Tech Team", department: "Technical", date: "2023-10-27", status: "Pending" },
+  { _id: "60d0fe4f5311236168a10e01", issue: "Repeated Cancellations on Route 5", escalatedBy: "Jane Doe", department: "Operations", date: "2023-10-26", status: "In Review" },
+  { _id: "60d0fe4f5311236168a10e02", issue: "Large Refund Request #F999", escalatedBy: "John Smith", department: "Payments", date: "2023-10-25", status: "Resolved" },
+  { _id: "60d0fe4f5311236168a10e03", issue: "System-wide login failures", escalatedBy: "Tech Team", department: "Technical", date: "2023-10-27", status: "Pending" },
 ];
 
 // Column definitions for the escalation table
@@ -32,7 +32,8 @@ const columns: ColumnDef<Escalation>[] = [
   {
     header: "Status",
     accessorKey: "status",
-    cell: (status) => {
+    cell: (row) => {
+      const status = row.status;
       const type =
         status === "Resolved" ? "success" :
         status === "In Review" ? "warning" :
@@ -42,8 +43,8 @@ const columns: ColumnDef<Escalation>[] = [
   },
    {
       header: "Actions",
-      accessorKey: "id",
-      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Review</button>
+      accessorKey: "_id",
+      cell: (_row) => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Review</button>
   }
 ];
 
