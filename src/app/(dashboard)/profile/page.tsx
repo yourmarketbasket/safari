@@ -6,7 +6,7 @@ import PrivateRoute from '@/app/components/PrivateRoute';
 import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import FileUpload from '@/app/components/FileUpload';
 import { FaUserCircle } from 'react-icons/fa';
-import { FiEdit, FiSave, FiX, FiMessageSquare } from 'react-icons/fi';
+import { FiEdit, FiSave, FiX, FiMessageSquare, FiCreditCard, FiPlus } from 'react-icons/fi';
 import Image from 'next/image';
 import { Ticket } from '@/app/models/Ticket.model';
 import { Chip } from '@/app/components/Chip';
@@ -105,112 +105,126 @@ export default function ProfilePage() {
 
   return (
     <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice', 'queue_manager']}>
-      <div className="container mx-auto px-6 py-8">
-        {user && (
-          <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
-            {isEditing ? (
-              <form onSubmit={handleUpdate} className="space-y-6">
-                <div className="flex justify-center mb-6">
-                  <FileUpload onFileChange={handleFileChange} />
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1 space-y-6">
+                {user && (
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                    {isEditing ? (
+                    <form onSubmit={handleUpdate} className="space-y-4">
+                        <div className="flex justify-center">
+                        <FileUpload onFileChange={handleFileChange} />
+                        </div>
+                        <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                        <input
+                            type="text"
+                            id="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        />
+                        </div>
+                        <div>
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
+                        <input
+                            type="text"
+                            id="phone"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        />
+                        </div>
+                        <div className="flex items-center justify-end space-x-2">
+                        <button
+                            type="button"
+                            onClick={() => setIsEditing(false)}
+                            className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+                        >
+                            <FiX className="mr-1" />
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                        >
+                            <FiSave className="mr-1" />
+                            Save
+                        </button>
+                        </div>
+                    </form>
+                    ) : (
+                    <div className="text-center">
+                        {user.avatar ? (
+                            <Image src={user.avatar} alt="Avatar" width={100} height={100} className="rounded-full mx-auto" />
+                        ) : (
+                        <FaUserCircle className="w-24 h-24 text-gray-300 mx-auto" />
+                        )}
+                        <h2 className="mt-4 text-xl font-bold text-gray-900">{user.name}</h2>
+                        <p className="text-sm text-gray-500">{user.email}</p>
+                        <p className="text-sm text-gray-500">{user.phone || 'N/A'}</p>
+                        <p className="mt-2 inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full">{user.role}</p>
+                        <div className="mt-4">
+                        <button
+                            onClick={() => setIsEditing(true)}
+                            className="flex items-center mx-auto px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                        >
+                            <FiEdit className="mr-1" />
+                            Edit Profile
+                        </button>
+                        </div>
+                    </div>
+                    )}
                 </div>
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="block w-full px-4 py-3 bg-gray-100 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input
-                    type="text"
-                    id="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="block w-full px-4 py-3 bg-gray-100 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                </div>
-                <div className="flex items-center justify-end space-x-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(false)}
-                    className="flex items-center px-4 py-2 font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                  >
-                    <FiX className="mr-2" />
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex items-center px-4 py-2 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    <FiSave className="mr-2" />
-                    Save Changes
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div className="text-center">
-                {user.avatar ? (
-                    <Image src={user.avatar} alt="Avatar" width={128} height={128} className="rounded-full mx-auto mb-4" />
-                ) : (
-                  <FaUserCircle className="w-32 h-32 text-gray-400 mx-auto mb-4" />
                 )}
-                <h2 className="text-2xl font-bold text-gray-800">{user.name}</h2>
-                <p className="text-gray-600">{user.email}</p>
-                <p className="text-gray-600">{user.phone || 'N/A'}</p>
-                <p className="mt-2 inline-block bg-indigo-100 text-indigo-800 text-sm font-semibold px-3 py-1 rounded-full">{user.role}</p>
-                <div className="mt-6">
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="flex items-center mx-auto px-6 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    <FiEdit className="mr-2" />
-                    Edit Profile
-                  </button>
+                 <div className="bg-white p-6 rounded-lg shadow-md">
+                    <h3 className="font-bold text-lg text-gray-900 mb-4">Loyalty Points</h3>
+                    <div className="text-center">
+                        <p className="text-5xl font-bold text-indigo-600">{mockLoyalty.points}</p>
+                        <p className="text-sm text-gray-500">Points</p>
+                    </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Added sections */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-            {/* Loyalty Points */}
-            <div className="p-6 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-2xl shadow-xl">
-                <h2 className="text-lg font-bold">Loyalty Points</h2>
-                <p className="text-4xl font-bold mt-2">{mockLoyalty.points}</p>
             </div>
 
-            {/* Payment Methods */}
-            <div className="p-6 bg-white rounded-2xl shadow-xl md:col-span-2">
-                <h2 className="text-xl font-bold text-gray-800">Payment Methods</h2>
-                <div className="mt-4 space-y-3">
-                {mockPaymentMethods.map((method) => (
-                    <div key={method._id} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-700 font-medium">{method.type} ending in {method.last4}</p>
-                    {method.isDefault && <span className="text-xs font-semibold text-green-800 bg-green-200 px-3 py-1 rounded-full">Default</span>}
+            <div className="lg:col-span-2 space-y-6">
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-bold text-lg text-gray-900">Payment Methods</h3>
+                        <button className="flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                            <FiPlus className="mr-1"/>
+                            Add Method
+                        </button>
                     </div>
-                ))}
+                    <div className="space-y-3">
+                    {mockPaymentMethods.map((method) => (
+                        <div key={method._id} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div className="flex items-center">
+                                <FiCreditCard className="w-6 h-6 text-gray-400 mr-4"/>
+                                <div>
+                                    <p className="text-gray-800 font-semibold">{method.type}</p>
+                                    <p className="text-sm text-gray-500">**** **** **** {method.last4}</p>
+                                </div>
+                            </div>
+                            {method.isDefault && <span className="text-xs font-semibold text-green-800 bg-green-100 px-3 py-1 rounded-full">Default</span>}
+                        </div>
+                    ))}
+                    </div>
                 </div>
-                <button className="mt-6 text-sm font-bold text-indigo-600 hover:text-indigo-800">Add Payment Method</button>
             </div>
         </div>
 
         {/* My Tickets Table */}
-        <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">My Tickets</h2>
-          <div className="flex justify-between items-center mb-6">
+        <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">My Tickets</h2>
+          <div className="flex justify-between items-center mb-4">
             <input
               type="text"
               placeholder="Search by route..."
-              className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 w-1/3"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 w-1/3"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <select
-              className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
               onChange={(e) => setFilterStatus(e.target.value)}
             >
               <option value="all">All Statuses</option>
@@ -222,23 +236,23 @@ export default function ProfilePage() {
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
-              <thead className="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
+              <thead className="bg-gray-50 text-gray-500 uppercase text-xs leading-normal">
                 <tr>
-                  <th className="py-3 px-6 text-left cursor-pointer font-light" onClick={() => requestSort('route')}>Route</th>
-                  <th className="py-3 px-6 text-left cursor-pointer font-light" onClick={() => requestSort('registrationTimestamp')}>Date</th>
-                  <th className="py-3 px-6 text-center cursor-pointer font-light" onClick={() => requestSort('status')}>Status</th>
-                  <th className="py-3 px-6 text-right cursor-pointer font-light" onClick={() => requestSort('totalCost')}>Total Cost</th>
-                  <th className="py-3 px-6 text-left font-light">Class</th>
-                  <th className="py-3 px-6 text-center font-light">Rating</th>
-                  <th className="py-3 px-6 text-center font-light">Actions</th>
+                  <th className="py-3 px-6 text-left font-semibold" onClick={() => requestSort('route')}>Route</th>
+                  <th className="py-3 px-6 text-left font-semibold" onClick={() => requestSort('registrationTimestamp')}>Date</th>
+                  <th className="py-3 px-6 text-center font-semibold" onClick={() => requestSort('status')}>Status</th>
+                  <th className="py-3 px-6 text-right font-semibold" onClick={() => requestSort('totalCost')}>Total Cost</th>
+                  <th className="py-3 px-6 text-left font-semibold">Class</th>
+                  <th className="py-3 px-6 text-center font-semibold">Rating</th>
+                  <th className="py-3 px-6 text-center font-semibold">Actions</th>
                 </tr>
               </thead>
-              <tbody className="text-gray-800 text-xs font-light">
+              <tbody className="text-gray-800 text-sm font-light">
                 {paginatedTickets.map((ticket) => (
-                  <tr key={ticket._id} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-4 px-6 text-left whitespace-nowrap">{ticket.route}</td>
-                    <td className="py-4 px-6 text-left">{new Date(ticket.registrationTimestamp).toLocaleDateString()}</td>
-                    <td className="py-4 px-6 text-center">
+                  <tr key={ticket._id} className="border-b border-gray-200 hover:bg-gray-50">
+                    <td className="py-3 px-6 text-left whitespace-nowrap">{ticket.route}</td>
+                    <td className="py-3 px-6 text-left">{new Date(ticket.registrationTimestamp).toLocaleDateString()}</td>
+                    <td className="py-3 px-6 text-center">
                       <Chip
                         text={ticket.status}
                         type={
@@ -249,13 +263,13 @@ export default function ProfilePage() {
                         }
                       />
                     </td>
-                    <td className="py-4 px-6 text-right">Ksh {ticket.totalCost.toLocaleString()}</td>
-                    <td className="py-4 px-6 text-left">{ticket.class}</td>
-                    <td className="py-4 px-6 text-center">
+                    <td className="py-3 px-6 text-right">Ksh {ticket.totalCost.toLocaleString()}</td>
+                    <td className="py-3 px-6 text-left">{ticket.class}</td>
+                    <td className="py-3 px-6 text-center">
                       <Rating rating={ticket.rating} readOnly={ticket.status !== 'boarded'} />
                     </td>
-                    <td className="py-4 px-6 text-center">
-                      <button className="text-purple-600 hover:text-purple-800">
+                    <td className="py-3 px-6 text-center">
+                      <button className="text-indigo-600 hover:text-indigo-800">
                         <FiMessageSquare />
                       </button>
                     </td>
