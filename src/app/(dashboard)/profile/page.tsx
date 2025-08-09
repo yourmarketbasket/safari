@@ -6,16 +6,18 @@ import PrivateRoute from '@/app/components/PrivateRoute';
 import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import FileUpload from '@/app/components/FileUpload';
 import { FaUserCircle } from 'react-icons/fa';
-import { FiEdit, FiSave, FiX, FiMessageSquare, FiCreditCard, FiPlus } from 'react-icons/fi';
+import { FiEdit, FiSave, FiX, FiMessageSquare, FiCreditCard, FiPlus, FiGift } from 'react-icons/fi';
 import Image from 'next/image';
 import { Ticket } from '@/app/models/Ticket.model';
 import { Chip } from '@/app/components/Chip';
 import Rating from '@/app/components/Rating';
-import Pagination from '@/app/components/Pagination';
-import TicketDialog from '@/app/components/TicketDialog';
+import { DataTable, ColumnDef } from '@/app/components/DataTable';
+import SummaryCard from '@/app/components/SummaryCard';
+
+type TicketType = Omit<Ticket, 'passengerId' | 'tripId' | 'routeId'> & { route: string, rating: number, comments: string, totalCost: number };
 
 // Mock Data from passenger/page.tsx
-const mockTicketsData: (Omit<Ticket, 'passengerId' | 'tripId' | 'routeId'> & { route: string, rating: number, comments: string, totalCost: number })[] = [
+const mockTicketsData: TicketType[] = [
   { _id: 't-1', route: 'Nairobi - Nakuru', registrationTimestamp: new Date('2024-10-26'), status: 'paid', class: 'economy', systemFee: 50, comments: 'Window seat preferred', rating: 0, totalCost: 500 },
   { _id: 't-2', route: 'Mombasa - Nairobi', registrationTimestamp: new Date('2024-10-22'), status: 'boarded', class: 'business', systemFee: 100, comments: '', rating: 4, totalCost: 1200 },
   { _id: 't-3', route: 'Kisumu - Nairobi', registrationTimestamp: new Date('2024-11-01'), status: 'registered', class: 'economy', systemFee: 75, comments: '', rating: 0, totalCost: 800 },
@@ -42,59 +44,8 @@ export default function ProfilePage() {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // State and logic from passenger/page.tsx
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [sortConfig, setSortConfig] = useState<{ key: keyof typeof mockTicketsData[0]; direction: string } | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const [selectedTicket, setSelectedTicket] = useState(null);
-
-  const filteredTickets = useMemo(() => {
-    let tickets = mockTicketsData.filter((ticket) =>
-      ticket.route.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    if (filterStatus !== 'all') {
-      tickets = tickets.filter((ticket) => ticket.status === filterStatus);
-    }
-
-    if (sortConfig) {
-      tickets.sort((a, b) => {
-        const valA = a[sortConfig.key];
-        const valB = b[sortConfig.key];
-        if (valA == null) return 1;
-        if (valB == null) return -1;
-        if (valA < valB) {
-          return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (valA > valB) {
-          return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-
-    return tickets;
-  }, [searchTerm, filterStatus, sortConfig]);
-
-  const paginatedTickets = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredTickets.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredTickets, currentPage, itemsPerPage]);
-
-  const requestSort = (key: keyof typeof mockTicketsData[0]) => {
-    let direction = 'ascending';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
-    }
-    setSortConfig({ key, direction });
-  };
-
-
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically call an API to update the user's profile
     console.log('Updating profile with:', { name, phone, avatar });
     setIsEditing(false);
   };
@@ -102,6 +53,16 @@ export default function ProfilePage() {
   const handleFileChange = (file: File) => {
     setAvatar(file);
   };
+
+  const ticketColumns: ColumnDef<TicketType>[] = useMemo(() => [
+    { header: 'Route', accessorKey: 'route' },
+    { header: 'Date', accessorKey: 'registrationTimestamp', cell: (row) => new Date(row.registrationTimestamp).toLocaleDateString() },
+    { header: 'Status', accessorKey: 'status', cell: (row) => <Chip text={row.status} type={row.status === 'boarded' ? 'success' : row.status === 'canceled' ? 'error' : 'info'} /> },
+    { header: 'Cost', accessorKey: 'totalCost', cell: (row) => `Ksh ${row.totalCost.toLocaleString()}` },
+    { header: 'Class', accessorKey: 'class' },
+    { header: 'Rating', accessorKey: 'rating', cell: (row) => <Rating rating={row.rating} readOnly={row.status !== 'boarded'} /> },
+    { header: 'Actions', accessorKey: '_id', cell: () => <button className="text-indigo-600 hover:text-indigo-800"><FiMessageSquare /></button> },
+  ], []);
 
   return (
     <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice', 'queue_manager']}>
@@ -176,12 +137,13 @@ export default function ProfilePage() {
                     )
                 )}
             </div>
-            <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
-                <h3 className="font-bold text-lg text-gray-900 mb-4">Loyalty Points</h3>
-                <div className="text-center">
-                    <p className="text-5xl font-bold text-indigo-600">{mockLoyalty.points}</p>
-                    <p className="text-sm text-gray-500">Points</p>
-                </div>
+            <div className="flex-1">
+                <SummaryCard
+                    icon={FiGift}
+                    title="Loyalty Points"
+                    value={mockLoyalty.points}
+                    color="purple"
+                />
             </div>
             <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
                 <div className="flex justify-between items-center mb-4">
@@ -211,74 +173,7 @@ export default function ProfilePage() {
         {/* My Tickets Table */}
         <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">My Tickets</h2>
-          <div className="flex justify-between items-center mb-4">
-            <input
-              type="text"
-              placeholder="Search by route..."
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 w-1/3"
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <select
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="all">All Statuses</option>
-              <option value="registered">Registered</option>
-              <option value="paid">Paid</option>
-              <option value="boarded">Boarded</option>
-              <option value="canceled">Canceled</option>
-            </select>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white">
-              <thead className="bg-gray-50 text-gray-500 uppercase text-xs leading-normal">
-                <tr>
-                  <th className="py-3 px-6 text-left font-semibold" onClick={() => requestSort('route')}>Route</th>
-                  <th className="py-3 px-6 text-left font-semibold" onClick={() => requestSort('registrationTimestamp')}>Date</th>
-                  <th className="py-3 px-6 text-center font-semibold" onClick={() => requestSort('status')}>Status</th>
-                  <th className="py-3 px-6 text-right font-semibold" onClick={() => requestSort('totalCost')}>Total Cost</th>
-                  <th className="py-3 px-6 text-left font-semibold">Class</th>
-                  <th className="py-3 px-6 text-center font-semibold">Rating</th>
-                  <th className="py-3 px-6 text-center font-semibold">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-800 text-sm font-light">
-                {paginatedTickets.map((ticket) => (
-                  <tr key={ticket._id} className="border-b border-gray-200 hover:bg-gray-50">
-                    <td className="py-3 px-6 text-left whitespace-nowrap">{ticket.route}</td>
-                    <td className="py-3 px-6 text-left">{new Date(ticket.registrationTimestamp).toLocaleDateString()}</td>
-                    <td className="py-3 px-6 text-center">
-                      <Chip
-                        text={ticket.status}
-                        type={
-                          ticket.status === 'boarded' ? 'success' :
-                          ticket.status === 'canceled' ? 'error' :
-                          ticket.status === 'paid' || ticket.status === 'registered' ? 'info' :
-                          'default'
-                        }
-                      />
-                    </td>
-                    <td className="py-3 px-6 text-right">Ksh {ticket.totalCost.toLocaleString()}</td>
-                    <td className="py-3 px-6 text-left">{ticket.class}</td>
-                    <td className="py-3 px-6 text-center">
-                      <Rating rating={ticket.rating} readOnly={ticket.status !== 'boarded'} />
-                    </td>
-                    <td className="py-3 px-6 text-center">
-                      <button className="text-indigo-600 hover:text-indigo-800">
-                        <FiMessageSquare />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <TicketDialog ticket={selectedTicket} onClose={() => setSelectedTicket(null)} />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={Math.ceil(filteredTickets.length / itemsPerPage)}
-            onPageChange={setCurrentPage}
-          />
+          <DataTable columns={ticketColumns} data={mockTicketsData} filterColumn="status" />
         </div>
 
       </div>
