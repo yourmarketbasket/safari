@@ -259,7 +259,7 @@ const MyTripsPage = () => {
 
         {/* Search Modal */}
         <Modal isOpen={isSearchModalOpen} onClose={() => setIsSearchModalOpen(false)} >
-            <div className="p-8 bg-white rounded-lg shadow-xl w-[90vw] max-w-4xl">
+            <div className="p-8 bg-white rounded-lg shadow-xl w-full mx-8">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Search for a Trip</h2>
                     <input
                         type="text"
