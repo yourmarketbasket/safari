@@ -152,12 +152,12 @@ export const removeUserPermission = async (id: string, permission: string): Prom
 };
 
 // Permission Management
-export const createPermission = async (permission: Omit<Permission, 'permissionNumber'>): Promise<Permission> => {
+export const createPermission = async (permission: Omit<Permission, '_id'>): Promise<Permission> => {
   const response = await api.post<ApiResponse<Permission>>('/permissions', permission);
   return response.data.data;
 };
 
-export const createPermissions = async (permissions: Omit<Permission, 'permissionNumber'>[]): Promise<Permission[]> => {
+export const createPermissions = async (permissions: Omit<Permission, '_id'>[]): Promise<Permission[]> => {
     const response = await api.post<ApiResponse<Permission[]>>('/permissions', permissions);
     return response.data.data;
 };
@@ -167,18 +167,18 @@ export const getAllPermissions = async (): Promise<Permission[]> => {
   return response.data.data;
 };
 
-export const getPermissionById = async (id: string): Promise<Permission> => {
-  const response = await api.get<ApiResponse<Permission>>(`/permissions/${id}`);
+export const getPermissionByNumber = async (permissionNumber: string): Promise<Permission> => {
+  const response = await api.get<ApiResponse<Permission>>(`/permissions/${permissionNumber}`);
   return response.data.data;
 };
 
-export const updatePermission = async (id: string, permission: Partial<Permission>): Promise<Permission> => {
-  const response = await api.put<ApiResponse<Permission>>(`/permissions/${id}`, permission);
+export const updatePermission = async (permissionNumber: string, permission: Partial<Permission>): Promise<Permission> => {
+  const response = await api.put<ApiResponse<Permission>>(`/permissions/${permissionNumber}`, permission);
   return response.data.data;
 };
 
-export const deletePermission = async (id: string): Promise<void> => {
-  await api.delete<ApiResponse<object>>(`/permissions/${id}`);
+export const deletePermission = async (permissionNumber: string): Promise<void> => {
+  await api.delete<ApiResponse<object>>(`/permissions/${permissionNumber}`);
 };
 
 const superuserService = {

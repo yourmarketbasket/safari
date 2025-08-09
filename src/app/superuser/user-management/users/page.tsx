@@ -1,29 +1,58 @@
 "use client";
 
 import { NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
 import { User } from "@/app/models/User.model";
+import { Permission } from "@/app/models/Permission.model";
 import UserManagementModal from "@/app/components/UserManagementModal";
-import { FiUser } from "react-icons/fi";
-
-// Dummy data for users
-const dummyUsers: User[] = [
-  { _id: "60d0fe4f5311236168a10b01", name: "John Doe", email: "john.doe@example.com", phone: "123-456-7890", role: "passenger", rank: "Ordinary", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
-  { _id: "60d0fe4f5311236168a10b02", name: "Jane Smith", email: "jane.smith@example.com", phone: "123-456-7891", role: "driver", rank: "Staff", approvedStatus: "approved", permissions: ["view_manifest"], verified: { email: true, phone: true }, createdAt: new Date() },
-  { _id: "60d0fe4f5311236168a10b03", name: "Admin User", email: "admin@example.com", phone: "123-456-7892", role: "admin", rank: "Manager", approvedStatus: "approved", permissions: ["manage_users", "set_fares"], verified: { email: true, phone: true }, createdAt: new Date() },
-  { _id: "60d0fe4f5311236168a10b04", name: "Suspended Driver", email: "suspend@example.com", phone: "123-456-7893", role: "driver", rank: "Staff", approvedStatus: "suspended", permissions: [], verified: { email: true, phone: false }, createdAt: new Date() },
-  { _id: "60d0fe4f5311236168a10b05", name: "Blocked User", email: "blocked@example.com", phone: "123-456-7894", role: "passenger", rank: "Ordinary", approvedStatus: "blocked", permissions: [], verified: { email: false, phone: false }, createdAt: new Date() },
-  { _id: "60d0fe4f5311236168a10b06", name: "Pending Passenger", email: "pending@example.com", phone: "123-456-7895", role: "passenger", rank: "Ordinary", approvedStatus: "pending", permissions: [], verified: { email: false, phone: false }, createdAt: new Date() },
-];
+import superuserService from "@/app/services/superuser.service";
+import { FiUser, FiUsers, FiUserCheck, FiUserX } from "react-icons/fi";
+import Message from "@/app/components/Message";
+import LoadingOverlay from "@/app/components/LoadingOverlay";
 
 const UsersPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
+    const [users, setUsers] = useState<User[]>([]);
+    const [allPermissions, setAllPermissions] = useState<Permission[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // Define columns inside the component so they can use state setters
+    const fetchUsersAndPermissions = async () => {
+        setIsLoading(true);
+        try {
+            const [usersData, permissionsData] = await Promise.all([
+                superuserService.getAllUsers(),
+                superuserService.getAllPermissions()
+            ]);
+            setUsers(usersData);
+            setAllPermissions(permissionsData);
+        } catch (err: any) {
+            setError(err.message || "Failed to fetch data.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        setTitle("User Management");
+        fetchUsersAndPermissions();
+    }, [setTitle]);
+
+    const handleUserUpdate = (updatedUser: User) => {
+        setUsers(users.map(u => u._id === updatedUser._id ? updatedUser : u));
+    };
+
+    const summaryStats = useMemo(() => {
+        const total = users.length;
+        const active = users.filter(u => u.approvedStatus === 'approved').length;
+        const suspended = users.filter(u => u.approvedStatus === 'suspended').length;
+        return { total, active, suspended };
+    }, [users]);
+
     const columns: ColumnDef<User>[] = [
         {
             header: "Avatar",
@@ -41,13 +70,13 @@ const UsersPage: NextPage = () => {
             header: "Status",
             accessorKey: "approvedStatus",
             cell: (row) => {
-            const status = row.approvedStatus;
-            const type =
-                status === "approved" ? "success" :
-                status === "suspended" ? "warning" :
-                status === "pending" ? "info" :
-                "error";
-            return <Chip text={status} type={type} />;
+                const status = row.approvedStatus;
+                const type =
+                    status === "approved" ? "success" :
+                    status === "suspended" ? "warning" :
+                    status === "pending" ? "info" :
+                    "error";
+                return <Chip text={status} type={type} />;
             },
         },
         { header: "Rank", accessorKey: "rank" },
@@ -67,7 +96,7 @@ const UsersPage: NextPage = () => {
             cell: (row) => (
                 <button
                     onClick={() => setSelectedUser(row)}
-                    className="text-xs bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
+                    className="text-xs bg-purple-600 text-white px-3 py-1 rounded-md hover:bg-purple-700 transition-colors"
                 >
                     Manage
                 </button>
@@ -75,37 +104,52 @@ const UsersPage: NextPage = () => {
         }
     ];
 
-    useEffect(() => {
-        setTitle("User Management");
-    }, [setTitle]);
-
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      {/* Summary Cards */}
+    <div className="p-6 bg-gray-50 min-h-screen relative">
+      {isLoading && <LoadingOverlay />}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold text-gray-700">Total Users</h2>
-          <p className="text-4xl font-bold text-blue-500">1,234</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold text-gray-700">Active Users</h2>
-          <p className="text-4xl font-bold text-green-500">1,100</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold text-gray-700">Suspended Users</h2>
-          <p className="text-4xl font-bold text-yellow-500">50</p>
-        </div>
+        <SummaryCard icon={FiUsers} title="Total Users" value={summaryStats.total} color="blue" />
+        <SummaryCard icon={FiUserCheck} title="Active Users" value={summaryStats.active} color="green" />
+        <SummaryCard icon={FiUserX} title="Suspended Users" value={summaryStats.suspended} color="yellow" />
       </div>
 
-      {/* Users Table */}
-      <div>
+      <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Users List</h2>
-        <DataTable data={dummyUsers} columns={columns} filterColumn="approvedStatus" />
+        {error && <Message type="error" message={error} />}
+        {!isLoading && !error && <DataTable data={users} columns={columns} filterColumn="name" />}
       </div>
 
-      <UserManagementModal user={selectedUser} onClose={() => setSelectedUser(null)} />
+      {selectedUser && (
+        <UserManagementModal
+            user={selectedUser}
+            onClose={() => setSelectedUser(null)}
+            onUserUpdate={handleUserUpdate}
+            allPermissions={allPermissions}
+        />
+      )}
     </div>
   );
+};
+
+const SummaryCard = ({ icon: Icon, title, value, color }: { icon: React.ElementType, title: string, value: number, color: string }) => {
+    const colorClasses = {
+        blue: 'text-blue-500',
+        green: 'text-green-500',
+        yellow: 'text-yellow-500',
+    }[color] || 'text-gray-500';
+
+    return (
+        <div className="bg-white p-6 rounded-lg shadow-md flex items-center gap-4">
+            <div className={`p-3 rounded-full bg-${color}-100`}>
+                <Icon className={`w-6 h-6 ${colorClasses}`} />
+            </div>
+            <div>
+                <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
+                <p className={`text-3xl font-bold ${colorClasses}`}>{value}</p>
+            </div>
+        </div>
+    );
 };
 
 export default UsersPage;
