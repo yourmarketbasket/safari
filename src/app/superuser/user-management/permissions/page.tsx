@@ -8,9 +8,10 @@ import { Permission } from "@/app/models/Permission.model";
 import superuserService from "@/app/services/superuser.service";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import Message from "@/app/components/Message";
-import { FiPlus, FiEdit, FiTrash2, FiShield, FiKey } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiShield, FiUser } from "react-icons/fi";
 import PermissionModal from "@/app/components/PermissionModal";
 import { Chip } from "@/app/components/Chip";
+import SummaryCard from "@/app/components/SummaryCard";
 
 const PermissionsPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -28,8 +29,7 @@ const PermissionsPage: NextPage = () => {
             });
             return acc;
         }, {} as Record<string, number>);
-        const mostPermissiveRole = Object.entries(rolesCount).sort((a, b) => b[1] - a[1])[0] || [];
-        return { total, mostPermissiveRole: mostPermissiveRole[0] };
+        return { total, rolesCount };
     }, [permissions]);
 
     const fetchPermissions = async () => {
@@ -126,9 +126,11 @@ const PermissionsPage: NextPage = () => {
     <div className="p-6 bg-gray-50 min-h-screen relative">
       {isLoading && <LoadingOverlay />}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <SummaryCard icon={FiShield} title="Total Permissions" value={summaryStats.total} color="blue" />
-        <SummaryCard icon={FiKey} title="Most Permissive Role" value={summaryStats.mostPermissiveRole} color="purple" />
+        {Object.entries(summaryStats.rolesCount).map(([role, count]) => (
+            <SummaryCard key={role} icon={FiUser} title={`${role} Permissions`} value={count} color="purple" />
+        ))}
       </div>
 
       <div className="mb-8">
@@ -157,27 +159,6 @@ const PermissionsPage: NextPage = () => {
       />
     </div>
   );
-};
-
-const SummaryCard = ({ icon: Icon, title, value, color }: { icon: React.ElementType, title: string, value: string | number, color: string }) => {
-    const colorClasses = {
-        blue: 'text-blue-500',
-        green: 'text-green-500',
-        yellow: 'text-yellow-500',
-        purple: 'text-purple-500',
-    }[color] || 'text-gray-500';
-
-    return (
-        <div className="bg-white p-6 rounded-lg shadow-md flex items-center gap-4">
-            <div className={`p-3 rounded-full bg-${color}-100`}>
-                <Icon className={`w-6 h-6 ${colorClasses}`} />
-            </div>
-            <div>
-                <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
-                <p className={`text-3xl font-bold ${colorClasses}`}>{value}</p>
-            </div>
-        </div>
-    );
 };
 
 export default PermissionsPage;

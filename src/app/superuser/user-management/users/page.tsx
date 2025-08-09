@@ -13,6 +13,7 @@ import { FiUser, FiUsers, FiUserCheck, FiUserX } from "react-icons/fi";
 import Message from "@/app/components/Message";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import Image from "next/image";
+import SummaryCard from "@/app/components/SummaryCard";
 
 const UsersPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -135,26 +136,6 @@ const UsersPage: NextPage = () => {
       )}
     </div>
   );
-};
-
-const SummaryCard = ({ icon: Icon, title, value, color }: { icon: React.ElementType, title: string, value: number, color: string }) => {
-    const colorClasses = {
-        blue: 'text-blue-500',
-        green: 'text-green-500',
-        yellow: 'text-yellow-500',
-    }[color] || 'text-gray-500';
-
-    return (
-        <div className="bg-white p-6 rounded-lg shadow-md flex items-center gap-4">
-            <div className={`p-3 rounded-full bg-${color}-100`}>
-                <Icon className={`w-6 h-6 ${colorClasses}`} />
-            </div>
-            <div>
-                <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
-                <p className={`text-3xl font-bold ${colorClasses}`}>{value}</p>
-            </div>
-        </div>
-    );
 };
 
 export default UsersPage;
