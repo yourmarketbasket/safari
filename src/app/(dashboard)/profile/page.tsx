@@ -106,11 +106,10 @@ export default function ProfilePage() {
   return (
     <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice', 'queue_manager']}>
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1 space-y-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
                 {user && (
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    {isEditing ? (
+                    isEditing ? (
                     <form onSubmit={handleUpdate} className="space-y-4">
                         <div className="flex justify-center">
                         <FileUpload onFileChange={handleFileChange} />
@@ -174,41 +173,37 @@ export default function ProfilePage() {
                         </button>
                         </div>
                     </div>
-                    )}
-                </div>
+                    )
                 )}
-                 <div className="bg-white p-6 rounded-lg shadow-md">
-                    <h3 className="font-bold text-lg text-gray-900 mb-4">Loyalty Points</h3>
-                    <div className="text-center">
-                        <p className="text-5xl font-bold text-indigo-600">{mockLoyalty.points}</p>
-                        <p className="text-sm text-gray-500">Points</p>
-                    </div>
+            </div>
+            <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
+                <h3 className="font-bold text-lg text-gray-900 mb-4">Loyalty Points</h3>
+                <div className="text-center">
+                    <p className="text-5xl font-bold text-indigo-600">{mockLoyalty.points}</p>
+                    <p className="text-sm text-gray-500">Points</p>
                 </div>
             </div>
-
-            <div className="lg:col-span-2 space-y-6">
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-bold text-lg text-gray-900">Payment Methods</h3>
-                        <button className="flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800">
-                            <FiPlus className="mr-1"/>
-                            Add Method
-                        </button>
-                    </div>
-                    <div className="space-y-3">
-                    {mockPaymentMethods.map((method) => (
-                        <div key={method._id} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            <div className="flex items-center">
-                                <FiCreditCard className="w-6 h-6 text-gray-400 mr-4"/>
-                                <div>
-                                    <p className="text-gray-800 font-semibold">{method.type}</p>
-                                    <p className="text-sm text-gray-500">**** **** **** {method.last4}</p>
-                                </div>
+            <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-bold text-lg text-gray-900">Payment Methods</h3>
+                    <button className="flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                        <FiPlus className="mr-1"/>
+                        Add Method
+                    </button>
+                </div>
+                <div className="space-y-3">
+                {mockPaymentMethods.map((method) => (
+                    <div key={method._id} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div className="flex items-center">
+                            <FiCreditCard className="w-6 h-6 text-gray-400 mr-4"/>
+                            <div>
+                                <p className="text-gray-800 font-semibold">{method.type}</p>
+                                <p className="text-sm text-gray-500">**** **** **** {method.last4}</p>
                             </div>
-                            {method.isDefault && <span className="text-xs font-semibold text-green-800 bg-green-100 px-3 py-1 rounded-full">Default</span>}
                         </div>
-                    ))}
+                        {method.isDefault && <span className="text-xs font-semibold text-green-800 bg-green-100 px-3 py-1 rounded-full">Default</span>}
                     </div>
+                ))}
                 </div>
             </div>
         </div>
