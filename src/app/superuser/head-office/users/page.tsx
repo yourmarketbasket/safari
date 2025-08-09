@@ -13,12 +13,13 @@ import Pagination from "@/app/components/Pagination";
 import ToggleSwitch from "@/app/components/ToggleSwitch";
 import UserDetailCard from "@/app/components/UserDetailCard";
 import {
-    FiLoader, FiRefreshCw, FiMail, FiPhone, FiCheckCircle, FiXCircle,
-    FiUsers, FiUserX, FiBriefcase
+    FiLoader, FiRefreshCw, FiCheckCircle, FiXCircle,
+    FiUsers, FiUserCheck, FiUserX, FiBriefcase
 } from "react-icons/fi";
-import { FaUsers, FaUserTie, FaCar, FaUser, FaClipboardList, FaUserShield } from "react-icons/fa";
+import { FaUsers, FaUserTie, FaCar, FaUser, FaClipboardList } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
 import { BiSupport } from "react-icons/bi";
+import { FaUserShield } from "react-icons/fa";
 import { AxiosError } from "axios";
 
 const ranks: UserRank[] = [
@@ -40,40 +41,40 @@ const StatusChip = ({ status }: { status: UserStatus }) => {
     return <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 ${color}`}><Icon /></div>;
 };
 
-const VerifiedChip = ({ verified, type }: { verified: boolean, type: 'email' | 'phone' }) => {
-    const TypeIcon = type === 'email' ? FiMail : FiPhone;
-    const StatusIcon = verified ? FiCheckCircle : FiXCircle;
+const VerifiedChip = ({ verified }: { verified: boolean }) => {
+    const Icon = verified ? FiCheckCircle : FiXCircle;
     return (
-        <div className={`flex items-center gap-1 p-1 rounded-full ${verified ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-            <TypeIcon />
-            <StatusIcon />
-        </div>
+        <span className={`flex items-center justify-center h-6 w-6 rounded-full ${verified ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+            <Icon />
+        </span>
     );
 };
 
-const roleUIConfig: Record<UserRole, { icon: React.ElementType, color: string }> = {
-    passenger: { icon: FaUser, color: "from-blue-400 to-blue-600" },
-    driver: { icon: FaCar, color: "from-green-400 to-green-600" },
-    sacco: { icon: FaUsers, color: "from-purple-400 to-purple-600" },
-    owner: { icon: FaUserTie, color: "from-indigo-400 to-indigo-600" },
-    queue_manager: { icon: FaClipboardList, color: "from-pink-400 to-pink-600" },
-    admin: { icon: RiAdminLine, color: "from-yellow-400 to-yellow-600" },
-    support_staff: { icon: BiSupport, color: "from-teal-400 to-teal-600" },
-    superuser: { icon: FaUserShield, color: "from-red-400 to-red-600" },
-    headoffice: { icon: FiBriefcase, color: "from-gray-400 to-gray-600" },
+const roleUIConfig: Record<string, { icon: React.ElementType, color: string }> = {
+    passenger: { icon: FaUser, color: "text-blue-500" },
+    driver: { icon: FaCar, color: "text-green-500" },
+    sacco: { icon: FaUsers, color: "text-purple-500" },
+    owner: { icon: FaUserTie, color: "text-indigo-500" },
+    queue_manager: { icon: FaClipboardList, color: "text-pink-500" },
+    admin: { icon: RiAdminLine, color: "text-yellow-500" },
+    support_staff: { icon: BiSupport, color: "text-teal-500" },
+    superuser: { icon: FaUserShield, color: "text-red-500" },
+    headoffice: { icon: FiBriefcase, color: "text-gray-500" },
+    default: { icon: FiUsers, color: "text-gray-500" },
 };
 
-const SummaryCard = ({ title, value, icon, color, isLoading }: { title: string, value: number, icon: React.ReactNode, color: string, isLoading: boolean }) => (
-    <div className={`bg-gradient-to-br ${color} text-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300`}>
-        <div className="flex justify-between items-start">
-            <h3 className="text-xl font-bold">{title}</h3>
-            <div className="text-4xl opacity-80">{icon}</div>
-        </div>
-        <div className="mt-4">
-            <p className="text-6xl font-bold">{isLoading ? <FiLoader className="animate-spin" /> : value}</p>
+const SummaryCard = ({ title, value, icon, color, isLoading }: { title: string, value: string | number, icon: React.ReactNode, color: string, isLoading: boolean }) => (
+    <div className="bg-white p-4 rounded-lg shadow-md border-l-4 flex-1" style={{ borderLeftColor: color, minWidth: '200px' }}>
+        <div className="flex justify-between items-center">
+            <div className="flex flex-col">
+                <h4 className={`text-sm font-semibold ${color}`}>{title}</h4>
+                <p className="text-3xl font-bold text-gray-800">{isLoading ? <FiLoader className="animate-spin" /> : value}</p>
+            </div>
+            <div className={`text-4xl ${color} opacity-80`}>{icon}</div>
         </div>
     </div>
 );
+
 
 export default function SuperuserUsersPage() {
   const { setTitle } = usePageTitleStore();
@@ -104,18 +105,40 @@ export default function SuperuserUsersPage() {
 
   const userStats = useMemo(() => {
     if (!users) {
-        return { totalUsers: 0, byRole: {} };
+        return {
+            totalUsers: 0,
+            byRole: {},
+            byRank: {},
+            verifiedEmails: 0,
+            verifiedPhones: 0,
+            blocked: 0,
+        };
     }
     const byRole: Record<string, number> = {};
+    const byRank: Record<string, number> = {};
+    let verifiedEmails = 0;
+    let verifiedPhones = 0;
+    let blocked = 0;
+
     roles.forEach(role => byRole[role] = 0);
+    ranks.forEach(rank => byRank[rank] = 0);
 
     users.forEach(user => {
-        if (byRole.hasOwnProperty(user.role)) {
-            byRole[user.role]++;
-        }
+        byRole[user.role] = (byRole[user.role] || 0) + 1;
+        if(user.rank) byRank[user.rank] = (byRank[user.rank] || 0) + 1;
+        if(user.verified?.email) verifiedEmails++;
+        if(user.verified?.phone) verifiedPhones++;
+        if(user.approvedStatus === 'blocked') blocked++;
     });
 
-    return { totalUsers: users.length, byRole };
+    return {
+        totalUsers: users.length,
+        byRole,
+        byRank,
+        verifiedEmails,
+        verifiedPhones,
+        blocked,
+    };
   }, [users]);
 
   const handleApiError = (error: Error, defaultMessage: string) => {
@@ -267,8 +290,8 @@ export default function SuperuserUsersPage() {
           <td className="py-4 px-6 text-left">{user.approvedStatus ? <StatusChip status={user.approvedStatus} /> : null}</td>
           <td className="py-4 px-6 text-left">
             <div className="flex items-center gap-2">
-                <VerifiedChip verified={!!user.verified?.email} type="email" />
-                <VerifiedChip verified={!!user.verified?.phone} type="phone" />
+                <VerifiedChip verified={!!user.verified?.email} />
+                <VerifiedChip verified={!!user.verified?.phone} />
             </div>
           </td>
           <td className="py-4 px-6 text-left">
@@ -290,11 +313,33 @@ export default function SuperuserUsersPage() {
         {updateUserMutation.isPending && <LoadingOverlay />}
         {updateBlockStatusMutation.isPending && <LoadingOverlay />}
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-            {Object.entries(userStats.byRole).map(([role, count]) => {
-                const config = roleUIConfig[role as UserRole] || { icon: FiUsers, color: "from-gray-400 to-gray-600" };
-                return <SummaryCard key={role} title={role} value={count} icon={<config.icon />} color={config.color} isLoading={isLoading} />
-            })}
+        <div className="mb-8">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">User Roles</h3>
+            <div className="flex flex-wrap gap-4">
+                {Object.entries(userStats.byRole).map(([role, count]) => {
+                    const config = roleUIConfig[role] || roleUIConfig.default;
+                    return <SummaryCard key={role} title={role} value={count} icon={<config.icon />} color={config.color} isLoading={isLoading} />
+                })}
+            </div>
+        </div>
+
+        <div className="mb-8">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">User Ranks</h3>
+            <div className="flex flex-wrap gap-4">
+                {Object.entries(userStats.byRank).map(([rank, count]) => {
+                    return <SummaryCard key={rank} title={rank} value={count} icon={<FiBriefcase />} color="text-gray-500" isLoading={isLoading} />
+                })}
+            </div>
+        </div>
+
+        <div className="mb-8">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">Miscellaneous Stats</h3>
+            <div className="flex flex-wrap gap-4">
+                <SummaryCard title="Total Users" value={userStats.totalUsers} icon={<FiUsers />} color="text-purple-500" isLoading={isLoading} />
+                <SummaryCard title="Verified Emails" value={userStats.verifiedEmails} icon={<FiUserCheck />} color="text-green-500" isLoading={isLoading} />
+                <SummaryCard title="Verified Phones" value={userStats.verifiedPhones} icon={<FiUserCheck />} color="text-blue-500" isLoading={isLoading} />
+                <SummaryCard title="Blocked Users" value={userStats.blocked} icon={<FiUserX />} color="text-red-500" isLoading={isLoading} />
+            </div>
         </div>
 
       <div className="bg-white p-8 rounded-2xl shadow-xl mt-4">
