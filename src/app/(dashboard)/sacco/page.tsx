@@ -1,38 +1,43 @@
 "use client";
 
-import Link from 'next/link';
+import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
+import Link from "next/link";
+import { FiTruck, FiList, FiUser, FiTrendingUp, FiGift, FiUsers } from "react-icons/fi";
 
-const features = [
-  { name: 'Route Management', href: '/sacco/route-management', description: 'Add, edit, or remove your Sacco&apos;s routes.' },
-  { name: 'Vehicle Management', href: '/sacco/vehicle-management', description: 'Manage your fleet of vehicles.' },
-  { name: 'Driver Management', href: '/sacco/driver-management', description: 'Onboard and manage your drivers.' },
-  { name: 'Revenue', href: '/sacco/revenue', description: 'View trip revenue and system deductions.' },
-  { name: 'Promotions', href: '/sacco/promotions', description: 'Create discounts and manage loyalty programs.' },
-  { name: 'HR / Payroll', href: '/sacco/hr', description: 'Manage driver contracts and process payroll.' },
-];
+const SaccoDashboardPage: NextPage = () => {
+    const { setTitle } = usePageTitleStore();
 
-import PrivateRoute from '@/app/components/PrivateRoute';
+    useEffect(() => {
+        setTitle("Sacco Dashboard");
+    }, [setTitle]);
 
-export default function SaccoDashboardPage() {
+    const features = [
+        { name: "Route Management", href: "/sacco/route-management", icon: FiList },
+        { name: "Vehicle Management", href: "/sacco/vehicle-management", icon: FiTruck },
+        { name: "Queue Management", href: "/sacco/queue-management", icon: FiList },
+        { name: "Driver Management", href: "/sacco/driver-management", icon: FiUser },
+        { name: "Revenue", href: "/sacco/revenue", icon: FiTrendingUp },
+        { name: "Promotions", href: "/sacco/promotions", icon: FiGift },
+        { name: "HR/Payroll", href: "/sacco/hr-payroll", icon: FiUsers },
+    ];
+
   return (
-    <PrivateRoute allowedRoles={['sacco']}>
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-800">Sacco Dashboard</h1>
-        <p className="mt-2 text-gray-600">
-          Manage all aspects of your Sacco&apos;s operations from here.
-        </p>
-
-        <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <Link key={feature.name} href={feature.href} passHref>
-              <div className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-                <h2 className="text-lg font-bold text-gray-900">{feature.name}</h2>
-                <p className="mt-2 text-sm text-gray-600">{feature.description}</p>
-              </div>
-            </Link>
-          ))}
+    <div className="p-6 bg-gray-50 min-h-screen">
+        <h1 className="text-2xl font-bold mb-6">Sacco Dashboard</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map(feature => (
+                <Link href={feature.href} key={feature.name}>
+                    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex items-center gap-4">
+                        <feature.icon className="w-8 h-8 text-purple-600" />
+                        <h2 className="text-lg font-semibold">{feature.name}</h2>
+                    </div>
+                </Link>
+            ))}
         </div>
-      </div>
-    </PrivateRoute>
+    </div>
   );
-}
+};
+
+export default SaccoDashboardPage;

@@ -33,8 +33,12 @@ const TeamsPage: NextPage = () => {
             ]);
             setTeams(teamsData);
             setUsers(usersData);
-        } catch (err: any) {
-            setError(err.message || "Failed to fetch data.");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Failed to fetch data.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -68,8 +72,12 @@ const TeamsPage: NextPage = () => {
             try {
                 await superuserService.deleteTeam(teamId);
                 setTeams(teams.filter(t => t._id !== teamId));
-            } catch (err: any) {
-                setError(err.message || "Failed to delete team.");
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Failed to delete team.");
+                }
             }
         }
     };
@@ -85,8 +93,8 @@ const TeamsPage: NextPage = () => {
 
     const columns: ColumnDef<Team>[] = [
       { header: "Name", accessorKey: "name" },
-      { header: "Team Lead", accessorKey: "teamLead.name" },
-      { header: "Members", cell: (row) => row.members.length },
+      { header: "Team Lead", accessorKey: "teamLead", cell: (row) => row.teamLead.name },
+      { header: "Members", accessorKey: "members", cell: (row) => row.members.length },
       {
           header: "Actions",
           accessorKey: "_id",

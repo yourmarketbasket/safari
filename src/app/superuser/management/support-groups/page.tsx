@@ -33,8 +33,12 @@ const SupportGroupsPage: NextPage = () => {
             ]);
             setSupportGroups(groupsData);
             setUsers(usersData);
-        } catch (err: any) {
-            setError(err.message || "Failed to fetch data.");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Failed to fetch data.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -68,8 +72,12 @@ const SupportGroupsPage: NextPage = () => {
             try {
                 await superuserService.deleteSupportGroup(groupId);
                 setSupportGroups(supportGroups.filter(g => g._id !== groupId));
-            } catch (err: any) {
-                setError(err.message || "Failed to delete support group.");
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Failed to delete support group.");
+                }
             }
         }
     };
@@ -85,8 +93,8 @@ const SupportGroupsPage: NextPage = () => {
 
     const columns: ColumnDef<SupportGroup>[] = [
       { header: "Name", accessorKey: "name" },
-      { header: "Supervisor", accessorKey: "supervisor.name" },
-      { header: "Members", cell: (row) => row.members.length },
+      { header: "Supervisor", accessorKey: "supervisor", cell: (row) => row.supervisor.name },
+      { header: "Members", accessorKey: "members", cell: (row) => row.members.length },
       {
           header: "Actions",
           accessorKey: "_id",

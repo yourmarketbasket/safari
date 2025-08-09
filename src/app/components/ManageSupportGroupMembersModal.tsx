@@ -41,8 +41,12 @@ export default function ManageSupportGroupMembersModal({ isOpen, onClose, onGrou
     try {
       const updatedGroup = await superuserService.addSupportGroupMember(group._id, selectedUser);
       onGroupUpdate(updatedGroup);
-    } catch (err: any) {
-      setError(err.message || 'Failed to add member.');
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('Failed to add member.');
+        }
     } finally {
       setIsLoading(false);
     }
@@ -54,8 +58,12 @@ export default function ManageSupportGroupMembersModal({ isOpen, onClose, onGrou
     try {
       const updatedGroup = await superuserService.removeSupportGroupMember(group._id, userId);
       onGroupUpdate(updatedGroup);
-    } catch (err: any) {
-      setError(err.message || 'Failed to remove member.');
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('Failed to remove member.');
+        }
     } finally {
       setIsLoading(false);
     }

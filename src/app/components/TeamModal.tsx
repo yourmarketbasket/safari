@@ -49,8 +49,12 @@ export default function TeamModal({ isOpen, onClose, onSave, teamToEdit, users }
       }
       onSave(savedTeam);
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'An error occurred.');
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('An error occurred.');
+        }
     } finally {
       setIsLoading(false);
     }

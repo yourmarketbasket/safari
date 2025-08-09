@@ -41,8 +41,12 @@ export default function ManageTeamMembersModal({ isOpen, onClose, onTeamUpdate, 
     try {
       const updatedTeam = await superuserService.addTeamMember(team._id, selectedUser);
       onTeamUpdate(updatedTeam);
-    } catch (err: any) {
-      setError(err.message || 'Failed to add member.');
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('Failed to add member.');
+        }
     } finally {
       setIsLoading(false);
     }
@@ -54,8 +58,12 @@ export default function ManageTeamMembersModal({ isOpen, onClose, onTeamUpdate, 
     try {
       const updatedTeam = await superuserService.removeTeamMember(team._id, userId);
       onTeamUpdate(updatedTeam);
-    } catch (err: any) {
-      setError(err.message || 'Failed to remove member.');
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('Failed to remove member.');
+        }
     } finally {
       setIsLoading(false);
     }

@@ -25,8 +25,12 @@ const SupportTicketsPage: NextPage = () => {
         try {
             const ticketsData = await superuserService.getAllSupportTickets();
             setTickets(ticketsData);
-        } catch (err: any) {
-            setError(err.message || "Failed to fetch data.");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Failed to fetch data.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -56,8 +60,12 @@ const SupportTicketsPage: NextPage = () => {
             try {
                 await superuserService.deleteSupportTicket(ticketId);
                 setTickets(tickets.filter(t => t._id !== ticketId));
-            } catch (err: any) {
-                setError(err.message || "Failed to delete ticket.");
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Failed to delete ticket.");
+                }
             }
         }
     };
@@ -66,17 +74,21 @@ const SupportTicketsPage: NextPage = () => {
         try {
             const updatedTicket = await superuserService.escalateSupportTicket(ticketId);
             handleTicketUpdate(updatedTicket);
-        } catch (err: any) {
-            setError(err.message || "Failed to escalate ticket.");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Failed to escalate ticket.");
+            }
         }
     };
 
     const columns: ColumnDef<SupportTicket>[] = [
       { header: "Ticket ID", accessorKey: "ticketId" },
       { header: "Title", accessorKey: "title" },
-      { header: "User", accessorKey: "user.name" },
-      { header: "Status", cell: (row) => <Chip text={row.status} type={row.status === 'resolved' || row.status === 'closed' ? 'success' : 'info'} /> },
-      { header: "Priority", cell: (row) => <Chip text={row.priority} type={row.priority === 'high' || row.priority === 'urgent' ? 'error' : 'default'} /> },
+      { header: "User", accessorKey: "user", cell: (row) => row.user.name },
+      { header: "Status", accessorKey: "status", cell: (row) => <Chip text={row.status} type={row.status === 'resolved' || row.status === 'closed' ? 'success' : 'info'} /> },
+      { header: "Priority", accessorKey: "priority", cell: (row) => <Chip text={row.priority} type={row.priority === 'high' || row.priority === 'urgent' ? 'error' : 'default'} /> },
       {
           header: "Actions",
           accessorKey: "_id",

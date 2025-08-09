@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { FiX, FiSave } from 'react-icons/fi';
-import { SupportTicket, TicketStatus, TicketPriority, TicketCategory } from '../models/SupportTicket.model';
+import { SupportTicket, TicketStatus, TicketPriority } from '../models/SupportTicket.model';
 import superuserService from '../services/superuser.service';
 import Message from './Message';
-import { Chip } from './Chip';
 
 interface TicketDetailModalProps {
   isOpen: boolean;
@@ -43,8 +42,12 @@ export default function TicketDetailModal({ isOpen, onClose, onTicketUpdate, tic
       const updatedTicket = await superuserService.updateSupportTicket(ticket._id, ticketData);
       onTicketUpdate(updatedTicket);
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'An error occurred.');
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError('An error occurred.');
+        }
     } finally {
       setIsLoading(false);
     }

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiSettings, FiLogOut, FiBriefcase, FiBarChart2, FiHelpCircle, FiChevronDown, FiShield, FiActivity, FiXCircle, FiAlertTriangle, FiUserPlus, FiTrendingUp, FiTruck, FiFileText, FiGitMerge, FiList, FiCreditCard, FiDollarSign } from 'react-icons/fi';
+import { FiHome, FiUsers, FiSettings, FiLogOut, FiBriefcase, FiBarChart2, FiHelpCircle, FiChevronDown, FiShield, FiActivity, FiXCircle, FiAlertTriangle, FiTrendingUp, FiTruck, FiFileText, FiGitMerge, FiList, FiCreditCard, FiDollarSign } from 'react-icons/fi';
 import { useSuperuserAuth } from '../lib/SuperuserAuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 import ConnectionStatus from './ConnectionStatus';
