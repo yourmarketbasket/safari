@@ -198,7 +198,7 @@ const superuserService = {
   createPermission,
   createPermissions,
   getAllPermissions,
-  getPermissionById,
+  getPermissionByNumber,
   updatePermission,
   deletePermission,
 };
