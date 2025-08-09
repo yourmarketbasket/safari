@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import PrivateRoute from '@/app/components/PrivateRoute';
 import { FiPlus, FiEdit, FiTrash, FiCheckCircle } from 'react-icons/fi';
 import { usePageTitleStore } from '@/app/store/pageTitle.store';
+import { Chip } from '@/app/components/Chip';
 
 const mockSaccos = [
   { id: 's-1', name: 'Prestige', status: 'approved' },
@@ -27,19 +28,6 @@ export default function SaccoManagementPage() {
       sacco.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [saccos, searchTerm]);
-
-  const getStatusClasses = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return 'bg-green-200 text-green-800';
-      case 'pending':
-        return 'bg-yellow-200 text-yellow-800';
-      case 'suspended':
-        return 'bg-red-200 text-red-800';
-      default:
-        return 'bg-gray-200 text-gray-800';
-    }
-  };
 
   return (
     <PrivateRoute allowedRoles={['support_staff']}>
@@ -74,9 +62,15 @@ export default function SaccoManagementPage() {
                   <tr key={sacco.id} className="border-b border-gray-200 hover:bg-gray-100">
                     <td className="py-4 px-6 text-left whitespace-nowrap">{sacco.name}</td>
                     <td className="py-4 px-6 text-center">
-                      <span className={`px-3 py-1 text-xs font-light rounded-full ${getStatusClasses(sacco.status)}`}>
-                        {sacco.status}
-                      </span>
+                      <Chip
+                        text={sacco.status}
+                        type={
+                          sacco.status === 'approved' ? 'success' :
+                          sacco.status === 'pending' ? 'warning' :
+                          sacco.status === 'suspended' ? 'error' :
+                          'default'
+                        }
+                      />
                     </td>
                     <td className="py-4 px-6 text-center">
                       <div className="flex item-center justify-center">

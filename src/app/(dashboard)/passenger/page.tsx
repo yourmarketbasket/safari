@@ -7,6 +7,7 @@ import Rating from '@/app/components/Rating';
 import { FiMessageSquare } from 'react-icons/fi';
 import Pagination from '@/app/components/Pagination';
 import { usePageTitleStore } from '@/app/store/pageTitle.store';
+import { Chip } from '@/app/components/Chip';
 
 // Mock Data
 const mockTicketsData = [
@@ -22,19 +23,6 @@ const mockPaymentMethods = [
   { id: 'p-1', type: 'Visa', last4: '4242', isDefault: true },
   { id: 'p-2', type: 'M-Pesa', last4: '7890', isDefault: false },
 ];
-
-const getStatusClasses = (status: string) => {
-  switch (status) {
-    case 'upcoming':
-      return 'bg-purple-200 text-purple-800';
-    case 'completed':
-      return 'bg-green-200 text-green-800';
-    case 'cancelled':
-      return 'bg-red-200 text-red-800';
-    default:
-      return 'bg-gray-200 text-gray-800';
-  }
-};
 
 export default function PassengerDashboardPage() {
   const { setTitle } = usePageTitleStore();
@@ -150,9 +138,15 @@ export default function PassengerDashboardPage() {
                     <td className="py-4 px-6 text-left whitespace-nowrap">{ticket.route}</td>
                     <td className="py-4 px-6 text-left">{ticket.date}</td>
                     <td className="py-4 px-6 text-center">
-                      <span className={`px-3 py-1 text-xs font-light rounded-full ${getStatusClasses(ticket.status)}`}>
-                        {ticket.status}
-                      </span>
+                      <Chip
+                        text={ticket.status}
+                        type={
+                          ticket.status === 'completed' ? 'success' :
+                          ticket.status === 'cancelled' ? 'error' :
+                          ticket.status === 'upcoming' ? 'info' :
+                          'default'
+                        }
+                      />
                     </td>
                     <td className="py-4 px-6 text-right">Ksh {ticket.totalCost.toLocaleString()}</td>
                     <td className="py-4 px-6 text-left">{ticket.comments || '-'}</td>

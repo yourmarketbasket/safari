@@ -174,14 +174,14 @@ export function DataTable<T extends DataObject>({ data, columns, filterColumn }:
           <button
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 border border-gray-400 rounded-lg mr-2 disabled:opacity-50 bg-white text-gray-800 hover:bg-gray-100 font-bold"
-          >&lt; Prev</button>
-          <span className="text-gray-800 font-semibold">Page {currentPage} of {totalPages}</span>
+            className="px-3 py-1 border border-gray-400 rounded-lg mr-2 disabled:opacity-50 bg-white text-gray-800 hover:bg-gray-100 font-bold"
+          >&lt;</button>
+          <span className="text-gray-700 text-xs font-normal">Page {currentPage} of {totalPages}</span>
           <button
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 border border-gray-400 rounded-lg ml-2 disabled:opacity-50 bg-white text-gray-800 hover:bg-gray-100 font-bold"
-          >Next &gt;</button>
+            className="px-3 py-1 border border-gray-400 rounded-lg ml-2 disabled:opacity-50 bg-white text-gray-800 hover:bg-gray-100 font-bold"
+          >&gt;</button>
         </div>
       </div>
     </div>

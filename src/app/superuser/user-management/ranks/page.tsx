@@ -1,6 +1,8 @@
 "use client";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 
 // Type for Rank data
@@ -43,10 +45,14 @@ const columns: ColumnDef<Rank>[] = [
 ];
 
 const RanksPage: NextPage = () => {
+    const { setTitle } = usePageTitleStore();
+
+    useEffect(() => {
+        setTitle("Rank Management");
+    }, [setTitle]);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Rank Management</h1>
-
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Update User Ranks</h2>
         <DataTable data={dummyRanks} columns={columns} filterColumn="currentRank" />

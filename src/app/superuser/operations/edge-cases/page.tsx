@@ -1,7 +1,10 @@
 "use client";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
+import { Chip } from "@/app/components/Chip";
 
 // Type for Edge Case data
 type EdgeCase = {
@@ -28,11 +31,11 @@ const columns: ColumnDef<EdgeCase>[] = [
     header: "Status",
     accessorKey: "status",
     cell: (status) => {
-      const statusColor =
-        status === "Resolved" ? "bg-green-200 text-green-800" :
-        status === "Action Required" ? "bg-red-200 text-red-800" :
-        "bg-yellow-200 text-yellow-800";
-      return <span className={`px-2 py-1 rounded-full font-semibold text-xs ${statusColor}`}>{status}</span>;
+      const type =
+        status === "Resolved" ? "success" :
+        status === "Action Required" ? "error" :
+        "warning";
+      return <Chip text={status} type={type} />;
     },
   },
   {
@@ -43,10 +46,14 @@ const columns: ColumnDef<EdgeCase>[] = [
 ];
 
 const EdgeCasesPage: NextPage = () => {
+    const { setTitle } = usePageTitleStore();
+
+    useEffect(() => {
+        setTitle("Edge Case Management");
+    }, [setTitle]);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Edge Case Management</h1>
-
       <div className="mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-4">Define New Edge Case Protocol</h2>

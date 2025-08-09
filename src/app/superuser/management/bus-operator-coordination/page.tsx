@@ -1,7 +1,10 @@
 "use client";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
+import { Chip } from "@/app/components/Chip";
 
 // Type for Bus Operator data
 type BusOperator = {
@@ -29,11 +32,11 @@ const columns: ColumnDef<BusOperator>[] = [
     header: "Performance",
     accessorKey: "performance",
     cell: (performance) => {
-      const perfColor =
-        performance === "Excellent" ? "bg-blue-200 text-blue-800" :
-        performance === "Good" ? "bg-green-200 text-green-800" :
-        "bg-red-200 text-red-800";
-      return <span className={`px-2 py-1 rounded-full font-semibold text-xs ${perfColor}`}>{performance}</span>;
+      const type =
+        performance === "Excellent" ? "info" :
+        performance === "Good" ? "success" :
+        "error";
+      return <Chip text={performance} type={type} />;
     },
   },
    {
@@ -44,10 +47,14 @@ const columns: ColumnDef<BusOperator>[] = [
 ];
 
 const BusOperatorCoordinationPage: NextPage = () => {
+    const { setTitle } = usePageTitleStore();
+
+    useEffect(() => {
+        setTitle("Bus Operator Coordination");
+    }, [setTitle]);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Bus Operator Coordination</h1>
-
       <div className="mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-4">Onboard New Operator</h2>

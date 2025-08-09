@@ -1,6 +1,8 @@
 "use client";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 
 // Type for Report data
@@ -38,10 +40,14 @@ const columns: ColumnDef<Report>[] = [
 ];
 
 const OperationalReportsPage: NextPage = () => {
+    const { setTitle } = usePageTitleStore();
+
+    useEffect(() => {
+        setTitle("Operational Reports");
+    }, [setTitle]);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Operational Reports</h1>
-
       <div className="mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-4">Generate New Report</h2>

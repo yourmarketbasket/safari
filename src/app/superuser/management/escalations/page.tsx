@@ -1,7 +1,10 @@
 "use client";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
+import { Chip } from "@/app/components/Chip";
 
 // Type for Escalation data
 type Escalation = {
@@ -30,11 +33,11 @@ const columns: ColumnDef<Escalation>[] = [
     header: "Status",
     accessorKey: "status",
     cell: (status) => {
-      const statusColor =
-        status === "Resolved" ? "bg-green-200 text-green-800" :
-        status === "In Review" ? "bg-yellow-200 text-yellow-800" :
-        "bg-red-200 text-red-800";
-      return <span className={`px-2 py-1 rounded-full font-semibold text-xs ${statusColor}`}>{status}</span>;
+      const type =
+        status === "Resolved" ? "success" :
+        status === "In Review" ? "warning" :
+        "error";
+      return <Chip text={status} type={type} />;
     },
   },
    {
@@ -45,10 +48,14 @@ const columns: ColumnDef<Escalation>[] = [
 ];
 
 const EscalationsPage: NextPage = () => {
+    const { setTitle } = usePageTitleStore();
+
+    useEffect(() => {
+        setTitle("Escalation Management");
+    }, [setTitle]);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Escalation Management</h1>
-
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Escalation Queue</h2>
         <DataTable data={dummyEscalations} columns={columns} filterColumn="department" />

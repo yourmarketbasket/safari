@@ -1,7 +1,10 @@
 "use client";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
+import { Chip } from "@/app/components/Chip";
 
 // Type for Policy data
 type Policy = {
@@ -29,11 +32,11 @@ const columns: ColumnDef<Policy>[] = [
     header: "Status",
     accessorKey: "status",
     cell: (status) => {
-      const statusColor =
-        status === "Active" ? "bg-green-200 text-green-800" :
-        status === "Draft" ? "bg-yellow-200 text-yellow-800" :
-        "bg-gray-200 text-gray-800";
-      return <span className={`px-2 py-1 rounded-full font-semibold text-xs ${statusColor}`}>{status}</span>;
+      const type =
+        status === "Active" ? "success" :
+        status === "Draft" ? "warning" :
+        "default";
+      return <Chip text={status} type={type} />;
     },
   },
   {
@@ -44,10 +47,14 @@ const columns: ColumnDef<Policy>[] = [
 ];
 
 const PolicyCompliancePage: NextPage = () => {
+    const { setTitle } = usePageTitleStore();
+
+    useEffect(() => {
+        setTitle("Policy & Compliance");
+    }, [setTitle]);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Policy & Compliance</h1>
-
       <div className="mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-4">Create New Policy</h2>

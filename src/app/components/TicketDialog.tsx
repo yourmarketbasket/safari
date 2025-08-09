@@ -1,5 +1,7 @@
 "use client";
 
+import { Chip } from './Chip';
+
 interface Ticket {
   id: string;
   route: string;
@@ -23,7 +25,18 @@ export default function TicketDialog({ ticket, onClose }: TicketDialogProps) {
           <p><strong>ID:</strong> {ticket.id}</p>
           <p><strong>Route:</strong> {ticket.route}</p>
           <p><strong>Date:</strong> {ticket.date}</p>
-          <p><strong>Status:</strong> <span className={`font-semibold ${ticket.status === 'upcoming' ? 'text-green-600' : 'text-gray-600'}`}>{ticket.status}</span></p>
+          <div className="flex items-center">
+            <strong className="mr-2">Status:</strong>
+            <Chip
+              text={ticket.status}
+              type={
+                ticket.status === 'completed' ? 'success' :
+                ticket.status === 'cancelled' ? 'error' :
+                ticket.status === 'upcoming' ? 'info' :
+                'default'
+              }
+            />
+          </div>
         </div>
         <button
           onClick={onClose}

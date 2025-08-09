@@ -1,7 +1,10 @@
 "use client";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
+import { Chip } from "@/app/components/Chip";
 
 // Type for User data
 type User = {
@@ -31,11 +34,11 @@ const columns: ColumnDef<User>[] = [
     header: "Status",
     accessorKey: "status",
     cell: (status) => {
-      const statusColor =
-        status === "Active" ? "bg-green-200 text-green-800" :
-        status === "Suspended" ? "bg-yellow-200 text-yellow-800" :
-        "bg-red-200 text-red-800";
-      return <span className={`px-2 py-1 rounded-full font-semibold text-xs ${statusColor}`}>{status}</span>;
+      const type =
+        status === "Active" ? "success" :
+        status === "Suspended" ? "warning" :
+        "error";
+      return <Chip text={status} type={type} />;
     },
   },
   { header: "Last Login", accessorKey: "lastLogin" },
@@ -53,10 +56,14 @@ const columns: ColumnDef<User>[] = [
 ];
 
 const UsersPage: NextPage = () => {
+    const { setTitle } = usePageTitleStore();
+
+    useEffect(() => {
+        setTitle("User Management");
+    }, [setTitle]);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">User Management</h1>
-
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">

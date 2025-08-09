@@ -1,6 +1,8 @@
 "use client";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 
 // Type for Audit Log data
@@ -29,10 +31,14 @@ const columns: ColumnDef<AuditLog>[] = [
 ];
 
 const AuditTrailsPage: NextPage = () => {
+    const { setTitle } = usePageTitleStore();
+
+    useEffect(() => {
+        setTitle("Audit Trails");
+    }, [setTitle]);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Audit Trails</h1>
-
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">System Action Log</h2>
         <DataTable data={dummyAuditLogs} columns={columns} filterColumn="action" />

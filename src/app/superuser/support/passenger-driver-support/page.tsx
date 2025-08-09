@@ -1,6 +1,8 @@
 "use client";
 
 import { NextPage } from "next";
+import { useEffect } from "react";
+import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
 
@@ -49,10 +51,14 @@ const columns: ColumnDef<SupportTicket>[] = [
 ];
 
 const PassengerDriverSupportPage: NextPage = () => {
+  const { setTitle } = usePageTitleStore();
+
+  useEffect(() => {
+    setTitle("Passenger & Driver Support");
+  }, [setTitle]);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Passenger & Driver Support</h1>
-
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
