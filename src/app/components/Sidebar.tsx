@@ -49,6 +49,7 @@ const allNavLinks: { [key in UserRole]?: NavLink[] } = {
   ],
   passenger: [
     { name: 'Dashboard', href: '/passenger', icon: <FiPocket /> },
+    { name: 'Trips', href: '/passenger/trips', icon: <FiList /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
   ],
   support_staff: [
