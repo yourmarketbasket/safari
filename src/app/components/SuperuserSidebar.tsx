@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiSettings, FiLogOut, FiBriefcase, FiBarChart2, FiHelpCircle, FiChevronDown, FiShield, FiActivity, FiXCircle, FiAlertTriangle, FiUserPlus, FiTrendingUp, FiTruck, FiFileText, FiGitMerge, FiList } from 'react-icons/fi';
+import { FiHome, FiUsers, FiSettings, FiLogOut, FiBriefcase, FiBarChart2, FiHelpCircle, FiChevronDown, FiShield, FiActivity, FiXCircle, FiAlertTriangle, FiUserPlus, FiTrendingUp, FiTruck, FiFileText, FiGitMerge, FiList, FiCreditCard, FiDollarSign } from 'react-icons/fi';
 import { useSuperuserAuth } from '../lib/SuperuserAuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 import ConnectionStatus from './ConnectionStatus';
@@ -33,6 +33,24 @@ const navLinks = [
       { name: 'Staff Management', href: '/superuser/management/staff-management', icon: <FiUserPlus /> },
       { name: 'Escalations', href: '/superuser/management/escalations', icon: <FiTrendingUp /> },
       { name: 'Bus Operator Coordination', href: '/superuser/management/bus-operator-coordination', icon: <FiTruck /> },
+    ]
+  },
+  {
+    name: 'User Management',
+    icon: <FiUsers />,
+    children: [
+      { name: 'Users', href: '/superuser/user-management/users', icon: <FiUsers /> },
+      { name: 'Permissions', href: '/superuser/user-management/permissions', icon: <FiShield /> },
+      { name: 'Ranks', href: '/superuser/user-management/ranks', icon: <FiTrendingUp /> },
+    ]
+  },
+  {
+    name: 'Payments',
+    icon: <FiCreditCard />,
+    children: [
+      { name: 'Methods', href: '/superuser/payments/methods', icon: <FiCreditCard /> },
+      { name: 'Income', href: '/superuser/payments/income', icon: <FiTrendingUp /> },
+      { name: 'Fares', href: '/superuser/payments/fares', icon: <FiDollarSign /> },
     ]
   },
   {
