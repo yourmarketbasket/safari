@@ -9,12 +9,23 @@ import { UserRole } from "@/app/models/User.model";
 import superuserService from "@/app/services/superuser.service";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import Message from "@/app/components/Message";
-import { FiPlus, FiEdit, FiTrash2, FiShield, FiUser } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiShield, FiUser, FiTruck, FiKey, FiHelpCircle, FiPocket, FiList, FiUserCheck } from "react-icons/fi";
 import PermissionModal from "@/app/components/PermissionModal";
 import { Chip } from "@/app/components/Chip";
 import SummaryCard from "@/app/components/SummaryCard";
 
 const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "superuser"];
+
+const roleDisplayConfig: Record<UserRole, { icon: React.ElementType, color: string }> = {
+    sacco: { icon: FiTruck, color: 'blue' },
+    owner: { icon: FiKey, color: 'yellow' },
+    admin: { icon: FiUserCheck, color: 'green' },
+    driver: { icon: FiUser, color: 'purple' },
+    passenger: { icon: FiPocket, color: 'indigo' },
+    support_staff: { icon: FiHelpCircle, color: 'pink' },
+    queue_manager: { icon: FiList, color: 'teal' },
+    superuser: { icon: FiShield, color: 'red' },
+};
 
 const PermissionsPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -127,11 +138,15 @@ const PermissionsPage: NextPage = () => {
     <div className="p-6 bg-gray-50 min-h-screen relative">
       {isLoading && <LoadingOverlay />}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-auto-fit gap-6 mb-8">
         <SummaryCard icon={FiShield} title="Total Permissions" value={summaryStats.total} color="blue" />
-        {Object.entries(summaryStats.rolesCount).map(([role, count]) => (
-            <SummaryCard key={role} icon={FiUser} title={`${role} Permissions`} value={count} color="purple" />
-        ))}
+        {Object.entries(summaryStats.rolesCount).map(([role, count]) => {
+            const config = roleDisplayConfig[role as UserRole];
+            const formattedRole = role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            return (
+                <SummaryCard key={role} icon={config.icon} title={formattedRole} value={count} color={config.color} />
+            );
+        })}
       </div>
 
       <div className="mb-8">

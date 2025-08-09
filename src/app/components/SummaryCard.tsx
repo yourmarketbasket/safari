@@ -16,13 +16,15 @@ const SummaryCard = ({ icon: Icon, title, value, color }: SummaryCardProps) => {
     }[color] || 'text-gray-500';
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md flex items-center h-48">
-            <div className={`p-4 rounded-lg bg-${color}-100 mr-6`}>
-                <Icon className={`w-24 h-24 ${colorClasses}`} />
+        <div className="bg-white p-6 rounded-lg shadow-md h-48 flex">
+            <div className="flex flex-col items-center justify-center w-1/2">
+                <div className={`p-4 rounded-full bg-${color}-100`}>
+                    <Icon className={`w-12 h-12 ${colorClasses}`} />
+                </div>
+                <p className={`text-4xl font-bold mt-2 ${colorClasses}`}>{value}</p>
             </div>
-            <div className="flex flex-col">
-                <h2 className="text-sm font-normal text-gray-500 mb-2">{title}</h2>
-                <p className={`text-5xl font-bold ${colorClasses}`}>{value}</p>
+            <div className="w-1/2 flex items-center justify-end">
+                <h2 className="text-lg font-normal text-gray-500 text-right">{title}</h2>
             </div>
         </div>
     );
