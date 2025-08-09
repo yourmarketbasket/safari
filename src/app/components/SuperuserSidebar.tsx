@@ -21,6 +21,7 @@ const navLinks = [
     name: 'Support',
     icon: <FiHelpCircle />,
     children: [
+      { name: 'Support Tickets', href: '/superuser/support/tickets', icon: <FiList /> },
       { name: 'Passenger & Driver Support', href: '/superuser/support/passenger-driver-support', icon: <FiUsers /> },
       { name: 'Cancellations & Reallocations', href: '/superuser/support/cancellations-reallocations', icon: <FiXCircle /> },
       { name: 'System Errors', href: '/superuser/support/system-errors', icon: <FiAlertTriangle /> },
@@ -30,7 +31,8 @@ const navLinks = [
     name: 'Management',
     icon: <FiBriefcase />,
     children: [
-      { name: 'Staff Management', href: '/superuser/management/staff-management', icon: <FiUserPlus /> },
+      { name: 'Team Management', href: '/superuser/management/teams', icon: <FiUsers /> },
+      { name: 'Support Group Management', href: '/superuser/management/support-groups', icon: <FiHelpCircle /> },
       { name: 'Escalations', href: '/superuser/management/escalations', icon: <FiTrendingUp /> },
       { name: 'Bus Operator Coordination', href: '/superuser/management/bus-operator-coordination', icon: <FiTruck /> },
     ]

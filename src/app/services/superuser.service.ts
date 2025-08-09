@@ -1,6 +1,9 @@
 import api from '../lib/api';
 import { User, UserRank, ApprovedStatus } from '../models/User.model';
 import { Permission } from '../models/Permission.model';
+import { Team } from '../models/Team.model';
+import { SupportGroup } from '../models/SupportGroup.model';
+import { SupportTicket } from '../models/SupportTicket.model';
 import axios from 'axios';
 
 export type ApiResponse<T> = {
@@ -181,6 +184,86 @@ export const deletePermission = async (permissionNumber: string): Promise<void> 
   await api.delete<ApiResponse<object>>(`/permissions/${permissionNumber}`);
 };
 
+// Team Management
+export const getAllTeams = async (): Promise<Team[]> => {
+    const response = await api.get<ApiResponse<Team[]>>('/teams');
+    return response.data.data;
+};
+
+export const createTeam = async (teamData: { name: string; teamLead: string }): Promise<Team> => {
+    const response = await api.post<ApiResponse<Team>>('/teams', teamData);
+    return response.data.data;
+};
+
+export const updateTeam = async (id: string, teamData: Partial<{ name: string; teamLead: string }>): Promise<Team> => {
+    const response = await api.put<ApiResponse<Team>>(`/teams/${id}`, teamData);
+    return response.data.data;
+};
+
+export const deleteTeam = async (id: string): Promise<void> => {
+    await api.delete(`/teams/${id}`);
+};
+
+export const addTeamMember = async (teamId: string, userId: string): Promise<Team> => {
+    const response = await api.post<ApiResponse<Team>>(`/teams/${teamId}/members/${userId}`);
+    return response.data.data;
+};
+
+export const removeTeamMember = async (teamId: string, userId: string): Promise<Team> => {
+    const response = await api.delete<ApiResponse<Team>>(`/teams/${teamId}/members/${userId}`);
+    return response.data.data;
+};
+
+// Support Group Management
+export const getAllSupportGroups = async (): Promise<SupportGroup[]> => {
+    const response = await api.get<ApiResponse<SupportGroup[]>>('/support-groups');
+    return response.data.data;
+};
+
+export const createSupportGroup = async (groupData: { name: string; supervisor: string }): Promise<SupportGroup> => {
+    const response = await api.post<ApiResponse<SupportGroup>>('/support-groups', groupData);
+    return response.data.data;
+};
+
+export const updateSupportGroup = async (id: string, groupData: Partial<{ name: string; supervisor: string }>): Promise<SupportGroup> => {
+    const response = await api.put<ApiResponse<SupportGroup>>(`/support-groups/${id}`, groupData);
+    return response.data.data;
+};
+
+export const deleteSupportGroup = async (id: string): Promise<void> => {
+    await api.delete(`/support-groups/${id}`);
+};
+
+export const addSupportGroupMember = async (groupId: string, userId: string): Promise<SupportGroup> => {
+    const response = await api.post<ApiResponse<SupportGroup>>(`/support-groups/${groupId}/members/${userId}`);
+    return response.data.data;
+};
+
+export const removeSupportGroupMember = async (groupId: string, userId: string): Promise<SupportGroup> => {
+    const response = await api.delete<ApiResponse<SupportGroup>>(`/support-groups/${groupId}/members/${userId}`);
+    return response.data.data;
+};
+
+// Support Ticket Management
+export const getAllSupportTickets = async (): Promise<SupportTicket[]> => {
+    const response = await api.get<ApiResponse<SupportTicket[]>>('/support');
+    return response.data.data;
+};
+
+export const updateSupportTicket = async (id: string, ticketData: Partial<SupportTicket>): Promise<SupportTicket> => {
+    const response = await api.put<ApiResponse<SupportTicket>>(`/support/${id}`, ticketData);
+    return response.data.data;
+};
+
+export const deleteSupportTicket = async (id: string): Promise<void> => {
+    await api.delete(`/support/${id}`);
+};
+
+export const escalateSupportTicket = async (id: string): Promise<SupportTicket> => {
+    const response = await api.post<ApiResponse<SupportTicket>>(`/support/${id}/escalate`);
+    return response.data.data;
+};
+
 const superuserService = {
   login,
   register,
@@ -201,6 +284,22 @@ const superuserService = {
   getPermissionByNumber,
   updatePermission,
   deletePermission,
+  getAllTeams,
+  createTeam,
+  updateTeam,
+  deleteTeam,
+  addTeamMember,
+  removeTeamMember,
+  getAllSupportGroups,
+  createSupportGroup,
+  updateSupportGroup,
+  deleteSupportGroup,
+  addSupportGroupMember,
+  removeSupportGroupMember,
+  getAllSupportTickets,
+  updateSupportTicket,
+  deleteSupportTicket,
+  escalateSupportTicket,
 };
 
 export default superuserService;
