@@ -22,7 +22,7 @@ const columns: ColumnDef<User>[] = [
   { header: "Current Rank", accessorKey: "rank" },
   {
       header: "Update Rank",
-      accessorKey: "rank", // Changed for semantics
+      accessorKey: "rank",
       cell: (row) => (
           <div className="flex gap-2">
               <select defaultValue={row.rank} className="border border-gray-300 rounded-lg px-2 py-1 text-gray-800 bg-white">

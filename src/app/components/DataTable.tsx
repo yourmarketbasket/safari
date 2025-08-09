@@ -146,7 +146,7 @@ export function DataTable<T extends DataObject>({ data, columns, filterColumn }:
             {paginatedData.map((row) => (
               <tr key={row._id}>
                 {columns.map(col => (
-                  <td key={String(col.accessorKey)} className="py-3 px-4 border-b border-gray-200 text-gray-800">
+                  <td key={`${row._id}-${String(col.accessorKey)}`} className="py-3 px-4 border-b border-gray-200 text-gray-800">
                     {col.cell ? col.cell(row) : row[col.accessorKey] as ReactNode}
                   </td>
                 ))}
