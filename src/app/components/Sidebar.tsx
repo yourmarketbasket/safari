@@ -68,11 +68,11 @@ const allNavLinks: { [key in UserRole]?: NavLink[] } = {
   ],
   driver: [
     { name: 'Dashboard', href: '/driver', icon: <FiUser /> },
-    { name: 'Trip Registration', href: '/driver/trip-registration', icon: <FiList /> },
-    { name: 'Trip Monitoring', href: '/driver/trip-monitoring', icon: <FiTrendingUp /> },
-    { name: 'Passenger Verification', href: '/driver/passenger-verification', icon: <FiPocket /> },
-    { name: 'Earnings', href: '/driver/earnings', icon: <FiTrendingUp /> },
-    { name: 'Trip Completion', href: '/driver/trip-completion', icon: <FiList /> },
+    { name: 'Register Bus', href: '/driver/register-bus', icon: <FiList /> },
+    { name: 'Monitor Trip', href: '/driver/monitor-trip', icon: <FiTrendingUp /> },
+    { name: 'Verify Passengers', href: '/driver/verify-passengers', icon: <FiPocket /> },
+    { name: 'End Trip', href: '/driver/end-trip', icon: <FiList /> },
+    { name: 'End Shift', href: '/driver/end-shift', icon: <FiLogOut /> },
   ],
   superuser: [
     { name: 'Dashboard', href: '/superuser', icon: <FiShield /> },
