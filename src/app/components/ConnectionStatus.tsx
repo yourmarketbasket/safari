@@ -1,10 +1,9 @@
 "use client";
 
 import useSocketStore from '../store/socket.store';
-import { useEffect } from 'react';
 
 const ConnectionStatus = () => {
-  const { isConnected, connect } = useSocketStore();
+  const { isConnected } = useSocketStore();
 
 
   return (

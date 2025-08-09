@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift } from 'react-icons/fi';
+import { FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 import { UserRole } from '../models/User.model';

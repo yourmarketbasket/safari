@@ -59,7 +59,7 @@ export default function SignupPage() {
       await authService.sendSignupOtp(email);
       setIsOtpSent(true);
       setSuccessMessage('OTP has been sent to your email.');
-    } catch (err) {
+    } catch {
       setError('Failed to send OTP. Please try again.');
     } finally {
       setSendOtpLoading(false);
@@ -79,7 +79,7 @@ export default function SignupPage() {
       setIsOtpVerified(true);
       setSuccessMessage('Email verified successfully!');
       setError('');
-    } catch (err) {
+    } catch {
       setOtpError('Invalid or expired OTP. Please try again.');
     } finally {
       setVerifyOtpLoading(false);

@@ -46,7 +46,7 @@ function SuperuserRegisterPageContent() {
       await superuserService.sendSignupOtp(email);
       setIsOtpSent(true);
       setSuccessMessage('OTP has been sent to your email.');
-    } catch (err) {
+    } catch {
       setError('Failed to send OTP. Please try again.');
     } finally {
       setSendOtpLoading(false);
@@ -66,7 +66,7 @@ function SuperuserRegisterPageContent() {
       setIsOtpVerified(true);
       setSuccessMessage('Email verified successfully!');
       setError('');
-    } catch (err) {
+    } catch {
       setOtpError('Invalid or expired OTP. Please try again.');
     } finally {
       setVerifyOtpLoading(false);

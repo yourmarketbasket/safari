@@ -25,8 +25,12 @@ const PermissionsPage: NextPage = () => {
         try {
             const data = await superuserService.getAllPermissions();
             setPermissions(data);
-        } catch (err: any) {
-            setError(err.message || "Failed to fetch permissions.");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Failed to fetch permissions.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -62,8 +66,12 @@ const PermissionsPage: NextPage = () => {
             try {
                 await superuserService.deletePermission(permissionNumber);
                 setPermissions(permissions.filter(p => p.permissionNumber !== permissionNumber));
-            } catch (err: any) {
-                setError(err.message || `Failed to delete permission ${permissionNumber}.`);
+            } catch (err: unknown) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError(`Failed to delete permission ${permissionNumber}.`);
+                }
             }
         }
     };
@@ -76,13 +84,13 @@ const PermissionsPage: NextPage = () => {
         accessorKey: "roles",
         cell: (row) => (
             <div className="flex flex-wrap gap-1">
-                {row.roles.map(r => <Chip key={r} text={r} type="default" />)}
+                {row.roles.map((r, index) => <Chip key={`${row._id}-${r}-${index}`} text={r} type="default" />)}
             </div>
         )
       },
       {
           header: "Actions",
-          accessorKey: "permissionNumber", // Use a unique key for actions
+          accessorKey: "_id", // Use a unique key for actions
           cell: (row) => (
               <div className="flex gap-2">
                   <button

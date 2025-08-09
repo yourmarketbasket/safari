@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from 'react';
-import { FiX, FiPlus, FiSave } from 'react-icons/fi';
-import { Permission, Role } from '../models/Permission.model';
+import { FiX, FiSave } from 'react-icons/fi';
+import { Permission } from '../models/Permission.model';
+import { UserRole } from '../models/User.model';
 import superuserService from '../services/superuser.service';
 import Message from './Message';
 
@@ -13,12 +14,12 @@ interface PermissionModalProps {
   permissionToEdit?: Permission | null;
 }
 
-const allRoles: Role[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "superuser"];
+const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "superuser"];
 
 export default function PermissionModal({ isOpen, onClose, onSave, permissionToEdit }: PermissionModalProps) {
   const [permissionNumber, setPermissionNumber] = useState('');
   const [description, setDescription] = useState('');
-  const [roles, setRoles] = useState<Role[]>([]);
+  const [roles, setRoles] = useState<UserRole[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,7 +41,7 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
     }
   }, [isOpen, permissionToEdit, isEditMode]);
 
-  const handleRoleChange = (role: Role) => {
+  const handleRoleChange = (role: UserRole) => {
     setRoles(prevRoles =>
       prevRoles.includes(role)
         ? prevRoles.filter(r => r !== role)
@@ -67,8 +68,13 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
       onSave(savedPermission);
       onClose();
 
-    } catch (err: any) {
-      setError(err.response?.data?.error || err.message || 'An error occurred.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        const axiosError = err as { response?: { data?: { error?: string } } };
+        setError(axiosError.response?.data?.error || err.message || 'An error occurred.');
+      } else {
+        setError('An unexpected error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }

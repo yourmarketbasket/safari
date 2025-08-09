@@ -12,6 +12,7 @@ import superuserService from "@/app/services/superuser.service";
 import { FiUser, FiUsers, FiUserCheck, FiUserX } from "react-icons/fi";
 import Message from "@/app/components/Message";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
+import Image from "next/image";
 
 const UsersPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -30,8 +31,12 @@ const UsersPage: NextPage = () => {
             ]);
             setUsers(usersData);
             setAllPermissions(permissionsData);
-        } catch (err: any) {
-            setError(err.message || "Failed to fetch data.");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Failed to fetch data.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -58,8 +63,8 @@ const UsersPage: NextPage = () => {
             header: "Avatar",
             accessorKey: "avatar",
             cell: (row) => (
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                    {row.avatar ? <img src={row.avatar} alt={row.name} className="w-full h-full rounded-full" /> : <FiUser className="text-gray-500" />}
+                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center relative">
+                    {row.avatar ? <Image src={row.avatar} alt={row.name} layout="fill" className="rounded-full" /> : <FiUser className="text-gray-500" />}
                 </div>
             )
         },

@@ -7,6 +7,7 @@ import { Chip } from "./Chip";
 import { useState, useEffect, FormEvent } from "react";
 import superuserService from "@/app/services/superuser.service";
 import Message from "./Message";
+import Image from "next/image";
 
 interface UserManagementModalProps {
   user: User | null;
@@ -81,8 +82,13 @@ export default function UserManagementModal({ user, onClose, onUserUpdate, allPe
       onUserUpdate(updatedUser);
       onClose();
 
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        const axiosError = err as { response?: { data?: { error?: string } } };
+        setError(axiosError.response?.data?.error || err.message || 'An error occurred.');
+      } else {
+        setError('An unexpected error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -103,8 +109,8 @@ export default function UserManagementModal({ user, onClose, onUserUpdate, allPe
         </button>
 
         <div className="flex items-center mb-6">
-            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mr-4">
-                {user.avatar ? <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full" /> : <FiUser className="text-gray-500" size={32}/>}
+            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mr-4 relative">
+                {user.avatar ? <Image src={user.avatar} alt={user.name} layout="fill" className="rounded-full" /> : <FiUser className="text-gray-500" size={32}/>}
             </div>
             <div>
                 <h2 className="text-2xl font-bold text-purple-700">{user.name}</h2>
