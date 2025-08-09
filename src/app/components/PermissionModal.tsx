@@ -10,7 +10,7 @@ import Message from './Message';
 interface PermissionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (permission: Permission) => void;
+  onSave: (permission: Permission | Permission[]) => void;
   permissionToEdit?: Permission | null;
 }
 
@@ -20,8 +20,10 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
   const [permissionNumber, setPermissionNumber] = useState('');
   const [description, setDescription] = useState('');
   const [roles, setRoles] = useState<UserRole[]>([]);
+  const [bulkJson, setBulkJson] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single');
 
   const isEditMode = !!permissionToEdit;
 
@@ -49,23 +51,29 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
     );
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: FormEvent) => {
+    if (e) e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
-      const permissionData = { permissionNumber, description, roles };
-      let savedPermission;
+      if (activeTab === 'single') {
+        const permissionData = { permissionNumber, description, roles };
+        let savedPermission;
 
-      if (isEditMode && permissionToEdit) {
-        // The API docs say to update by permission number, not ID
-        savedPermission = await superuserService.updatePermission(permissionToEdit.permissionNumber, permissionData);
-      } else {
-        savedPermission = await superuserService.createPermission(permissionData);
+        if (isEditMode && permissionToEdit) {
+          savedPermission = await superuserService.updatePermission(permissionToEdit.permissionNumber, permissionData);
+        } else {
+          savedPermission = await superuserService.createPermission(permissionData);
+        }
+        onSave(savedPermission);
+      } else { // bulk
+        const permissionsToCreate = JSON.parse(bulkJson);
+        // Add more validation here if needed
+        const savedPermissions = await superuserService.createPermissions(permissionsToCreate);
+        onSave(savedPermissions);
       }
 
-      onSave(savedPermission);
       onClose();
 
     } catch (err: unknown) {
@@ -89,11 +97,39 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
           <FiX size={20} />
         </button>
 
-        <h2 className="text-2xl font-bold text-purple-700 mb-6">{isEditMode ? 'Edit Permission' : 'Add New Permission'}</h2>
+        <h2 className="text-2xl font-bold text-purple-700 mb-4">{isEditMode ? 'Edit Permission' : 'Add New Permission'}</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="permissionNumber" className="block text-sm font-medium text-gray-700 mb-1">Permission Number (e.g., P101)</label>
+        {!isEditMode && (
+          <div className="border-b border-gray-200 mb-4">
+            <nav className="-mb-px flex space-x-4" aria-label="Tabs">
+              <button
+                onClick={() => setActiveTab('single')}
+                className={`${
+                  activeTab === 'single'
+                    ? 'border-purple-500 text-purple-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm`}
+              >
+                Single Permission
+              </button>
+              <button
+                onClick={() => setActiveTab('bulk')}
+                className={`${
+                  activeTab === 'bulk'
+                    ? 'border-purple-500 text-purple-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm`}
+              >
+                Bulk Add
+              </button>
+            </nav>
+          </div>
+        )}
+
+        {activeTab === 'single' && (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="permissionNumber" className="block text-sm font-medium text-gray-700 mb-1">Permission Number (e.g., P101)</label>
             <input
               id="permissionNumber"
               type="text"
@@ -146,6 +182,31 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
             </button>
           </div>
         </form>
+        )}
+
+        {activeTab === 'bulk' && (
+          <div>
+            <label htmlFor="bulkJson" className="block text-sm font-medium text-gray-700 mb-1">
+              Paste JSON array of permissions
+            </label>
+            <textarea
+              id="bulkJson"
+              value={bulkJson}
+              onChange={(e) => setBulkJson(e.target.value)}
+              className="w-full h-64 border border-gray-300 rounded-md px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder='[&#10;  { "permissionNumber": "P101", "description": "...", "roles": ["admin"] },&#10;  { "permissionNumber": "P102", "description": "...", "roles": ["sacco"] }&#10;]'
+            />
+            <div className="flex justify-end pt-4 mt-4 border-t">
+                <button type="button" className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm mr-3" onClick={onClose} disabled={isLoading}>
+                    Cancel
+                </button>
+                <button type="button" onClick={handleSubmit} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-bold flex items-center" disabled={isLoading}>
+                    <FiSave className="mr-2" />
+                    {isLoading ? 'Saving...' : 'Save Permissions'}
+                </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
