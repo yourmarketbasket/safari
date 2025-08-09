@@ -41,7 +41,6 @@ const navLinks = [
     children: [
       { name: 'Users', href: '/superuser/user-management/users', icon: <FiUsers /> },
       { name: 'Permissions', href: '/superuser/user-management/permissions', icon: <FiShield /> },
-      { name: 'Ranks', href: '/superuser/user-management/ranks', icon: <FiTrendingUp /> },
     ]
   },
   {
