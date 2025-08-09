@@ -13,8 +13,8 @@ const navLinks = [
     name: 'Dashboards',
     icon: <FiHome />,
     children: [
-      { name: 'System Operations', href: '/superuser/dashboards/system-operations', icon: <FiActivity /> },
-      { name: 'Admin Analytics', href: '/superuser/dashboards/admin-analytics', icon: <FiBarChart2 /> },
+      { name: 'Dashboard', href: '/superuser/dashboard', icon: <FiActivity /> },
+      { name: 'Admin Analytics', href: '/superuser/dashboard/admin-analytics', icon: <FiBarChart2 /> },
     ]
   },
   {
@@ -60,7 +60,7 @@ export default function SuperuserSidebar() {
   return (
     <aside className={`flex-shrink-0 bg-white text-gray-800 flex flex-col transition-all duration-300 shadow-2xl ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className="h-20 flex items-center justify-center px-4 text-2xl font-bold border-b border-gray-200 relative">
-        {!isCollapsed && <Link href="/superuser/dashboards/system-operations" className="text-purple-600">Superuser</Link>}
+        {!isCollapsed && <Link href="/superuser/dashboard" className="text-purple-600">Superuser</Link>}
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
             <AnimatedHamburgerIcon isCollapsed={isCollapsed} onClick={() => setIsCollapsed(!isCollapsed)} />
         </div>
