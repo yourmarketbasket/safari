@@ -138,13 +138,17 @@ const PermissionsPage: NextPage = () => {
     <div className="p-6 bg-gray-50 min-h-screen relative">
       {isLoading && <LoadingOverlay />}
 
-      <div className="grid grid-auto-fit gap-6 mb-8">
-        <SummaryCard icon={FiShield} title="Total Permissions" value={summaryStats.total} color="blue" />
+      <div className="flex flex-wrap gap-6 mb-8">
+        <div className="flex-1 min-w-[300px]">
+            <SummaryCard icon={FiShield} title="Total Permissions" value={summaryStats.total} color="blue" />
+        </div>
         {Object.entries(summaryStats.rolesCount).map(([role, count]) => {
             const config = roleDisplayConfig[role as UserRole];
             const formattedRole = role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
             return (
-                <SummaryCard key={role} icon={config.icon} title={formattedRole} value={count} color={config.color} />
+                <div className="flex-1 min-w-[300px]" key={role}>
+                    <SummaryCard icon={config.icon} title={formattedRole} value={count} color={config.color} />
+                </div>
             );
         })}
       </div>

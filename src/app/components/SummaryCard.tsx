@@ -20,7 +20,7 @@ const SummaryCard = ({ icon: Icon, title, value, color }: SummaryCardProps) => {
             <div className={`p-4 rounded-full bg-${color}-100 mr-6`}>
                 <Icon className={`w-8 h-8 ${colorClasses}`} />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center">
                 <h2 className="text-sm font-normal text-gray-500">{title}</h2>
                 <p className={`text-3xl font-bold ${colorClasses}`}>{value}</p>
             </div>
