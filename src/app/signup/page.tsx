@@ -152,7 +152,7 @@ export default function SignupPage() {
             {!isOtpVerified && isOtpSent && (
               <div className="w-full flex items-center justify-center space-x-2">
                 <OtpInput onComplete={setOtp} />
-                <Button type="button" onClick={handleVerifyOtp} disabled={verifyOtpLoading || otp.length !== 6} variant="success" className="w-full">
+                <Button type="button" onClick={handleVerifyOtp} disabled={verifyOtpLoading || otp.length !== 6} variant="success">
                   {verifyOtpLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <><FiCheck className="h-6 w-6 mr-2" /> Verify</>}
                 </Button>
               </div>
