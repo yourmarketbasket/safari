@@ -10,7 +10,7 @@ const buttonVariants = cva(
         secondary: 'border border-gray-400 text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
         danger: 'border border-pink-600 text-pink-600 hover:bg-pink-100 focus:ring-pink-500',
         success: 'border border-lime-500 text-lime-600 hover:bg-lime-100 focus:ring-lime-500',
-        ghost: 'hover:bg-gray-100',
+        ghost: 'text-gray-900 hover:bg-gray-200',
         link: 'text-purple-600 underline-offset-4 hover:underline',
         pagination: 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500 rounded-md',
       },
