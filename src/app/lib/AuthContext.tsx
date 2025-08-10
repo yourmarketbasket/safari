@@ -114,7 +114,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const redirectUser = (user: User, router: AppRouterInstance) => {
     if (user.role === 'ordinary') {
-      router.push('/dashboard/pending-approval');
+      router.push('/pending-approval');
       return;
     }
 

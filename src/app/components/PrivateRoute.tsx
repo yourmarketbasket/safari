@@ -22,7 +22,7 @@ export default function PrivateRoute({ children, allowedRoles }: PrivateRoutePro
     }
 
     if (user && user.role === 'ordinary') {
-      router.push('/dashboard/pending-approval');
+      router.push('/pending-approval');
       return;
     }
 
