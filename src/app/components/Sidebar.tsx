@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift, FiMonitor, FiHelpCircle, FiTool, FiAlertTriangle, FiFileText, FiChevronsUp } from 'react-icons/fi';
+import { FiUsers, FiShield, FiTruck, FiUser, FiPocket, FiList, FiPower, FiChevronDown, FiChevronUp, FiTrendingUp, FiGift, FiMonitor, FiHelpCircle, FiTool, FiAlertTriangle, FiFileText, FiChevronsUp } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 import { UserRole } from '../models/User.model';
@@ -100,14 +100,18 @@ export default function Sidebar() {
         </div>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-        {navLinks.map((link) => (
+        {navLinks.map((link) => {
+          const isChildActive = link.subLinks?.some(subLink => pathname.startsWith(subLink.href));
+          return (
           <div key={link.name}>
             {link.subLinks ? (
               <>
                 <Button
                   variant="ghost"
                   onClick={() => handleSubmenuClick(link.name)}
-                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-normal"
+                  className={`w-full flex items-center justify-between px-4 py-2 text-xs font-normal rounded-lg transition-colors ${
+                    (openSubmenu === link.name || isChildActive) ? 'bg-purple-600 text-white shadow-lg' : 'text-gray-600 hover:bg-purple-100 hover:text-purple-600'
+                  }`}
                 >
                   <div className="flex items-center">
                     <div className="w-5 h-5">{link.icon}</div>
@@ -157,6 +161,8 @@ export default function Sidebar() {
             <FiUser className="w-5 h-5" />
             {!isCollapsed && <span className="ml-3">Profile</span>}
         </Link>
+        );
+        })}
       </nav>
       <div className="px-4 py-6 border-t border-gray-200 space-y-2">
         <ConnectionStatus />
@@ -165,7 +171,7 @@ export default function Sidebar() {
           onClick={logout}
           className="w-full flex items-center px-4 py-2 text-xs font-normal"
         >
-          <FiLogOut className="w-5 h-5" />
+          <FiPower className="w-5 h-5" />
           {!isCollapsed && <span className="ml-3">Logout</span>}
         </Button>
       </div>
