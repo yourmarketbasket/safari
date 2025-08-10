@@ -9,7 +9,7 @@ import { UserRole } from "@/app/models/User.model";
 import superuserService from "@/app/services/superuser.service";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import Message from "@/app/components/Message";
-import { FiPlus, FiEdit, FiTrash2, FiShield, FiUser, FiTruck, FiKey, FiHelpCircle, FiPocket, FiList, FiUserCheck } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiShield, FiUser, FiTruck, FiKey, FiHelpCircle, FiPocket, FiList, FiUserCheck, FiChevronDown } from "react-icons/fi";
 import PermissionModal from "@/app/components/PermissionModal";
 import { Chip } from "@/app/components/Chip";
 import SummaryCard from "@/app/components/SummaryCard";
