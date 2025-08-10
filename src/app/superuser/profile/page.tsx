@@ -7,6 +7,7 @@ import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import { FaUserCircle } from 'react-icons/fa';
 import { FiEdit, FiSave, FiX } from 'react-icons/fi';
 import Image from 'next/image';
+import { Button } from '@/app/components/ui/Button';
 
 export default function SuperuserProfilePage() {
   const { setTitle } = usePageTitleStore();
@@ -61,21 +62,20 @@ export default function SuperuserProfilePage() {
                 />
               </div>
               <div className="flex items-center justify-end space-x-4">
-                <button
+                <Button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="flex items-center px-4 py-2 font-bold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  variant="secondary"
                 >
                   <FiX className="mr-2" />
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="flex items-center px-4 py-2 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   <FiSave className="mr-2" />
                   Save Changes
-                </button>
+                </Button>
               </div>
             </form>
           ) : (
@@ -90,13 +90,12 @@ export default function SuperuserProfilePage() {
               <p className="text-gray-600">{user.phone || 'N/A'}</p>
               <p className="mt-2 inline-block bg-indigo-100 text-indigo-800 text-sm font-semibold px-3 py-1 rounded-full">{user.role}</p>
               <div className="mt-6">
-                <button
+                <Button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center mx-auto px-6 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   <FiEdit className="mr-2" />
                   Edit Profile
-                </button>
+                </Button>
               </div>
             </div>
           )}

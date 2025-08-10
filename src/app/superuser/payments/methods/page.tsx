@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/app/components/ui/Button";
 import { NextPage } from "next";
 
 const PaymentMethodsPage: NextPage = () => {
@@ -11,7 +12,7 @@ const PaymentMethodsPage: NextPage = () => {
       <div className="bg-white p-4 rounded-lg shadow">
         <h2 className="text-xl font-bold mb-4">Manage Payment Methods</h2>
         <p>A form and list will be provided here to manage payment gateways and credentials.</p>
-        <button className="mt-4 bg-purple-600 text-white px-4 py-2 rounded-lg">Add New Method</button>
+        <Button className="mt-4">Add New Method</Button>
       </div>
     </div>
   );

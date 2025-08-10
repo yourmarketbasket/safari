@@ -10,29 +10,29 @@ interface PrivateRouteProps {
 }
 
 export default function PrivateRoute({ children, allowedRoles }: PrivateRouteProps) {
-  const { user, token, isLoading } = useAuth();
+  const { user, token, isInitialized } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (!isInitialized) return;
 
     if (!token) {
       router.push('/login');
       return;
     }
 
-    if (user && !allowedRoles.includes(user.role)) {
-      // Redirect to a default page or an unauthorized page
-      router.push('/dashboard'); // Or a new '/unauthorized' page
+    if (user && user.role === 'ordinary') {
+      router.push('/dashboard/pending-approval');
+      return;
     }
-  }, [user, token, isLoading, router, allowedRoles]);
 
-  if (isLoading || !token || (user && !allowedRoles.includes(user.role))) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Loading...</p>
-      </div>
-    );
+    if (user && !allowedRoles.includes(user.role)) {
+      router.push('/dashboard');
+    }
+  }, [user, token, isInitialized, router, allowedRoles]);
+
+  if (!isInitialized || !token || (user && !allowedRoles.includes(user.role))) {
+    return null;
   }
 
   return <>{children}</>;

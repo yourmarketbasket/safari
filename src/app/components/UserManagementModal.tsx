@@ -8,6 +8,7 @@ import { useState, useEffect, FormEvent } from "react";
 import superuserService from "@/app/services/superuser.service";
 import Message from "./Message";
 import Image from "next/image";
+import { Button } from "./ui/Button";
 
 interface UserManagementModalProps {
   user: User | null;
@@ -104,9 +105,9 @@ export default function UserManagementModal({ user, onClose, onUserUpdate, allPe
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-2xl w-full text-gray-800 relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+        <Button onClick={onClose} variant="ghost" className="absolute top-4 right-4">
           <FiX size={20} />
-        </button>
+        </Button>
 
         <div className="flex items-center mb-6">
             <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mr-4 relative">
@@ -151,9 +152,9 @@ export default function UserManagementModal({ user, onClose, onUserUpdate, allPe
                 currentUserPermissions.map(p => (
                   <div key={p} className="flex items-center bg-purple-100 text-purple-800 rounded-full px-3 py-1 text-xs font-medium">
                     <span>{allPermissions.find(ap => ap.permissionNumber === p)?.description || p}</span>
-                    <button onClick={() => handleRemovePermission(p)} className="ml-2 text-purple-600 hover:text-purple-800">
+                    <Button onClick={() => handleRemovePermission(p)} variant="ghost" size="sm" className="ml-2">
                       <FiTrash2 />
-                    </button>
+                    </Button>
                   </div>
                 ))
               ) : (
@@ -167,9 +168,9 @@ export default function UserManagementModal({ user, onClose, onUserUpdate, allPe
                     .filter(p => !currentUserPermissions.includes(p.permissionNumber))
                     .map(p => <option key={p._id} value={p.permissionNumber}>{p.description} ({p.permissionNumber})</option>)}
                </select>
-               <button type="submit" className="bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 flex items-center justify-center">
+               <Button type="submit" size="sm">
                  <FiPlus size={20}/>
-               </button>
+               </Button>
             </form>
           </Well>
 
@@ -177,12 +178,12 @@ export default function UserManagementModal({ user, onClose, onUserUpdate, allPe
         </div>
 
         <div className="flex justify-end pt-4 mt-4 border-t">
-            <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm mr-3" onClick={onClose} disabled={isLoading}>
+            <Button variant="secondary" onClick={onClose} disabled={isLoading}>
                 Cancel
-            </button>
-            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-bold flex items-center" onClick={handleSaveChanges} disabled={isLoading}>
+            </Button>
+            <Button variant="success" onClick={handleSaveChanges} disabled={isLoading}>
                 {isLoading ? 'Saving...' : 'Save Changes'}
-            </button>
+            </Button>
         </div>
       </div>
     </div>

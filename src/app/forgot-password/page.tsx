@@ -4,6 +4,7 @@ import { useState } from 'react';
 import authService from '../services/auth.service';
 import Link from 'next/link';
 import Message from '../components/Message';
+import { Button } from '../components/ui/Button';
 
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 
@@ -55,9 +56,9 @@ export default function ForgotPasswordPage() {
           {message && <Message message={message} type="info" />}
 
           <div>
-            <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+            <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Sending...' : 'Send Recovery Link'}
-            </button>
+            </Button>
           </div>
         </form>
         <div className="text-sm text-center">

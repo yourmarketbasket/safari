@@ -6,6 +6,7 @@ import { Permission } from '../models/Permission.model';
 import { UserRole } from '../models/User.model';
 import superuserService from '../services/superuser.service';
 import Message from './Message';
+import { Button } from './ui/Button';
 
 type NewPermission = Omit<Permission, '_id'>;
 
@@ -87,9 +88,9 @@ export default function BulkPermissionModal({ isOpen, onClose, onSave }: BulkPer
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-4xl w-full text-gray-800 relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+        <Button onClick={onClose} variant="ghost" className="absolute top-4 right-4">
           <FiX size={20} />
-        </button>
+        </Button>
 
         <h2 className="text-2xl font-bold text-purple-700 mb-6">Add Permissions in Bulk</h2>
 
@@ -135,30 +136,30 @@ export default function BulkPermissionModal({ isOpen, onClose, onSave }: BulkPer
                 </div>
               </div>
               {permissions.length > 1 && (
-                <button onClick={() => removePermissionField(index)} className="absolute top-2 right-2 text-red-500 hover:text-red-700">
+                <Button onClick={() => removePermissionField(index)} variant="ghost" size="sm" className="absolute top-2 right-2">
                   <FiTrash2 />
-                </button>
+                </Button>
               )}
             </div>
           ))}
         </div>
 
         <div className="mt-6">
-          <button onClick={addPermissionField} className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800">
+          <Button onClick={addPermissionField} variant="link">
             <FiPlus /> Add Another Permission
-          </button>
+          </Button>
         </div>
 
         {error && <Message type="error" message={error} />}
 
         <div className="flex justify-end pt-4 mt-4 border-t">
-            <button type="button" className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm mr-3" onClick={onClose} disabled={isLoading}>
+            <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
               Cancel
-            </button>
-            <button type="button" onClick={handleSubmit} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-bold flex items-center" disabled={isLoading}>
+            </Button>
+            <Button type="button" onClick={handleSubmit} variant="success" disabled={isLoading}>
               <FiSave className="mr-2" />
               {isLoading ? 'Saving...' : `Save ${permissions.length} Permissions`}
-            </button>
+            </Button>
         </div>
       </div>
     </div>

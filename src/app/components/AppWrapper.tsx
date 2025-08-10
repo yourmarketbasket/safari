@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 import useSocketStore from '../store/socket.store';
 
 export default function AppWrapper({ children }: { children: React.ReactNode }) {
-  const { isMfaRequired, verifyMfa, cancelMfa, isLoading } = useAuth();
+  const { isMfaRequired, verifyMfa, cancelMfa, isInitialized } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -44,7 +44,7 @@ export default function AppWrapper({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      {(isLoading || isNavigating) && <LoadingOverlay />}
+      {(!isInitialized || isNavigating) && <LoadingOverlay />}
       {children}
       <MfaDialog
         isOpen={isMfaRequired}

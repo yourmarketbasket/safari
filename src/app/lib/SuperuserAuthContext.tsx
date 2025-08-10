@@ -118,7 +118,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
         setUser(responseData.user);
         localStorage.setItem('superuserAuthToken', responseData.token);
         localStorage.setItem('superuser', JSON.stringify(responseData.user));
-        window.location.href = '/superuser/dashboard';
+        router.push('/superuser/dashboard');
     }
   };
 
@@ -131,7 +131,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
   };
 
   if (!isInitialized || (tabStatus === 'PENDING' && token)) {
-    return <LoadingOverlay />;
+    return null;
   }
 
   if (tabStatus === 'INACTIVE' && token) {

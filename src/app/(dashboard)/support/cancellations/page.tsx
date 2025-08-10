@@ -6,6 +6,7 @@ import PrivateRoute from '@/app/components/PrivateRoute';
 import { DataTable, ColumnDef } from '@/app/components/DataTable';
 import { Chip } from '@/app/components/Chip';
 import Modal from '@/app/components/Modal';
+import { Button } from '@/app/components/ui/Button';
 
 interface Cancellation {
     _id: string;
@@ -58,12 +59,12 @@ const CancellationsPage = () => {
             header: 'Actions',
             accessorKey: '_id',
             cell: (row: Cancellation) => (
-                <button
+                <Button
                     onClick={() => handleViewDetails(row)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700"
+                    size="sm"
                 >
                     View Details
-                </button>
+                </Button>
             )
         }
     ], []);
@@ -87,15 +88,15 @@ const CancellationsPage = () => {
                                 <p>Reallocation for this trip is {selectedCancellation.status}.</p>
                             </div>
                             <div className="mt-4 flex justify-end space-x-4">
-                                <button
+                                <Button
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                                    variant="secondary"
                                 >
                                     Close
-                                </button>
-                                <button className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700">
+                                </Button>
+                                <Button>
                                     Authorize Refund
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}

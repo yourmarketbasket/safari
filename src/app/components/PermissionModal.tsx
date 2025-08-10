@@ -6,6 +6,7 @@ import { Permission } from '../models/Permission.model';
 import { UserRole } from '../models/User.model';
 import superuserService from '../services/superuser.service';
 import Message from './Message';
+import { Button } from './ui/Button';
 
 interface PermissionModalProps {
   isOpen: boolean;
@@ -93,16 +94,17 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-lg w-full text-gray-800 relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+        <Button onClick={onClose} variant="ghost" className="absolute top-4 right-4">
           <FiX size={20} />
-        </button>
+        </Button>
 
         <h2 className="text-2xl font-bold text-purple-700 mb-4">{isEditMode ? 'Edit Permission' : 'Add New Permission'}</h2>
 
         {!isEditMode && (
           <div className="border-b border-gray-200 mb-4">
             <nav className="-mb-px flex space-x-4" aria-label="Tabs">
-              <button
+              <Button
+                variant="link"
                 onClick={() => setActiveTab('single')}
                 className={`${
                   activeTab === 'single'
@@ -111,8 +113,9 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
                 } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm`}
               >
                 Single Permission
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="link"
                 onClick={() => setActiveTab('bulk')}
                 className={`${
                   activeTab === 'bulk'
@@ -121,7 +124,7 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
                 } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm`}
               >
                 Bulk Add
-              </button>
+              </Button>
             </nav>
           </div>
         )}
@@ -173,13 +176,13 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
           {error && <Message type="error" message={error} />}
 
           <div className="flex justify-end pt-4 mt-4 border-t">
-            <button type="button" className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm mr-3" onClick={onClose} disabled={isLoading}>
+            <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
               Cancel
-            </button>
-            <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-bold flex items-center" disabled={isLoading}>
+            </Button>
+            <Button type="submit" variant="success" disabled={isLoading}>
               <FiSave className="mr-2" />
               {isLoading ? 'Saving...' : 'Save Permission'}
-            </button>
+            </Button>
           </div>
         </form>
         )}
@@ -197,13 +200,13 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
               placeholder='[&#10;  { "permissionNumber": "P101", "description": "...", "roles": ["admin"] },&#10;  { "permissionNumber": "P102", "description": "...", "roles": ["sacco"] }&#10;]'
             />
             <div className="flex justify-end pt-4 mt-4 border-t">
-                <button type="button" className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm mr-3" onClick={onClose} disabled={isLoading}>
+                <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
                     Cancel
-                </button>
-                <button type="button" onClick={handleSubmit} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-bold flex items-center" disabled={isLoading}>
+                </Button>
+                <Button type="button" onClick={handleSubmit} variant="success" disabled={isLoading}>
                     <FiSave className="mr-2" />
                     {isLoading ? 'Saving...' : 'Save Permissions'}
-                </button>
+                </Button>
             </div>
           </div>
         )}

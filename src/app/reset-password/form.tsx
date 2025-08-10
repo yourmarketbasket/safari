@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import authService from '../services/auth.service';
 import Link from 'next/link';
 import Message from '../components/Message';
+import { Button } from '../components/ui/Button';
 
 export default function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -61,9 +62,9 @@ export default function ResetPasswordForm() {
         {error && <Message message={error} type="error" />}
         {message && <Message message={message} type="success" />}
         <div>
-          <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? 'Resetting...' : 'Reset Password'}
-          </button>
+          </Button>
         </div>
       </form>
       <div className="text-sm text-center">

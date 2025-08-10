@@ -14,6 +14,7 @@ import Message from "@/app/components/Message";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import Image from "next/image";
 import SummaryCard from "@/app/components/SummaryCard";
+import { Button } from "@/app/components/ui/Button";
 
 const UsersPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -100,12 +101,12 @@ const UsersPage: NextPage = () => {
             header: "Actions",
             accessorKey: "_id",
             cell: (row) => (
-                <button
+                <Button
                     onClick={() => setSelectedUser(row)}
-                    className="text-xs bg-purple-600 text-white px-3 py-1 rounded-md hover:bg-purple-700 transition-colors"
+                    size="sm"
                 >
                     Manage
-                </button>
+                </Button>
             )
         }
     ];

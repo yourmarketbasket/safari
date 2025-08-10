@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import PrivateRoute from '@/app/components/PrivateRoute';
+import { Button } from '@/app/components/ui/Button';
 
 const EscalationsPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -65,12 +66,11 @@ const EscalationsPage = () => {
                             </select>
                         </div>
                         <div className="flex justify-end">
-                            <button
+                            <Button
                                 type="submit"
-                                className="px-6 py-2 text-white bg-purple-600 rounded-lg hover:bg-purple-700"
                             >
                                 Escalate
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>

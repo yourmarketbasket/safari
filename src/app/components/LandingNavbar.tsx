@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { Button } from './ui/Button';
 
 export default function LandingNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -32,12 +33,12 @@ export default function LandingNavbar() {
             <Link href="#features" className="py-2 px-3 text-gray-600 hover:text-gray-800">Features</Link>
             <Link href="#about" className="py-2 px-3 text-gray-600 hover:text-gray-800">About Us</Link>
             <div className="relative" ref={accountMenuRef}>
-              <button onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)} className="flex items-center space-x-1 py-2 px-3 text-gray-600 hover:text-gray-800">
+              <Button onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)} variant="ghost" className="flex items-center space-x-1">
                 <span>Account</span>
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+              </Button>
               {isAccountMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-20">
                   <Link href="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Login</Link>
@@ -47,7 +48,7 @@ export default function LandingNavbar() {
             </div>
           </div>
           <div className="md:hidden flex items-center">
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600 hover:text-gray-800 focus:outline-none">
+            <Button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} variant="ghost">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -55,7 +56,7 @@ export default function LandingNavbar() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
-            </button>
+            </Button>
           </div>
         </div>
 

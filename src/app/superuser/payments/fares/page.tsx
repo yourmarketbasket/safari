@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/app/components/ui/Button";
 import { NextPage } from "next";
 
 const FaresPage: NextPage = () => {
@@ -11,7 +12,7 @@ const FaresPage: NextPage = () => {
       <div className="bg-white p-4 rounded-lg shadow">
         <h2 className="text-xl font-bold mb-4">Set Fare Charges</h2>
         <p>A form will be provided here to manage fare prices for different routes or times.</p>
-        <button className="mt-4 bg-purple-600 text-white px-4 py-2 rounded-lg">Update Fares</button>
+        <Button className="mt-4">Update Fares</Button>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Message from '../../../components/Message';
 import superuserService, { SignupData } from '../../../services/superuser.service';
 import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
+import { Button } from '@/app/components/ui/Button';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -124,9 +125,9 @@ function SuperuserRegisterPageContent() {
             </div>
             {error && <Message message={error} type="error" />}
             <div>
-              <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-400 transition-all duration-300">
+              <Button type="submit" disabled={loading} className="w-full">
                 {loading ? 'Registering...' : 'Register'}
-              </button>
+              </Button>
             </div>
           </form>
           <div className="text-sm text-center text-gray-400">

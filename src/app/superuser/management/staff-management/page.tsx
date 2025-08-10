@@ -6,6 +6,7 @@ import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
 import { User } from "@/app/models/User.model";
+import { Button } from "@/app/components/ui/Button";
 
 // Dummy data for staff, conforming to the User model
 const dummyStaff: User[] = [
@@ -32,7 +33,7 @@ const columns: ColumnDef<User>[] = [
   {
       header: "Actions",
       accessorKey: "_id",
-      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Manage</button>
+      cell: () => <Button size="sm">Manage</Button>
   }
 ];
 
@@ -48,7 +49,7 @@ const StaffManagementPage: NextPage = () => {
       <div className="mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-4">Add New Staff Member</h2>
-            <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Add Staff</button>
+            <Button>Add Staff</Button>
         </div>
       </div>
 

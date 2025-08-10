@@ -2,6 +2,7 @@
 
 import { useState, useMemo, ReactNode } from "react";
 import { FiSearch, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { Button } from "./ui/Button";
 
 // A generic data object type that must have an _id property.
 type DataObject = { _id: string | number };
@@ -171,17 +172,17 @@ export function DataTable<T extends DataObject>({ data, columns, filterColumn }:
           </select>
         </div>
         <div className="flex items-center">
-          <button
+          <Button
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 border border-gray-400 rounded-lg mr-2 disabled:opacity-50 bg-white text-gray-800 hover:bg-gray-100 font-bold"
-          >&lt;</button>
+            variant="secondary"
+          >&lt;</Button>
           <span className="text-gray-700 text-xs font-normal">Page {currentPage} of {totalPages}</span>
-          <button
+          <Button
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 border border-gray-400 rounded-lg ml-2 disabled:opacity-50 bg-white text-gray-800 hover:bg-gray-100 font-bold"
-          >&gt;</button>
+            variant="secondary"
+          >&gt;</Button>
         </div>
       </div>
     </div>

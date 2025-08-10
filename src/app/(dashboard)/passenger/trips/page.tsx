@@ -7,6 +7,7 @@ import { DataTable, ColumnDef } from '@/app/components/DataTable';
 import Modal from '@/app/components/Modal';
 import { Chip } from '@/app/components/Chip';
 import Link from 'next/link';
+import { Button } from '@/app/components/ui/Button';
 
 interface Trip {
     _id: string;
@@ -199,19 +200,21 @@ const MyTripsPage = () => {
                 View Details
             </Link>
             {row.status === 'registered' && (
-              <button
+              <Button
                 onClick={() => handlePay(row)}
-                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+                size="sm"
+                variant="success"
               >
                 Pay Now
-              </button>
+              </Button>
             )}
-            <button
+            <Button
               onClick={() => handleCancelTrip(row)}
-              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
+                size="sm"
+                variant="danger"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         ),
       },
@@ -234,13 +237,13 @@ const MyTripsPage = () => {
         header: 'Actions',
         accessorKey: '_id',
         cell: (row: Trip) => (
-          <button
+          <Button
             onClick={() => handleRegister(row)}
             disabled={row.availableSeats === 0}
-            className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 disabled:bg-gray-400"
+            size="sm"
           >
             {row.availableSeats === 0 ? 'Waitlist' : 'Register'}
-          </button>
+          </Button>
         ),
       },
     ],
@@ -251,9 +254,9 @@ const MyTripsPage = () => {
     <PrivateRoute allowedRoles={['passenger']}>
       <div className="container mx-auto px-6 py-8">
         <div className="flex justify-end mb-4">
-            <button onClick={() => setIsSearchModalOpen(true)} className="px-6 py-2 text-white bg-purple-600 rounded-lg hover:bg-purple-700">
+            <Button onClick={() => setIsSearchModalOpen(true)}>
                 Search for Trips
-            </button>
+            </Button>
         </div>
         <DataTable columns={myTripsColumns} data={registeredTrips} filterColumn="route" />
 
@@ -285,18 +288,17 @@ const MyTripsPage = () => {
                 </p>
               )}
               <div className="mt-6 flex justify-end space-x-4">
-                <button
+                <Button
                   onClick={() => setIsRegisterModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  variant="secondary"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={confirmRegistration}
-                  className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700"
                 >
                   Confirm
-                </button>
+                </Button>
               </div>
             </div>
         </Modal>
@@ -312,18 +314,18 @@ const MyTripsPage = () => {
                 </p>
               )}
               <div className="mt-6 flex justify-end space-x-4">
-                <button
+                <Button
                   onClick={() => setIsCancelModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  variant="secondary"
                 >
                   Keep Registration
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={confirmCancellation}
-                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
+                  variant="danger"
                 >
                   Confirm Cancellation
-                </button>
+                </Button>
               </div>
             </div>
         </Modal>
@@ -338,18 +340,18 @@ const MyTripsPage = () => {
                 </p>
               )}
               <div className="mt-6 flex justify-end space-x-4">
-                <button
+                <Button
                   onClick={() => setIsPaymentModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  variant="secondary"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={confirmPayment}
-                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+                  variant="success"
                 >
                   Confirm Payment
-                </button>
+                </Button>
               </div>
             </div>
         </Modal>

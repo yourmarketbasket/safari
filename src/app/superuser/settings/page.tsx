@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
+import { Button } from "@/app/components/ui/Button";
 
 export default function SuperuserSettingsPage() {
   const { setTitle } = usePageTitleStore();
@@ -43,12 +44,11 @@ export default function SuperuserSettingsPage() {
             />
           </div>
           <div className="flex justify-end">
-            <button
+            <Button
               type="submit"
-              className="px-6 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Save Settings
-            </button>
+            </Button>
           </div>
         </form>
       </div>

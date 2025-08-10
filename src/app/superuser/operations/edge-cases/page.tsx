@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
+import { Button } from "@/app/components/ui/Button";
 
 // Type for Edge Case data
 type EdgeCase = {
@@ -42,7 +43,7 @@ const columns: ColumnDef<EdgeCase>[] = [
   {
       header: "Actions",
       accessorKey: "_id",
-      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View Log</button>
+      cell: () => <Button size="sm">View Log</Button>
   }
 ];
 
@@ -58,7 +59,7 @@ const EdgeCasesPage: NextPage = () => {
       <div className="mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-4">Define New Edge Case Protocol</h2>
-            <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">New Protocol</button>
+            <Button>New Protocol</Button>
         </div>
       </div>
 

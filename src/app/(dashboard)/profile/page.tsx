@@ -13,6 +13,7 @@ import { Chip } from '@/app/components/Chip';
 import Rating from '@/app/components/Rating';
 import { DataTable, ColumnDef } from '@/app/components/DataTable';
 import SummaryCard from '@/app/components/SummaryCard';
+import { Button } from '@/app/components/ui/Button';
 
 type TicketType = Omit<Ticket, 'passengerId' | 'tripId' | 'routeId'> & { route: string, rating: number, comments: string, totalCost: number };
 
@@ -61,7 +62,7 @@ export default function ProfilePage() {
     { header: 'Cost', accessorKey: 'totalCost', cell: (row) => `Ksh ${row.totalCost.toLocaleString()}` },
     { header: 'Class', accessorKey: 'class' },
     { header: 'Rating', accessorKey: 'rating', cell: (row) => <Rating rating={row.rating} readOnly={row.status !== 'boarded'} /> },
-    { header: 'Actions', accessorKey: '_id', cell: () => <button className="text-indigo-600 hover:text-indigo-800"><FiMessageSquare /></button> },
+    { header: 'Actions', accessorKey: '_id', cell: () => <Button variant="ghost" size="sm"><FiMessageSquare /></Button> },
   ], []);
 
   return (
@@ -96,21 +97,20 @@ export default function ProfilePage() {
                         />
                         </div>
                         <div className="flex items-center justify-end space-x-2">
-                        <button
+                        <Button
                             type="button"
                             onClick={() => setIsEditing(false)}
-                            className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+                            variant="secondary"
                         >
                             <FiX className="mr-1" />
                             Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="submit"
-                            className="flex items-center px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
                         >
                             <FiSave className="mr-1" />
                             Save
-                        </button>
+                        </Button>
                         </div>
                     </form>
                     ) : (
@@ -125,13 +125,12 @@ export default function ProfilePage() {
                         <p className="text-sm text-gray-500">{user.phone || 'N/A'}</p>
                         <p className="mt-2 inline-block bg-indigo-100 text-indigo-800 text-xs font-semibold px-2 py-1 rounded-full">{user.role}</p>
                         <div className="mt-4">
-                        <button
+                        <Button
                             onClick={() => setIsEditing(true)}
-                            className="flex items-center mx-auto px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
                         >
                             <FiEdit className="mr-1" />
                             Edit Profile
-                        </button>
+                        </Button>
                         </div>
                     </div>
                     )
@@ -148,10 +147,10 @@ export default function ProfilePage() {
             <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-lg text-gray-900">Payment Methods</h3>
-                    <button className="flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                    <Button variant="link">
                         <FiPlus className="mr-1"/>
                         Add Method
-                    </button>
+                    </Button>
                 </div>
                 <div className="space-y-3">
                 {mockPaymentMethods.map((method) => (

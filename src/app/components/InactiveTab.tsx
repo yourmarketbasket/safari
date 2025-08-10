@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from './ui/Button';
+
 interface InactiveTabProps {
   onTakeOver: () => void;
 }
@@ -9,12 +11,9 @@ export default function InactiveTab({ onTakeOver }: InactiveTabProps) {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="p-8 bg-white rounded-lg shadow-md text-center">
         <p className="text-gray-600 mb-6">The application is currently running in another tab.</p>
-        <button
-          onClick={onTakeOver}
-          className="px-6 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
+        <Button onClick={onTakeOver}>
           Take Over
-        </button>
+        </Button>
       </div>
     </div>
   );

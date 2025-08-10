@@ -5,6 +5,7 @@ import PrivateRoute from '@/app/components/PrivateRoute';
 import { FiPlus, FiEdit, FiTrash, FiCheckCircle } from 'react-icons/fi';
 import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import { Chip } from '@/app/components/Chip';
+import { Button } from '@/app/components/ui/Button';
 
 const mockSaccos = [
   { _id: 's-1', name: 'Prestige', status: 'approved' },
@@ -33,10 +34,10 @@ export default function SaccoManagementPage() {
       <div className="container mx-auto px-6 py-8">
         <div className="flex justify-between items-center mb-6">
           <div></div> {/* Placeholder for alignment */}
-          <button className="flex items-center px-4 py-2 font-bold text-white bg-purple-600 rounded-lg hover:bg-purple-700">
+          <Button>
             <FiPlus className="mr-2" />
             Register Sacco
-          </button>
+          </Button>
         </div>
 
         <div className="mt-8 bg-white p-8 rounded-2xl shadow-xl">
@@ -73,15 +74,15 @@ export default function SaccoManagementPage() {
                     </td>
                     <td className="py-4 px-6 text-center">
                       <div className="flex item-center justify-center">
-                        <button className="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center mr-2">
+                        <Button size="sm" variant="success" className="mr-2">
                           <FiCheckCircle />
-                        </button>
-                        <button className="w-6 h-6 rounded-full bg-yellow-500 text-white flex items-center justify-center mr-2">
+                        </Button>
+                        <Button size="sm" className="mr-2">
                           <FiEdit />
-                        </button>
-                        <button className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center">
+                        </Button>
+                        <Button size="sm" variant="danger">
                           <FiTrash />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>

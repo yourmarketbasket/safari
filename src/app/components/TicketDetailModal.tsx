@@ -5,6 +5,7 @@ import { FiX, FiSave } from 'react-icons/fi';
 import { SupportTicket, TicketStatus, TicketPriority } from '../models/SupportTicket.model';
 import superuserService from '../services/superuser.service';
 import Message from './Message';
+import { Button } from './ui/Button';
 
 interface TicketDetailModalProps {
   isOpen: boolean;
@@ -56,9 +57,9 @@ export default function TicketDetailModal({ isOpen, onClose, onTicketUpdate, tic
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-2xl w-full text-gray-800 relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+        <Button onClick={onClose} variant="ghost" className="absolute top-4 right-4">
           <FiX size={20} />
-        </button>
+        </Button>
         <h2 className="text-2xl font-bold text-purple-700 mb-2">{ticket.title}</h2>
         <p className="text-sm text-gray-500 mb-4">Ticket ID: {ticket.ticketId}</p>
 
@@ -95,13 +96,13 @@ export default function TicketDetailModal({ isOpen, onClose, onTicketUpdate, tic
         </div>
 
         <div className="flex justify-end pt-4 mt-4 border-t">
-            <button type="button" className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 text-sm mr-3" onClick={onClose} disabled={isLoading}>
+            <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
               Cancel
-            </button>
-            <button type="button" onClick={handleSubmit} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-bold flex items-center" disabled={isLoading}>
+            </Button>
+            <Button type="button" onClick={handleSubmit} variant="success" disabled={isLoading}>
               <FiSave className="mr-2" />
               {isLoading ? 'Saving...' : 'Save Changes'}
-            </button>
+            </Button>
         </div>
       </div>
     </div>

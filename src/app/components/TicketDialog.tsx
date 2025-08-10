@@ -1,6 +1,7 @@
 "use client";
 
 import { Chip } from './Chip';
+import { Button } from './ui/Button';
 
 import { Ticket } from "@/app/models/Ticket.model";
 
@@ -34,12 +35,12 @@ export default function TicketDialog({ ticket, onClose }: TicketDialogProps) {
             />
           </div>
         </div>
-        <button
+        <Button
           onClick={onClose}
-          className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          className="mt-6"
         >
           Close
-        </button>
+        </Button>
       </div>
     </div>
   );

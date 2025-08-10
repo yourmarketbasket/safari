@@ -6,6 +6,7 @@ import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Vehicle } from "@/app/models/Vehicle.model";
 import { Chip } from "@/app/components/Chip";
+import { Button } from "@/app/components/ui/Button";
 
 // Dummy data for vehicles
 const dummyVehicles: Vehicle[] = [
@@ -36,8 +37,8 @@ const columns: ColumnDef<Vehicle>[] = [
       accessorKey: "_id",
       cell: () => (
           <div className="flex gap-2">
-              <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Edit</button>
-              <button className="text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Delete</button>
+              <Button size="sm">Edit</Button>
+              <Button size="sm" variant="danger">Delete</Button>
           </div>
       )
   }
@@ -55,7 +56,7 @@ const VehicleManagementPage: NextPage = () => {
       <div className="mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-4">Add New Vehicle</h2>
-            <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Add Vehicle</button>
+            <Button>Add Vehicle</Button>
         </div>
       </div>
 

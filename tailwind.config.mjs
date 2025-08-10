@@ -63,6 +63,17 @@ const config = {
           800: '#991b1b',
           900: '#7f1d1d',
         },
+        lime: {
+          100: '#f7fee7',
+          200: '#ecfccb',
+          300: '#d9f99d',
+          400: '#a3e635',
+          500: '#84cc16',
+          600: '#65a30d',
+          700: '#4d7c0f',
+          800: '#3f6212',
+          900: '#365314',
+        }
       },
       animation: {
         'fade-in-down': 'fade-in-down 0.6s ease-out forwards',

@@ -11,6 +11,7 @@ import Message from "@/app/components/Message";
 import { FiEye, FiTrash2, FiArrowUp } from "react-icons/fi";
 import TicketDetailModal from "@/app/components/TicketDetailModal";
 import { Chip } from "@/app/components/Chip";
+import { Button } from "@/app/components/ui/Button";
 
 const SupportTicketsPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -94,9 +95,9 @@ const SupportTicketsPage: NextPage = () => {
           accessorKey: "_id",
           cell: (row) => (
               <div className="flex gap-2">
-                  <button onClick={() => handleOpenModal(row)} className="text-xs bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1"><FiEye /> View</button>
-                  <button onClick={() => handleDeleteTicket(row._id)} className="text-xs bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 flex items-center gap-1"><FiTrash2 /> Delete</button>
-                  {row.status !== 'escalated' && <button onClick={() => handleEscalateTicket(row._id)} className="text-xs bg-yellow-500 text-white px-2 py-1 rounded-md hover:bg-yellow-600 flex items-center gap-1"><FiArrowUp /> Escalate</button>}
+                  <Button onClick={() => handleOpenModal(row)} size="sm"><FiEye /> View</Button>
+                  <Button onClick={() => handleDeleteTicket(row._id)} size="sm" variant="danger"><FiTrash2 /> Delete</Button>
+                  {row.status !== 'escalated' && <Button onClick={() => handleEscalateTicket(row._id)} size="sm" variant="secondary"><FiArrowUp /> Escalate</Button>}
               </div>
           )
       }

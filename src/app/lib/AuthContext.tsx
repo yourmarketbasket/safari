@@ -5,6 +5,7 @@ import authService, { LoginCredentials, SignupData, VerifyMfaData } from '../ser
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
 import InactiveTab from '../components/InactiveTab';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import LoadingOverlay from '../components/LoadingOverlay';
 
 type TabStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE';
@@ -12,7 +13,7 @@ type TabStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE';
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  isLoading: boolean;
+  isInitialized: boolean;
   isMfaRequired: boolean;
   login: (loginData: LoginCredentials) => Promise<void>;
   logout: () => void;
@@ -26,7 +27,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [mfaToken, setMfaToken] = useState<string | null>(null);
   const [tabStatus, setTabStatus] = useState<TabStatus>('PENDING');
   const tabId = useRef<string | null>(null);
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setToken(null);
     setMfaToken(null);
-    setIsLoading(true);
+    setIsInitialized(false);
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     localStorage.removeItem('superuserAuthToken');
@@ -108,12 +109,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
     }
-    setIsLoading(false);
+    setIsInitialized(true);
   }, []);
 
-  const redirectUser = (user: User) => {
-    if (user.role === 'ordinary' && user.rank === 'Ordinary' && user.approvedStatus === 'pending') {
-      router.push('/pending-approval');
+  const redirectUser = (user: User, router: AppRouterInstance) => {
+    if (user.role === 'ordinary') {
+      router.push('/dashboard/pending-approval');
       return;
     }
 
@@ -144,7 +145,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(responseData.user);
       localStorage.setItem('authToken', responseData.token);
       localStorage.setItem('user', JSON.stringify(responseData.user));
-      redirectUser(responseData.user);
+      redirectUser(responseData.user, router);
     }
   };
 
@@ -163,7 +164,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem('authToken', responseData.token);
     localStorage.setItem('user', JSON.stringify(responseData.user));
     setMfaToken(null);
-    redirectUser(responseData.user);
+    redirectUser(responseData.user, router);
   };
 
   const handleCancelMfa = () => {
@@ -178,7 +179,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     user,
     token,
-    isLoading,
+    isInitialized,
     isMfaRequired,
     login: handleLogin,
     logout: handleLogout,
@@ -187,8 +188,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     cancelMfa: handleCancelMfa,
   };
 
-  if (isLoading || (tabStatus === 'PENDING' && token)) {
-    return <LoadingOverlay />;
+  if (!isInitialized || (tabStatus === 'PENDING' && token)) {
+    return null;
   }
 
   if (tabStatus === 'INACTIVE' && token) {

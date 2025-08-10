@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSuperuserAuth } from '../../lib/SuperuserAuthContext';
 import Link from 'next/link';
 import Message from '../../components/Message';
+import { Button } from '@/app/components/ui/Button';
 
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 
@@ -92,9 +93,9 @@ function SuperuserLoginPageContent() {
               </div>
             </div>
             <div>
-              <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-400 transition-all duration-300">
+              <Button type="submit" disabled={loading} className="w-full">
                 {loading ? 'Logging in...' : 'Login'}
-              </button>
+              </Button>
             </div>
           </form>
           <div className="text-sm text-center text-gray-400">

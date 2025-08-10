@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
+import { Button } from "@/app/components/ui/Button";
 
 // Type for Escalation data
 type Escalation = {
@@ -44,7 +45,7 @@ const columns: ColumnDef<Escalation>[] = [
    {
       header: "Actions",
       accessorKey: "_id",
-      cell: () => <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Review</button>
+      cell: () => <Button size="sm">Review</Button>
   }
 ];
 

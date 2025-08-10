@@ -1,6 +1,7 @@
 "use client";
 
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { Button } from './ui/Button';
 
 interface PaginationProps {
   currentPage: number;
@@ -27,20 +28,20 @@ export default function Pagination({
         Page {currentPage} out of {totalPages}
       </span>
       <div className="flex items-center gap-2">
-        <button
+        <Button
           onClick={handlePrevious}
           disabled={currentPage === 1}
-          className="p-2 border border-gray-400 rounded-md disabled:opacity-50 text-black"
+          variant="secondary"
         >
           <FiChevronLeft />
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={handleNext}
           disabled={currentPage === totalPages}
-          className="p-2 border border-gray-400 rounded-md disabled:opacity-50 text-black"
+          variant="secondary"
         >
           <FiChevronRight />
-        </button>
+        </Button>
       </div>
     </div>
   );

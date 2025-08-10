@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { NewStaffData } from '../services/superuser.service';
 import { User, UserRole } from '../models/User.model';
+import { Button } from './ui/Button';
 
 const availableRoles: UserRole[] = [
   "support_staff",
@@ -66,12 +67,12 @@ export default function AddStaffForm({ onClose, onSubmit, isLoading, error, init
         </p>
       )}
       <div className="flex justify-end space-x-4 pt-4">
-        <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+        <Button type="button" variant="secondary" onClick={onClose}>
           Cancel
-        </button>
-        <button type="submit" disabled={isLoading} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-400">
+        </Button>
+        <Button type="submit" disabled={isLoading}>
           {isLoading ? 'Saving...' : 'Save'}
-        </button>
+        </Button>
       </div>
     </form>
   );

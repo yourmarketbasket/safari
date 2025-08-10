@@ -5,6 +5,7 @@ import { useState } from 'react';
 import LoadingOverlay from '../components/LoadingOverlay';
 import Modal from '../components/Modal';
 import { FiCheck, FiClock, FiHelpCircle, FiLogOut, FiUser, FiMail } from 'react-icons/fi';
+import { Button } from '../components/ui/Button';
 
 export default function PendingApprovalPage() {
   const { user, logout } = useAuth();
@@ -88,14 +89,14 @@ export default function PendingApprovalPage() {
         </div>
 
         <div className="mt-8 flex items-center justify-center space-x-6">
-            <button onClick={() => setIsSupportModalOpen(true)} className="text-gray-500 hover:text-indigo-600 transition-colors">
+            <Button onClick={() => setIsSupportModalOpen(true)} variant="ghost">
                 <FiHelpCircle className="w-8 h-8" />
                 <span className="sr-only">Contact Support</span>
-            </button>
-            <button onClick={logout} className="text-gray-500 hover:text-red-600 transition-colors">
+            </Button>
+            <Button onClick={logout} variant="ghost">
                 <FiLogOut className="w-8 h-8" />
                 <span className="sr-only">Logout</span>
-            </button>
+            </Button>
         </div>
         {messageSent && (
           <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-lg shadow-sm text-center">
@@ -119,12 +120,11 @@ export default function PendingApprovalPage() {
             required
           />
           <div className="flex justify-end mt-4">
-            <button
+            <Button
               type="submit"
-              className="px-6 py-2 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
             >
               Send Message
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>

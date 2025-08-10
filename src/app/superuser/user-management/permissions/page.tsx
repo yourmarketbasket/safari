@@ -13,6 +13,7 @@ import { FiPlus, FiEdit, FiTrash2, FiShield, FiUser, FiTruck, FiKey, FiHelpCircl
 import PermissionModal from "@/app/components/PermissionModal";
 import { Chip } from "@/app/components/Chip";
 import SummaryCard from "@/app/components/SummaryCard";
+import { Button } from "@/app/components/ui/Button";
 
 const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "superuser", "ordinary"];
 
@@ -118,18 +119,19 @@ const PermissionsPage: NextPage = () => {
           accessorKey: "_id", // Use a unique key for actions
           cell: (row) => (
               <div className="flex gap-2">
-                  <button
+                  <Button
                     onClick={() => handleOpenModal(row)}
-                    className="text-xs bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1"
+                    size="sm"
                   >
                     <FiEdit /> Edit
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleDeletePermission(row.permissionNumber)}
-                    className="text-xs bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 flex items-center gap-1"
+                    size="sm"
+                    variant="danger"
                   >
                     <FiTrash2 /> Delete
-                  </button>
+                  </Button>
               </div>
           )
       }
@@ -160,9 +162,9 @@ const PermissionsPage: NextPage = () => {
                 <h2 className="text-xl font-bold">Permission Configuration</h2>
                 <p className="text-gray-600 mt-1">Create new permissions and assign them to roles.</p>
             </div>
-            <button onClick={() => handleOpenModal()} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-2">
+            <Button onClick={() => handleOpenModal()}>
                 <FiPlus /> Add Permission
-            </button>
+            </Button>
         </div>
       </div>
 

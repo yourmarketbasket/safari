@@ -4,6 +4,7 @@ import { NextPage } from "next";
 import { useEffect } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
+import { Button } from "@/app/components/ui/Button";
 
 // Type for Report data
 type Report = {
@@ -32,8 +33,8 @@ const columns: ColumnDef<Report>[] = [
       accessorKey: "_id",
       cell: () => (
           <div className="flex gap-2">
-              <button className="text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">View</button>
-              <button className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Download</button>
+              <Button size="sm">View</Button>
+              <Button size="sm" variant="success">Download</Button>
           </div>
       )
   }
@@ -51,7 +52,7 @@ const OperationalReportsPage: NextPage = () => {
       <div className="mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-4">Generate New Report</h2>
-            <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Generate Report</button>
+            <Button>Generate Report</Button>
         </div>
       </div>
 

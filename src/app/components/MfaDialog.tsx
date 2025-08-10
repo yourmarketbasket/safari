@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Modal from './Modal';
+import { Button } from './ui/Button';
 
 interface MfaDialogProps {
   isOpen: boolean;
@@ -44,12 +45,12 @@ export default function MfaDialog({ isOpen, onClose, onSubmit, isLoading, error 
                 </div>
                 {error && <p className="text-sm text-center text-red-600">{error}</p>}
                 <div className="flex justify-end space-x-4">
-                    <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                    <Button type="button" onClick={onClose} variant="secondary">
                         Cancel
-                    </button>
-                    <button type="submit" disabled={isLoading} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:bg-indigo-400">
+                    </Button>
+                    <Button type="submit" disabled={isLoading}>
                         {isLoading ? 'Verifying...' : 'Verify'}
-                    </button>
+                    </Button>
                 </div>
             </form>
         </div>

@@ -9,6 +9,7 @@ import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 import OtpInput from '@/app/components/OtpInput';
 import superuserService from '@/app/services/superuser.service';
 import { FiSend, FiCheck } from 'react-icons/fi';
+import { Button } from '@/app/components/ui/Button';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -155,9 +156,9 @@ function SuperuserRegisterPageContent() {
                   <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder=" " className={inputClasses} disabled={isOtpSent}/>
                   <label htmlFor="email" className={labelClasses}>Email Address</label>
                   {isEmailValid && !isOtpSent && (
-                    <button type="button" onClick={handleSendOtp} disabled={sendOtpLoading} className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white disabled:text-gray-600">
+                    <Button type="button" onClick={handleSendOtp} disabled={sendOtpLoading} variant="ghost" className="absolute inset-y-0 right-0">
                       {sendOtpLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-cyan-400"></div> : <FiSend className="h-5 w-5" />}
-                    </button>
+                    </Button>
                   )}
                 </div>
               )}
@@ -166,9 +167,9 @@ function SuperuserRegisterPageContent() {
             {!isOtpVerified && isOtpSent && (
               <div className="flex items-center space-x-2">
                 <OtpInput onComplete={setOtp} />
-                <button type="button" onClick={handleVerifyOtp} disabled={verifyOtpLoading || otp.length !== 6} className="flex items-center justify-center w-full px-4 py-3 font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:bg-green-400">
+                <Button type="button" onClick={handleVerifyOtp} disabled={verifyOtpLoading || otp.length !== 6} variant="success" className="w-full">
                   {verifyOtpLoading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : <><FiCheck className="h-6 w-6 mr-2" /> Verify</>}
-                </button>
+                </Button>
               </div>
             )}
 
@@ -205,9 +206,9 @@ function SuperuserRegisterPageContent() {
               </>
             )}
             <div>
-              <button type="submit" disabled={loading || !isOtpVerified} className="w-full px-4 py-3 font-bold text-white bg-cyan-600 rounded-lg hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-400 transition-all duration-300">
+              <Button type="submit" disabled={loading || !isOtpVerified} className="w-full">
                 {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mx-auto"></div> : 'Register'}
-              </button>
+              </Button>
             </div>
           </form>
           <div className="text-sm text-center text-gray-400">

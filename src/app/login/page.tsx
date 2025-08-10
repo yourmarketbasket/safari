@@ -5,6 +5,7 @@ import { useAuth } from '../lib/AuthContext';
 import Link from 'next/link';
 import Message from '../components/Message';
 import PublicRoute from '../components/PublicRoute';
+import { Button } from '../components/ui/Button';
 
 // Regex for basic email or phone number validation
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
@@ -95,9 +96,9 @@ export default function LoginPage() {
               </div>
             </div>
             <div>
-              <button type="submit" disabled={loading} className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 transition-all duration-300">
+              <Button type="submit" disabled={loading} className="w-full">
                 {loading ? 'Logging in...' : 'Login'}
-              </button>
+              </Button>
             </div>
           </form>
           <div className="text-sm text-center text-gray-800">

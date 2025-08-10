@@ -12,6 +12,7 @@ import Message from "@/app/components/Message";
 import { FiPlus, FiEdit, FiTrash2, FiUsers } from "react-icons/fi";
 import SupportGroupModal from "@/app/components/SupportGroupModal";
 import ManageSupportGroupMembersModal from "@/app/components/ManageSupportGroupMembersModal";
+import { Button } from "@/app/components/ui/Button";
 
 const SupportGroupsPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -100,9 +101,9 @@ const SupportGroupsPage: NextPage = () => {
           accessorKey: "_id",
           cell: (row) => (
               <div className="flex gap-2">
-                  <button onClick={() => handleOpenModal(row)} className="text-xs bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1"><FiEdit /> Edit</button>
-                  <button onClick={() => handleDeleteGroup(row._id)} className="text-xs bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 flex items-center gap-1"><FiTrash2 /> Delete</button>
-                  <button onClick={() => handleOpenMembersModal(row)} className="text-xs bg-gray-500 text-white px-2 py-1 rounded-md hover:bg-gray-600 flex items-center gap-1"><FiUsers /> Members</button>
+                  <Button onClick={() => handleOpenModal(row)} size="sm"><FiEdit /> Edit</Button>
+                  <Button onClick={() => handleDeleteGroup(row._id)} size="sm" variant="danger"><FiTrash2 /> Delete</Button>
+                  <Button onClick={() => handleOpenMembersModal(row)} size="sm" variant="secondary"><FiUsers /> Members</Button>
               </div>
           )
       }
@@ -118,9 +119,9 @@ const SupportGroupsPage: NextPage = () => {
                 <h2 className="text-xl font-bold">Support Group Management</h2>
                 <p className="text-gray-600 mt-1">Create and manage support groups.</p>
             </div>
-            <button onClick={() => handleOpenModal()} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-2">
+            <Button onClick={() => handleOpenModal()}>
                 <FiPlus /> Create Support Group
-            </button>
+            </Button>
         </div>
       </div>
 

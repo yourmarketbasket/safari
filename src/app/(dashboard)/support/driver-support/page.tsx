@@ -6,6 +6,7 @@ import PrivateRoute from '@/app/components/PrivateRoute';
 import { DataTable, ColumnDef } from '@/app/components/DataTable';
 import Modal from '@/app/components/Modal';
 import { Chip } from '@/app/components/Chip';
+import { Button } from '@/app/components/ui/Button';
 
 interface DriverSupportRequest {
     _id: string;
@@ -60,12 +61,12 @@ const DriverSupportPage = () => {
             header: 'Actions',
             accessorKey: '_id',
             cell: (row: DriverSupportRequest) => (
-                <button
+                <Button
                     onClick={() => handleViewRequest(row)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700"
+                    size="sm"
                 >
                     View
-                </button>
+                </Button>
             )
         }
     ], []);
@@ -85,15 +86,15 @@ const DriverSupportPage = () => {
                                 <p className="text-sm">The driver reported a mechanical issue with the bus. Needs immediate attention.</p>
                             </div>
                             <div className="mt-4 flex justify-end space-x-4">
-                                <button
+                                <Button
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+                                    variant="secondary"
                                 >
                                     Close
-                                </button>
-                                <button className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700">
+                                </Button>
+                                <Button>
                                     Assign Technician
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}

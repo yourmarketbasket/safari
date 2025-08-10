@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/app/components/ui/Button";
+
 // Mock data
 const mockEscalations = [
   { id: 'esc-1', type: 'Fare Dispute', description: 'Passenger claims overcharge on route R-123.', status: 'open', escalatedBy: 'Alice Johnson' },
@@ -35,9 +37,9 @@ export default function EscalationQueuePage() {
             </div>
              {issue.status === 'open' && (
                  <div className="mt-4 flex justify-end">
-                    <button className="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                    <Button variant="link">
                         Resolve
-                    </button>
+                    </Button>
                  </div>
              )}
           </div>

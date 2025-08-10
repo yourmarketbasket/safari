@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { user, token, isLoading } = useAuth();
+  const { user, token, isInitialized } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (!isInitialized) return;
 
     if (token && user) {
       // Redirect to a default page or an unauthorized page
@@ -33,14 +33,10 @@ export default function PublicRoute({ children }: { children: React.ReactNode })
           router.push('/dashboard');
       }
     }
-  }, [user, token, isLoading, router]);
+  }, [user, token, isInitialized, router]);
 
     if (token) {
-    return (
-        <div className="flex items-center justify-center min-h-screen">
-            <p>Loading...</p>
-        </div>
-    );
+    return null;
   }
 
 
