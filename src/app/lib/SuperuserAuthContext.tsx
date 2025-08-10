@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import superuserService, { LoginCredentials } from '../services/superuser.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
+import InactiveTab from '../components/InactiveTab';
 
 interface SuperuserAuthContextType {
   user: User | null;
@@ -19,7 +20,68 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isTabActive, setIsTabActive] = useState(false);
+  const [tabId, setTabId] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const id = sessionStorage.getItem('tabId') || `${Date.now()}-${Math.random()}`;
+    sessionStorage.setItem('tabId', id);
+    setTabId(id);
+  }, []);
+
+  const handleTakeOver = useCallback(() => {
+    if (tabId) {
+      localStorage.setItem('activeTabId', tabId);
+      setIsTabActive(true);
+    }
+  }, [tabId]);
+
+  const handleLogout = useCallback(() => {
+    setUser(null);
+    setToken(null);
+    setIsInitialized(false);
+    const activeTabId = localStorage.getItem('activeTabId');
+    if (tabId && activeTabId === tabId) {
+      localStorage.removeItem('activeTabId');
+    }
+    localStorage.removeItem('superuserAuthToken');
+    localStorage.removeItem('superuser');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    router.push('/superuser/login');
+  }, [router, tabId]);
+
+  useEffect(() => {
+    if (!tabId) return;
+
+    const checkActiveTab = () => {
+      const activeTabId = localStorage.getItem('activeTabId');
+      if (!activeTabId) {
+        localStorage.setItem('activeTabId', tabId);
+        setIsTabActive(true);
+      } else {
+        setIsTabActive(activeTabId === tabId);
+      }
+    };
+
+    checkActiveTab();
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'activeTabId') {
+        setIsTabActive(event.newValue === tabId);
+      }
+      if (event.key === 'logout-event' || (event.key === 'superuserAuthToken' && event.newValue === null)) {
+        handleLogout();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [tabId, handleLogout]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('superuserAuthToken');
@@ -37,7 +99,6 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     if (responseData.mfaRequired) {
         // Superusers might not have MFA, so this needs to be handled
     } else {
-        // Clear normal user data
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
 
@@ -45,37 +106,28 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
         setUser(responseData.user);
         localStorage.setItem('superuserAuthToken', responseData.token);
         localStorage.setItem('superuser', JSON.stringify(responseData.user));
+        if (tabId) {
+          localStorage.setItem('activeTabId', tabId);
+        }
         localStorage.setItem('logout-event', Date.now().toString());
+        setIsTabActive(true);
         window.location.href = '/superuser/dashboard';
     }
   };
 
-  const handleLogout = useCallback(() => {
-    setUser(null);
-    setToken(null);
-    setIsInitialized(false); // Reset initialization state
-    localStorage.removeItem('superuserAuthToken');
-    localStorage.removeItem('superuser');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    router.push('/superuser/login');
-  }, [router]);
-
   useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'logout-event') {
-        handleLogout();
-      }
-      if (event.key === 'superuserAuthToken' && event.newValue === null) {
-        handleLogout();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [handleLogout]);
+    if (!tabId) return;
+      const releaseTab = () => {
+          const activeTabId = localStorage.getItem('activeTabId');
+          if (activeTabId === tabId) {
+              localStorage.removeItem('activeTabId');
+          }
+      };
+      window.addEventListener('beforeunload', releaseTab);
+      return () => {
+          window.removeEventListener('beforeunload', releaseTab);
+      };
+  }, [tabId]);
 
   const value = {
     user,
@@ -84,6 +136,10 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     login: handleLogin,
     logout: handleLogout,
   };
+
+  if (!isTabActive && token) {
+    return <InactiveTab onTakeOver={handleTakeOver} />;
+  }
 
   return (
     <SuperuserAuthContext.Provider value={value}>

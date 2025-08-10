@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSuperuserAuth } from '../../lib/SuperuserAuthContext';
 import Link from 'next/link';
 import Message from '../../components/Message';
-import Modal from '../../components/Modal';
 
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 
@@ -16,22 +15,6 @@ function SuperuserLoginPageContent() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useSuperuserAuth();
-  const [showSessionConflict, setShowSessionConflict] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('superuserAuthToken');
-    if (token) {
-      setShowSessionConflict(true);
-    }
-  }, []);
-
-  const handleUseHere = () => {
-    setShowSessionConflict(false);
-  };
-
-  const handleClose = () => {
-    window.close();
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,21 +45,6 @@ function SuperuserLoginPageContent() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <Modal
-          isOpen={showSessionConflict}
-          onClose={() => setShowSessionConflict(false)}
-          title="Session Conflict"
-          description="Another superuser account is already logged in. Do you want to log in here and log out the other session?"
-        >
-          <div className="flex justify-end space-x-4">
-            <button onClick={handleClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
-              Close
-            </button>
-            <button onClick={handleUseHere} className="px-4 py-2 text-sm font-medium text-white bg-cyan-600 rounded-md hover:bg-cyan-700">
-              Use Here
-            </button>
-          </div>
-        </Modal>
       <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-2xl shadow-2xl">
           <div className="text-center">
               <h1 className="text-3xl font-bold text-white">Superuser Login</h1>
