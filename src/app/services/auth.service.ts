@@ -12,7 +12,6 @@ export type SignupData = {
     name: string;
     email: string;
     phone: string;
-    role: User['role'];
     password?: string;
     verifiedToken?: string;
 } & Partial<Omit<User, '_id' | 'name' | 'email' | 'phone' | 'role'>>;

@@ -3,22 +3,11 @@
 import { useState } from 'react';
 import { useAuth } from '../lib/AuthContext';
 import Link from 'next/link';
-import { UserRole } from '../models/User.model';
 import Message from '../components/Message';
 import PublicRoute from '../components/PublicRoute';
 import OtpInput from '../components/OtpInput';
 import authService from '../services/auth.service';
 import { FiSend, FiCheck } from 'react-icons/fi';
-
-const availableRoles: UserRole[] = [
-  "passenger",
-  "sacco",
-  "owner",
-  "queue_manager",
-  "driver",
-  "support_staff",
-  "admin",
-];
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -30,7 +19,6 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<UserRole>('passenger');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [confirmedDetails, setConfirmedDetails] = useState(false);
   const [error, setError] = useState('');
@@ -113,7 +101,7 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await signup({ name, email, phone, password, role, verifiedToken });
+      await signup({ name, email, phone, password, verifiedToken });
     } catch (err) {
       setError('Failed to create account. Please try again.');
       console.error(err);
@@ -149,17 +137,7 @@ export default function SignupPage() {
                 <input id="phone" name="phone" type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder=" " className={inputClasses}/>
                 <label htmlFor="phone" className={labelClasses}>Phone Number</label>
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
-                <label htmlFor="role" className="absolute left-4 top-[-10px] text-xs text-black bg-white px-1 z-10">Role</label>
-                <select id="role" value={role} onChange={(e) => setRole(e.target.value as UserRole)} required className="appearance-none block w-full px-4 py-3 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}>
-                  {availableRoles.map((r) => ( <option key={r} value={r} className="text-black">{r.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>))}
-                </select>
-              </div>
-              {!isOtpVerified && (
-                <div className="relative">
                   <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder=" " className={inputClasses} disabled={isOtpSent}/>
                   <label htmlFor="email" className={labelClasses}>Email Address</label>
                   {isEmailValid && !isOtpSent && (
@@ -168,7 +146,6 @@ export default function SignupPage() {
                   </button>
                   )}
                 </div>
-              )}
             </div>
 
             {!isOtpVerified && isOtpSent && (
