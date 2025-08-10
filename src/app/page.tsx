@@ -14,7 +14,7 @@ const HeroSection = () => (
       <p className="text-lg md:text-xl mb-8 animate-fade-in-up">
         The future of seamless and efficient travel management is here.
       </p>
-      <Link href="/login" passHref>
+      <Link href="/signup/role-selection" passHref>
         <div className="bg-white text-indigo-700 font-bold rounded-full py-4 px-8 shadow-lg uppercase tracking-wider hover:bg-gray-200 transition-transform transform hover:scale-105 cursor-pointer inline-block">
           Get Started
         </div>

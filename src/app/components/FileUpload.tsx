@@ -6,23 +6,23 @@ import { FiUploadCloud } from 'react-icons/fi';
 import Image from 'next/image';
 
 interface FileUploadProps {
-  onFileChange: (file: File) => void;
+  onFileSelect: (file: File | null) => void;
 }
 
-export default function FileUpload({ onFileChange }: FileUploadProps) {
+export default function FileUpload({ onFileSelect }: FileUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
       const file = acceptedFiles[0];
-      onFileChange(file);
+      onFileSelect(file);
       const reader = new FileReader();
       reader.onload = (event) => {
         setPreview(event.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
-  }, [onFileChange]);
+  }, [onFileSelect]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 

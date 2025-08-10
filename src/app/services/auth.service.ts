@@ -8,13 +8,23 @@ export type LoginCredentials = {
   // mfaCode is removed from initial login
 }
 
+import { UserRole } from '../models/User.model';
+
 export type SignupData = {
     name: string;
     email: string;
     phone: string;
+    role: UserRole;
     password?: string;
     verifiedToken?: string;
-} & Partial<Omit<User, '_id' | 'name' | 'email' | 'phone' | 'role'>>;
+    address?: string;
+    dob?: string;
+    gender?: string;
+    deviceDetails?: string;
+    drivingLicense?: File | null;
+    saccoLicense?: File | null;
+    saccoRegistrationNumber?: string;
+};
 
 export type ForgotPasswordData = {
     emailOrPhone: string;
@@ -75,8 +85,34 @@ export const verifyMfa = async (verifyData: VerifyMfaData): Promise<AuthData> =>
  * Signs up a new user.
  */
 export const signup = async (signupData: SignupData): Promise<AuthData> => {
-  const response = await api.post<AuthResponse>('/auth/signup', signupData);
-  return response.data.data;
+    const { drivingLicense, saccoLicense, ...rest } = signupData;
+
+    if (drivingLicense || saccoLicense) {
+        const formData = new FormData();
+        Object.keys(rest).forEach(key => {
+            const value = (rest as Record<string, string | Blob | null>)[key];
+            if (value !== null && value !== undefined) {
+                formData.append(key, value);
+            }
+        });
+
+        if (drivingLicense) {
+            formData.append('drivingLicense', drivingLicense);
+        }
+        if (saccoLicense) {
+            formData.append('saccoLicense', saccoLicense);
+        }
+
+        const response = await api.post<AuthResponse>('/auth/signup', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data.data;
+    } else {
+        const response = await api.post<AuthResponse>('/auth/signup', signupData);
+        return response.data.data;
+    }
 };
 
 /**

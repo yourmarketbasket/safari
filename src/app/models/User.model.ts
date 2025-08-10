@@ -35,4 +35,11 @@ export interface User {
   passwordResetToken?: string;
   passwordResetExpire?: Date;
   createdAt: Date;
+  address?: string;
+  dob?: string;
+  gender?: string;
+  deviceDetails?: string;
+  drivingLicenseUrl?: string;
+  saccoLicenseUrl?: string;
+  saccoRegistrationNumber?: string;
 }

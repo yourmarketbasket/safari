@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from 'react';
-import { useAuth } from '../lib/AuthContext';
+import { useAuth } from '../../lib/AuthContext';
 import Link from 'next/link';
-import Message from '../components/Message';
-import PublicRoute from '../components/PublicRoute';
-import OtpInput from '../components/OtpInput';
-import authService from '../services/auth.service';
+import Message from '../../components/Message';
+import PublicRoute from '../../components/PublicRoute';
+import OtpInput from '../../components/OtpInput';
+import authService from '../../services/auth.service';
 import { FiSend, FiCheck } from 'react-icons/fi';
-import { Button } from '../components/ui/Button';
+import { Button } from '../../components/ui/Button';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -102,7 +102,7 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await signup({ name, email, phone, password, verifiedToken });
+      await signup({ name, email, phone, password, verifiedToken, role: 'ordinary' });
     } catch (err) {
       setError('Failed to create account. Please try again.');
       console.error(err);
@@ -120,7 +120,7 @@ export default function SignupPage() {
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-200 to-blue-200 py-12">
         <div className="w-full max-w-2xl p-8 space-y-6 bg-white rounded-2xl shadow-xl">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Create an Account</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Create a Staff Account</h1>
             <p className="mt-2 text-gray-800">Join Safary today</p>
           </div>
           <div className="my-4">

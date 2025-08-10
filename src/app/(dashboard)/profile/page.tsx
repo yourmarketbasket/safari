@@ -54,7 +54,7 @@ export default function ProfilePage() {
     setIsEditing(false);
   };
 
-  const handleFileChange = (file: File) => {
+  const handleFileChange = (file: File | null) => {
     setAvatar(file);
   };
 
@@ -79,7 +79,7 @@ export default function ProfilePage() {
                     isEditing ? (
                     <form onSubmit={handleUpdate} className="space-y-4">
                         <div className="flex justify-center">
-                        <FileUpload onFileChange={handleFileChange} />
+                        <FileUpload onFileSelect={handleFileChange} />
                         </div>
                         <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
