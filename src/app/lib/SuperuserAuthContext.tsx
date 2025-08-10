@@ -25,17 +25,22 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
   const [isInitialized, setIsInitialized] = useState(false);
   const [tabStatus, setTabStatus] = useState<TabStatus>('PENDING');
   const tabId = useRef<string | null>(null);
-  const channel = useRef<BroadcastChannel | null>(null);
   const router = useRouter();
 
   const handleTakeOver = useCallback(() => {
     if (tabId.current) {
-      channel.current?.postMessage({ type: 'ACTIVATE_TAB', tabId: tabId.current });
+      localStorage.setItem('activeTabId', tabId.current);
+      setTabStatus('ACTIVE');
     }
   }, []);
 
   const handleLogout = useCallback(() => {
-    channel.current?.postMessage({ type: 'LOGOUT' });
+    if (tabId.current) {
+        const activeTabId = localStorage.getItem('activeTabId');
+        if (activeTabId === tabId.current) {
+            localStorage.removeItem('activeTabId');
+        }
+    }
     setUser(null);
     setToken(null);
     setIsInitialized(false);
@@ -50,32 +55,44 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     tabId.current = sessionStorage.getItem('tabId') || `${Date.now()}-${Math.random()}`;
     sessionStorage.setItem('tabId', tabId.current);
 
-    if ('BroadcastChannel' in window) {
-      channel.current = new BroadcastChannel('app_session');
-
-      const handleMessage = (event: MessageEvent) => {
-        const { type, tabId: newActiveTabId } = event.data;
-        if (type === 'ACTIVATE_TAB') {
-          if (tabId.current !== newActiveTabId) {
-            setTabStatus('INACTIVE');
-          } else {
-            setTabStatus('ACTIVE');
-          }
-        } else if (type === 'LOGOUT') {
-          handleLogout();
-        }
-      };
-
-      channel.current.addEventListener('message', handleMessage);
-
-      setTimeout(() => {
-        channel.current?.postMessage({ type: 'ACTIVATE_TAB', tabId: tabId.current });
-      }, 200);
-
-    } else {
+    const checkActiveTab = () => {
+      const activeTabId = localStorage.getItem('activeTabId');
+      if (!activeTabId) {
+        localStorage.setItem('activeTabId', tabId.current!);
         setTabStatus('ACTIVE');
-    }
+      } else {
+        setTabStatus(activeTabId === tabId.current ? 'ACTIVE' : 'INACTIVE');
+      }
+    };
 
+    checkActiveTab();
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'activeTabId') {
+        setTabStatus(event.newValue === tabId.current ? 'ACTIVE' : 'INACTIVE');
+      }
+       if (event.key === 'superuserAuthToken' && event.newValue === null) {
+          handleLogout();
+      }
+    };
+
+    const releaseTab = () => {
+        const activeTabId = localStorage.getItem('activeTabId');
+        if (activeTabId === tabId.current) {
+            localStorage.removeItem('activeTabId');
+        }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('beforeunload', releaseTab);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('beforeunload', releaseTab);
+    };
+  }, [handleLogout]);
+
+  useEffect(() => {
     const storedToken = localStorage.getItem('superuserAuthToken');
     const storedUser = localStorage.getItem('superuser');
     if (storedToken && storedUser && storedUser !== 'undefined') {
@@ -83,11 +100,8 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
       setUser(JSON.parse(storedUser));
     }
     setIsInitialized(true);
+  }, []);
 
-    return () => {
-      channel.current?.close();
-    };
-  }, [handleLogout]);
 
   const handleLogin = async (loginData: LoginCredentials) => {
     const responseData = await superuserService.login(loginData);
@@ -96,12 +110,14 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     } else {
         localStorage.removeItem('authToken');
         localStorage.removeItem('user');
-
+        if (tabId.current) {
+          localStorage.setItem('activeTabId', tabId.current);
+        }
+        setTabStatus('ACTIVE');
         setToken(responseData.token);
         setUser(responseData.user);
         localStorage.setItem('superuserAuthToken', responseData.token);
         localStorage.setItem('superuser', JSON.stringify(responseData.user));
-        channel.current?.postMessage({ type: 'ACTIVATE_TAB', tabId: tabId.current });
         window.location.href = '/superuser/dashboard';
     }
   };
@@ -114,7 +130,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     logout: handleLogout,
   };
 
-  if (tabStatus === 'PENDING' || !isInitialized) {
+  if (!isInitialized || (tabStatus === 'PENDING' && token)) {
     return <LoadingOverlay />;
   }
 
