@@ -9,7 +9,7 @@ import { UserRole } from "@/app/models/User.model";
 import superuserService from "@/app/services/superuser.service";
 import LoadingOverlay from "@/app/components/LoadingOverlay";
 import Message from "@/app/components/Message";
-import { FiPlus, FiEdit, FiTrash2, FiShield, FiUser, FiTruck, FiKey, FiHelpCircle, FiPocket, FiList, FiUserCheck, FiChevronDown } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiShield, FiUser, FiTruck, FiKey, FiHelpCircle, FiPocket, FiList, FiUserCheck, FiUsers } from "react-icons/fi";
 import PermissionModal from "@/app/components/PermissionModal";
 import { Chip } from "@/app/components/Chip";
 import SummaryCard from "@/app/components/SummaryCard";
@@ -40,13 +40,16 @@ const PermissionsPage: NextPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
 
-    const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
+    const summaryStats = useMemo(() => {
+        const total = permissions.length;
+        const rolesCount = allRoles.reduce((acc, role) => {
+            acc[role] = permissions.filter(p => p.roles.includes(role)).length;
+            return acc;
+        }, {} as Record<string, number>);
 
-    const groupedPermissions = useMemo(() => {
-        return allRoles.map(role => ({
-            role,
-            permissions: permissions.filter(p => p.roles.includes(role)),
-        })).filter(group => group.permissions.length > 0);
+        const passengerAndOrdinary = (rolesCount.passenger || 0) + (rolesCount.ordinary || 0);
+
+        return { total, rolesCount, passengerAndOrdinary };
     }, [permissions]);
 
     const fetchPermissions = async () => {
@@ -81,15 +84,20 @@ const PermissionsPage: NextPage = () => {
     };
 
     const handleSavePermission = (savedData: Permission | Permission[]) => {
-        // This logic might need adjustment if the backend returns the full updated list
-        fetchPermissions(); // Easiest way to get the updated state
+        if (Array.isArray(savedData)) {
+            setPermissions(prev => [...prev, ...savedData]);
+        } else if (permissionToEdit) {
+            setPermissions(prev => prev.map(p => p._id === savedData._id ? savedData : p));
+        } else {
+            setPermissions(prev => [...prev, savedData]);
+        }
     };
 
     const handleDeletePermission = async (permissionNumber: string) => {
         if (window.confirm(`Are you sure you want to delete permission ${permissionNumber}? This action cannot be undone.`)) {
             try {
                 await superuserService.deletePermission(permissionNumber);
-                fetchPermissions(); // Refresh the list
+                setPermissions(permissions.filter(p => p.permissionNumber !== permissionNumber));
             } catch (err: unknown) {
                 if (err instanceof Error) {
                     setError(err.message);
@@ -100,83 +108,107 @@ const PermissionsPage: NextPage = () => {
         }
     };
 
-    const AccordionItem = ({ group, isOpen, onToggle }: { group: any, isOpen: boolean, onToggle: () => void }) => {
-        const { role, permissions } = group;
-        const config = roleDisplayConfig[role as UserRole];
-        const formattedRole = role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-
-        return (
-            <div className="border-b border-gray-200">
-                <h2>
-                    <button type="button" onClick={onToggle} className="flex items-center justify-between w-full p-5 font-normal text-left text-gray-800 bg-gray-50 hover:bg-gray-100">
-                        <div className="flex items-center">
-                            <config.icon className={`w-6 h-6 text-${config.color}-500 mr-4`} />
-                            <span className="text-lg">{formattedRole}</span>
-                            <span className="ml-4 text-sm font-semibold text-gray-500 bg-gray-200 rounded-full px-2 py-0.5">{permissions.length}</span>
-                        </div>
-                        <FiChevronDown className={`w-6 h-6 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                </h2>
-                {isOpen && (
-                    <div className="p-5 border-t-0 border-gray-200 bg-white">
-                        <ul className="space-y-2">
-                            {permissions.map((p: Permission) => (
-                                <li key={p._id} className="flex justify-between items-center p-2 rounded-md hover:bg-gray-50">
-                                    <div>
-                                        <p className="font-semibold text-gray-700">{p.permissionNumber}</p>
-                                        <p className="text-sm text-gray-500">{p.description}</p>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <Button onClick={() => handleOpenModal(p)} size="sm"><FiEdit /></Button>
-                                        <Button onClick={() => handleDeletePermission(p.permissionNumber)} size="sm" variant="danger"><FiTrash2 /></Button>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
+    const columns: ColumnDef<Permission>[] = [
+      { header: "Permission #", accessorKey: "permissionNumber" },
+      { header: "Description", accessorKey: "description" },
+      {
+        header: "Roles",
+        accessorKey: "roles",
+        cell: (row) => (
+            <div className="flex flex-wrap gap-1">
+                {row.roles.map((r, index) => <Chip key={`${row._id}-${r}-${index}`} text={r} type="default" />)}
             </div>
-        );
-    };
+        )
+      },
+      {
+          header: "Actions",
+          accessorKey: "_id", // Use a unique key for actions
+          cell: (row) => (
+              <div className="flex gap-2">
+                  <Button
+                    onClick={() => handleOpenModal(row)}
+                    size="sm"
+                  >
+                    <FiEdit /> Edit
+                  </Button>
+                  <Button
+                    onClick={() => handleDeletePermission(row.permissionNumber)}
+                    size="sm"
+                    variant="danger"
+                  >
+                    <FiTrash2 /> Delete
+                  </Button>
+              </div>
+          )
+      }
+    ];
 
-    return (
-        <div className="p-6 bg-gray-50 min-h-screen relative">
-            {isLoading && <LoadingOverlay />}
+    const totalPages = Math.ceil(permissions.length / itemsPerPage);
 
-            <div className="mb-8">
-                <div className="bg-white p-6 rounded-lg shadow-md flex justify-between items-center">
-                    <div>
-                        <h2 className="text-xl font-semibold">Permission Configuration</h2>
-                        <p className="text-gray-600 mt-1">Create new permissions and assign them to roles, grouped by role below.</p>
-                    </div>
-                    <Button onClick={() => handleOpenModal()}>
-                        <FiPlus /> Add Permission
-                    </Button>
-                </div>
-            </div>
+  return (
+    <div className="p-6 bg-gray-50 min-h-screen relative">
+      {isLoading && <LoadingOverlay />}
 
-            {error && <Message type="error" message={error} />}
-            {!isLoading && !error && (
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                    {groupedPermissions.map(group => (
-                        <AccordionItem
-                            key={group.role}
-                            group={group}
-                            isOpen={activeAccordion === group.role}
-                            onToggle={() => setActiveAccordion(activeAccordion === group.role ? null : group.role)}
-                        />
-                    ))}
-                </div>
-            )}
-
-            <PermissionModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onSave={handleSavePermission}
-                permissionToEdit={permissionToEdit}
-            />
+      <div className="flex flex-wrap gap-6 mb-8">
+        <div className="flex-1 min-w-[300px]">
+            <SummaryCard icon={FiShield} title="Total Permissions" value={summaryStats.total} color="blue" />
         </div>
-    );
+        <div className="flex-1 min-w-[300px]">
+            <SummaryCard icon={FiUsers} title="Passengers & Ordinary Users" value={summaryStats.passengerAndOrdinary} color="indigo" />
+        </div>
+        {Object.entries(summaryStats.rolesCount).map(([role, count]) => {
+            if (role === 'passenger' || role === 'ordinary') return null; // Already grouped
+            const config = roleDisplayConfig[role as UserRole];
+            const formattedRole = role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            return (
+                <div className="flex-1 min-w-[300px]" key={role}>
+                    <SummaryCard icon={config.icon} title={formattedRole} value={count} color={config.color} />
+                </div>
+            );
+        })}
+      </div>
+
+      <Button
+        onClick={() => handleOpenModal()}
+        className="fixed bottom-8 right-8 bg-purple-600 text-white rounded-full p-4 shadow-lg hover:bg-purple-700 transition-all"
+        aria-label="Add Permission"
+      >
+        <FiPlus size={24} />
+      </Button>
+
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Existing Permissions</h2>
+        {error && <Message type="error" message={error} />}
+        {!isLoading && !error && (
+            <>
+                <DataTable
+                    data={permissions}
+                    columns={columns}
+                    filterColumn="description"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+            </>
+        )}
+      </div>
+
+      <PermissionModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSavePermission}
+        permissionToEdit={permissionToEdit}
+      />
+    </div>
+  );
 };
 
 export default PermissionsPage;
