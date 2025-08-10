@@ -72,7 +72,7 @@ export default function TeamModal({ isOpen, onClose, onSave, teamToEdit, users }
         <h2 className="text-2xl font-bold text-purple-700 mb-6">{isEditMode ? 'Edit Team' : 'Create New Team'}</h2>
         <div className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Team Name</label>
+            <label htmlFor="name" className="block text-sm font-normal text-gray-700 mb-1">Team Name</label>
             <input
               id="name"
               type="text"
@@ -83,7 +83,7 @@ export default function TeamModal({ isOpen, onClose, onSave, teamToEdit, users }
             />
           </div>
           <div>
-            <label htmlFor="teamLead" className="block text-sm font-medium text-gray-700 mb-1">Team Lead</label>
+            <label htmlFor="teamLead" className="block text-sm font-normal text-gray-700 mb-1">Team Lead</label>
             <select
               id="teamLead"
               value={teamLead}

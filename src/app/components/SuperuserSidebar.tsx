@@ -79,7 +79,7 @@ export default function SuperuserSidebar() {
 
   return (
     <aside className={`flex-shrink-0 bg-white text-gray-800 flex flex-col transition-all duration-300 shadow-2xl ${isCollapsed ? 'w-20' : 'w-64'}`}>
-      <div className="h-20 flex items-center justify-center px-4 text-2xl font-light border-b border-gray-200 relative">
+      <div className="h-20 flex items-center justify-center px-4 text-2xl font-normal border-b border-gray-200 relative">
         {!isCollapsed && <Link href="/superuser/dashboard" className="text-purple-600">Superuser</Link>}
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
             <AnimatedHamburgerIcon isCollapsed={isCollapsed} onClick={() => setIsCollapsed(!isCollapsed)} />
@@ -91,7 +91,7 @@ export default function SuperuserSidebar() {
             <Button
               variant="ghost"
               onClick={() => handleMenuClick(link.name)}
-              className={`w-full flex items-center px-4 py-2 text-sm font-light rounded-lg transition-colors ${
+              className={`w-full flex items-center px-4 py-2 text-sm font-normal rounded-lg transition-colors ${
                 openMenu === link.name ? 'bg-purple-100 text-purple-600' : 'text-gray-600 hover:bg-purple-100 hover:text-purple-600'
               }`}
             >
@@ -105,7 +105,7 @@ export default function SuperuserSidebar() {
                   <Link
                     key={child.name}
                     href={child.href}
-                    className={`flex items-center px-4 py-2 text-sm font-light rounded-lg transition-colors ${
+                    className={`flex items-center px-4 py-2 text-sm font-normal rounded-lg transition-colors ${
                       pathname === child.href
                         ? 'bg-purple-600 text-white shadow-lg'
                         : 'text-gray-600 hover:bg-purple-100 hover:text-purple-600'
@@ -119,7 +119,7 @@ export default function SuperuserSidebar() {
             )}
           </div>
         ))}
-        <Link href="/superuser/profile" className="flex items-center px-4 py-2 text-sm font-light rounded-lg text-gray-600 hover:bg-purple-100 hover:text-purple-600">
+        <Link href="/superuser/profile" className="flex items-center px-4 py-2 text-sm font-normal rounded-lg text-gray-600 hover:bg-purple-100 hover:text-purple-600">
             <FiUsers className="w-5 h-5" />
             {!isCollapsed && <span className="ml-3">Profile</span>}
         </Link>

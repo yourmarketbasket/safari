@@ -103,28 +103,28 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
         {!isEditMode && (
           <div className="border-b border-gray-200 mb-4">
             <nav className="-mb-px flex space-x-4" aria-label="Tabs">
-              <Button
-                variant="link"
+              <button
+                type="button"
                 onClick={() => setActiveTab('single')}
                 className={`${
                   activeTab === 'single'
                     ? 'border-purple-500 text-purple-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm`}
+                } whitespace-nowrap py-3 px-1 border-b-2 font-normal text-sm focus:outline-none`}
               >
                 Single Permission
-              </Button>
-              <Button
-                variant="link"
+              </button>
+              <button
+                type="button"
                 onClick={() => setActiveTab('bulk')}
                 className={`${
                   activeTab === 'bulk'
                     ? 'border-purple-500 text-purple-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm`}
+                } whitespace-nowrap py-3 px-1 border-b-2 font-normal text-sm focus:outline-none`}
               >
                 Bulk Add
-              </Button>
+              </button>
             </nav>
           </div>
         )}
@@ -132,7 +132,7 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
         {activeTab === 'single' && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="permissionNumber" className="block text-sm font-medium text-gray-700 mb-1">Permission Number (e.g., P101)</label>
+              <label htmlFor="permissionNumber" className="block text-sm font-normal text-gray-700 mb-1">Permission Number (e.g., P101)</label>
             <input
               id="permissionNumber"
               type="text"
@@ -145,7 +145,7 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label htmlFor="description" className="block text-sm font-normal text-gray-700 mb-1">Description</label>
             <textarea
               id="description"
               value={description}
@@ -157,7 +157,7 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Assign to Roles</label>
+            <label className="block text-sm font-normal text-gray-700 mb-2">Assign to Roles</label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {allRoles.map(role => (
                 <label key={role} className="flex items-center space-x-2 text-sm">
@@ -189,7 +189,7 @@ export default function PermissionModal({ isOpen, onClose, onSave, permissionToE
 
         {activeTab === 'bulk' && (
           <div>
-            <label htmlFor="bulkJson" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="bulkJson" className="block text-sm font-normal text-gray-700 mb-1">
               Paste JSON array of permissions
             </label>
             <textarea

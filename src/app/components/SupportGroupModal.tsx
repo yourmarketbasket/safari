@@ -72,7 +72,7 @@ export default function SupportGroupModal({ isOpen, onClose, onSave, groupToEdit
         <h2 className="text-2xl font-bold text-purple-700 mb-6">{isEditMode ? 'Edit Support Group' : 'Create New Support Group'}</h2>
         <div className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Group Name</label>
+            <label htmlFor="name" className="block text-sm font-normal text-gray-700 mb-1">Group Name</label>
             <input
               id="name"
               type="text"
@@ -83,7 +83,7 @@ export default function SupportGroupModal({ isOpen, onClose, onSave, groupToEdit
             />
           </div>
           <div>
-            <label htmlFor="supervisor" className="block text-sm font-medium text-gray-700 mb-1">Supervisor</label>
+            <label htmlFor="supervisor" className="block text-sm font-normal text-gray-700 mb-1">Supervisor</label>
             <select
               id="supervisor"
               value={supervisor}
