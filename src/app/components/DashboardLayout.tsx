@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Sidebar from './Sidebar';
 import SupportSidebar from './SupportSidebar';
 import { useAuth } from '../lib/AuthContext';
@@ -26,6 +28,17 @@ function Header() {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && user.role === 'ordinary') {
+      router.push('/pending-approval');
+    }
+  }, [user, router]);
+
+  if (!user || user.role === 'ordinary') {
+    return null;
+  }
 
   return (
     <div className="flex h-screen bg-gray-100">
