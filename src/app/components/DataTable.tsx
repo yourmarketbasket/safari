@@ -106,7 +106,7 @@ export function DataTable<T extends DataObject>({
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div>
       {/* Controls: Search and Filter */}
       <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
         <div className="relative">
