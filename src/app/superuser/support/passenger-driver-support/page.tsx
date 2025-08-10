@@ -1,10 +1,11 @@
 "use client";
 
 import { NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
+import Pagination from "@/app/components/Pagination";
 
 // Define the type for a support ticket
 type SupportTicket = {
@@ -53,10 +54,17 @@ const columns: ColumnDef<SupportTicket>[] = [
 
 const PassengerDriverSupportPage: NextPage = () => {
   const { setTitle } = usePageTitleStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [escalatedCurrentPage, setEscalatedCurrentPage] = useState(1);
+  const [escalatedItemsPerPage, setEscalatedItemsPerPage] = useState(10);
 
   useEffect(() => {
     setTitle("Passenger & Driver Support");
   }, [setTitle]);
+
+  const totalPages = Math.ceil(dummyData.length / itemsPerPage);
+  const totalPagesEscalated = Math.ceil(escalatedDummyData.length / escalatedItemsPerPage);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -83,13 +91,43 @@ const PassengerDriverSupportPage: NextPage = () => {
       {/* Support Issues Table */}
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Active Support Issues</h2>
-        <DataTable data={dummyData} columns={columns} filterColumn="status" />
+        <DataTable
+            data={dummyData}
+            columns={columns}
+            filterColumn="status"
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
       </div>
 
       {/* Escalated Issues Table */}
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Escalated Issues</h2>
-        <DataTable data={escalatedDummyData} columns={columns} filterColumn="status" />
+        <DataTable
+            data={escalatedDummyData}
+            columns={columns}
+            filterColumn="status"
+            currentPage={escalatedCurrentPage}
+            itemsPerPage={escalatedItemsPerPage}
+            onPageChange={setEscalatedCurrentPage}
+            onItemsPerPageChange={setEscalatedItemsPerPage}
+        />
+        <Pagination
+            currentPage={escalatedCurrentPage}
+            totalPages={totalPagesEscalated}
+            onPageChange={setEscalatedCurrentPage}
+            itemsPerPage={escalatedItemsPerPage}
+            onItemsPerPageChange={setEscalatedItemsPerPage}
+        />
       </div>
     </div>
   );

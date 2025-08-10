@@ -15,6 +15,7 @@ import LoadingOverlay from "@/app/components/LoadingOverlay";
 import Image from "next/image";
 import SummaryCard from "@/app/components/SummaryCard";
 import { Button } from "@/app/components/ui/Button";
+import Pagination from "@/app/components/Pagination";
 
 const UsersPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -23,6 +24,8 @@ const UsersPage: NextPage = () => {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     const fetchUsersAndPermissions = async () => {
         setIsLoading(true);
@@ -111,6 +114,8 @@ const UsersPage: NextPage = () => {
         }
     ];
 
+    const totalPages = Math.ceil(users.length / itemsPerPage);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen relative">
       {isLoading && <LoadingOverlay />}
@@ -124,7 +129,26 @@ const UsersPage: NextPage = () => {
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Users List</h2>
         {error && <Message type="error" message={error} />}
-        {!isLoading && !error && <DataTable data={users} columns={columns} filterColumn="name" />}
+        {!isLoading && !error && (
+            <>
+                <DataTable
+                    data={users}
+                    columns={columns}
+                    filterColumn="name"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+            </>
+        )}
       </div>
 
       {selectedUser && (

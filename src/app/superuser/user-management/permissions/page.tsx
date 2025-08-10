@@ -14,6 +14,7 @@ import PermissionModal from "@/app/components/PermissionModal";
 import { Chip } from "@/app/components/Chip";
 import SummaryCard from "@/app/components/SummaryCard";
 import { Button } from "@/app/components/ui/Button";
+import Pagination from "@/app/components/Pagination";
 
 const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "superuser", "ordinary"];
 
@@ -36,6 +37,8 @@ const PermissionsPage: NextPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [permissionToEdit, setPermissionToEdit] = useState<Permission | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     const summaryStats = useMemo(() => {
         const total = permissions.length;
@@ -137,6 +140,8 @@ const PermissionsPage: NextPage = () => {
       }
     ];
 
+    const totalPages = Math.ceil(permissions.length / itemsPerPage);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen relative">
       {isLoading && <LoadingOverlay />}
@@ -171,7 +176,26 @@ const PermissionsPage: NextPage = () => {
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Existing Permissions</h2>
         {error && <Message type="error" message={error} />}
-        {!isLoading && !error && <DataTable data={permissions} columns={columns} filterColumn="description" />}
+        {!isLoading && !error && (
+            <>
+                <DataTable
+                    data={permissions}
+                    columns={columns}
+                    filterColumn="description"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+            </>
+        )}
       </div>
 
       <PermissionModal

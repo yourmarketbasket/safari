@@ -7,6 +7,7 @@ import { DataTable, ColumnDef } from '@/app/components/DataTable';
 import { Chip } from '@/app/components/Chip';
 import Modal from '@/app/components/Modal';
 import { Button } from '@/app/components/ui/Button';
+import Pagination from '@/app/components/Pagination';
 
 interface Cancellation {
     _id: string;
@@ -24,13 +25,15 @@ const mockCancellations: Cancellation[] = [
 
 const CancellationsPage = () => {
     const { setTitle } = usePageTitleStore();
-    useEffect(() => {
-        setTitle("Cancellations & Reallocations");
-    }, [setTitle]);
-
     const [cancellations, setCancellations] = useState(mockCancellations);
     const [selectedCancellation, setSelectedCancellation] = useState<Cancellation | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    useEffect(() => {
+        setTitle("Cancellations & Reallocations");
+    }, [setTitle]);
 
     const handleViewDetails = (cancellation: Cancellation) => {
         setSelectedCancellation(cancellation);
@@ -69,10 +72,27 @@ const CancellationsPage = () => {
         }
     ], []);
 
+    const totalPages = Math.ceil(cancellations.length / itemsPerPage);
+
     return (
         <PrivateRoute allowedRoles={['support_staff']}>
             <div className="container mx-auto px-6 py-8">
-                <DataTable columns={columns} data={cancellations} filterColumn="status" />
+                <DataTable
+                    columns={columns}
+                    data={cancellations}
+                    filterColumn="status"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
 
                 <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                     {selectedCancellation && (

@@ -1,10 +1,11 @@
 "use client";
 
 import { NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
+import Pagination from "@/app/components/Pagination";
 
 // Type for the data
 type SystemError = {
@@ -46,10 +47,14 @@ const columns: ColumnDef<SystemError>[] = [
 
 const SystemErrorsPage: NextPage = () => {
   const { setTitle } = usePageTitleStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     setTitle("System Errors");
   }, [setTitle]);
+
+  const totalPages = Math.ceil(dummyErrors.length / itemsPerPage);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -72,7 +77,22 @@ const SystemErrorsPage: NextPage = () => {
       {/* System Errors Table */}
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Error Log</h2>
-        <DataTable data={dummyErrors} columns={columns} filterColumn="status" />
+        <DataTable
+            data={dummyErrors}
+            columns={columns}
+            filterColumn="status"
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
       </div>
     </div>
   );

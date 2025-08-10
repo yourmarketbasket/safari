@@ -7,6 +7,7 @@ import { DataTable, ColumnDef } from '@/app/components/DataTable';
 import Modal from '@/app/components/Modal';
 import { Chip } from '@/app/components/Chip';
 import { Button } from '@/app/components/ui/Button';
+import Pagination from '@/app/components/Pagination';
 
 interface DriverSupportRequest {
     _id: string;
@@ -25,13 +26,15 @@ const mockDriverSupportRequests: DriverSupportRequest[] = [
 
 const DriverSupportPage = () => {
     const { setTitle } = usePageTitleStore();
-    useEffect(() => {
-        setTitle("Driver Support");
-    }, [setTitle]);
-
     const [requests, setRequests] = useState(mockDriverSupportRequests);
     const [selectedRequest, setSelectedRequest] = useState<DriverSupportRequest | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    useEffect(() => {
+        setTitle("Driver Support");
+    }, [setTitle]);
 
     const handleViewRequest = (request: DriverSupportRequest) => {
         setSelectedRequest(request);
@@ -71,10 +74,27 @@ const DriverSupportPage = () => {
         }
     ], []);
 
+    const totalPages = Math.ceil(requests.length / itemsPerPage);
+
     return (
         <PrivateRoute allowedRoles={['support_staff']}>
             <div className="container mx-auto px-6 py-8">
-                <DataTable columns={columns} data={requests} filterColumn="status" />
+                <DataTable
+                    columns={columns}
+                    data={requests}
+                    filterColumn="status"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
 
                 <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                     {selectedRequest && (

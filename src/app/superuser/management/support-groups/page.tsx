@@ -13,6 +13,7 @@ import { FiPlus, FiEdit, FiTrash2, FiUsers } from "react-icons/fi";
 import SupportGroupModal from "@/app/components/SupportGroupModal";
 import ManageSupportGroupMembersModal from "@/app/components/ManageSupportGroupMembersModal";
 import { Button } from "@/app/components/ui/Button";
+import Pagination from "@/app/components/Pagination";
 
 const SupportGroupsPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -24,6 +25,8 @@ const SupportGroupsPage: NextPage = () => {
     const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
     const [groupToEdit, setGroupToEdit] = useState<SupportGroup | null>(null);
     const [groupToManage, setGroupToManage] = useState<SupportGroup | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -109,6 +112,8 @@ const SupportGroupsPage: NextPage = () => {
       }
     ];
 
+    const totalPages = Math.ceil(supportGroups.length / itemsPerPage);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen relative">
       {isLoading && <LoadingOverlay />}
@@ -128,7 +133,26 @@ const SupportGroupsPage: NextPage = () => {
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Support Groups</h2>
         {error && <Message type="error" message={error} />}
-        {!isLoading && !error && <DataTable data={supportGroups} columns={columns} filterColumn="name" />}
+        {!isLoading && !error && (
+            <>
+                <DataTable
+                    data={supportGroups}
+                    columns={columns}
+                    filterColumn="name"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+            </>
+        )}
       </div>
 
       <SupportGroupModal

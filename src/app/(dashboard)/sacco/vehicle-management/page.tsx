@@ -1,12 +1,13 @@
 "use client";
 
 import { NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Vehicle } from "@/app/models/Vehicle.model";
 import { Chip } from "@/app/components/Chip";
 import { Button } from "@/app/components/ui/Button";
+import Pagination from "@/app/components/Pagination";
 
 // Dummy data for vehicles
 const dummyVehicles: Vehicle[] = [
@@ -46,10 +47,14 @@ const columns: ColumnDef<Vehicle>[] = [
 
 const VehicleManagementPage: NextPage = () => {
   const { setTitle } = usePageTitleStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     setTitle('Vehicle Management');
   }, [setTitle]);
+
+  const totalPages = Math.ceil(dummyVehicles.length / itemsPerPage);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -62,7 +67,22 @@ const VehicleManagementPage: NextPage = () => {
 
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Registered Vehicles</h2>
-        <DataTable data={dummyVehicles} columns={columns} filterColumn="class" />
+        <DataTable
+            data={dummyVehicles}
+            columns={columns}
+            filterColumn="class"
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
       </div>
     </div>
   );

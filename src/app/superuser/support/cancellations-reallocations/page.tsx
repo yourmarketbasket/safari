@@ -1,10 +1,11 @@
 "use client";
 
 import { NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
+import Pagination from "@/app/components/Pagination";
 
 // Types for the data
 type Cancellation = {
@@ -82,10 +83,16 @@ const reallocationColumns: ColumnDef<Reallocation>[] = [
 
 const CancellationsReallocationsPage: NextPage = () => {
   const { setTitle } = usePageTitleStore();
+  const [cancellationsPage, setCancellationsPage] = useState(1);
+  const [reallocationsPage, setReallocationsPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     setTitle("Cancellations & Reallocations");
   }, [setTitle]);
+
+  const totalPagesCancellations = Math.ceil(dummyCancellations.length / itemsPerPage);
+  const totalPagesReallocations = Math.ceil(dummyReallocations.length / itemsPerPage);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -108,13 +115,43 @@ const CancellationsReallocationsPage: NextPage = () => {
       {/* Cancellations Table */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Trip Cancellations</h2>
-        <DataTable data={dummyCancellations} columns={cancellationColumns} filterColumn="status" />
+        <DataTable
+            data={dummyCancellations}
+            columns={cancellationColumns}
+            filterColumn="status"
+            currentPage={cancellationsPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCancellationsPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={cancellationsPage}
+            totalPages={totalPagesCancellations}
+            onPageChange={setCancellationsPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
       </div>
 
       {/* Reallocations Table */}
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Passenger Reallocations</h2>
-        <DataTable data={dummyReallocations} columns={reallocationColumns} filterColumn="status" />
+        <DataTable
+            data={dummyReallocations}
+            columns={reallocationColumns}
+            filterColumn="status"
+            currentPage={reallocationsPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setReallocationsPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={reallocationsPage}
+            totalPages={totalPagesReallocations}
+            onPageChange={setReallocationsPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
       </div>
     </div>
   );

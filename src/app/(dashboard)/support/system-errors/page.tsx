@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import PrivateRoute from '@/app/components/PrivateRoute';
 import { DataTable, ColumnDef } from '@/app/components/DataTable';
+import Pagination from '@/app/components/Pagination';
 
 interface SystemError {
     _id: string;
@@ -20,11 +21,13 @@ const mockSystemErrors: SystemError[] = [
 
 const SystemErrorsPage = () => {
     const { setTitle } = usePageTitleStore();
+    const [errors, setErrors] = useState(mockSystemErrors);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
     useEffect(() => {
         setTitle("System Errors");
     }, [setTitle]);
-
-    const [errors, setErrors] = useState(mockSystemErrors);
 
     const columns: ColumnDef<SystemError>[] = useMemo(() => [
         { header: 'Error Code', accessorKey: 'errorCode' },
@@ -32,10 +35,27 @@ const SystemErrorsPage = () => {
         { header: 'Timestamp', accessorKey: 'timestamp', cell: (row: SystemError) => new Date(row.timestamp).toLocaleString() },
     ], []);
 
+    const totalPages = Math.ceil(errors.length / itemsPerPage);
+
     return (
         <PrivateRoute allowedRoles={['support_staff']}>
             <div className="container mx-auto px-6 py-8">
-                <DataTable columns={columns} data={errors} filterColumn="errorCode" />
+                <DataTable
+                    columns={columns}
+                    data={errors}
+                    filterColumn="errorCode"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
             </div>
         </PrivateRoute>
     );

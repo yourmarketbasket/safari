@@ -1,11 +1,12 @@
 "use client";
 
 import { NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
 import { Button } from "@/app/components/ui/Button";
+import Pagination from "@/app/components/Pagination";
 
 // Type for Policy data
 type Policy = {
@@ -50,10 +51,14 @@ const columns: ColumnDef<Policy>[] = [
 
 const PolicyCompliancePage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
         setTitle("Policy & Compliance");
     }, [setTitle]);
+
+    const totalPages = Math.ceil(dummyPolicies.length / itemsPerPage);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -66,7 +71,22 @@ const PolicyCompliancePage: NextPage = () => {
 
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">System Policies</h2>
-        <DataTable data={dummyPolicies} columns={columns} filterColumn="category" />
+        <DataTable
+            data={dummyPolicies}
+            columns={columns}
+            filterColumn="category"
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
       </div>
     </div>
   );

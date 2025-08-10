@@ -19,14 +19,24 @@ type DataTableProps<T extends DataObject> = {
   data: T[];
   columns: ColumnDef<T>[];
   filterColumn: keyof T;
+  currentPage: number;
+  itemsPerPage: number;
+  onPageChange: (page: number) => void;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
 };
 
-export function DataTable<T extends DataObject>({ data, columns, filterColumn }: DataTableProps<T>) {
+export function DataTable<T extends DataObject>({
+    data,
+    columns,
+    filterColumn,
+    currentPage,
+    itemsPerPage,
+    onPageChange,
+    onItemsPerPageChange
+}: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: keyof T; direction: 'ascending' | 'descending' } | null>(null);
   const [filterValue, setFilterValue] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Derive unique filter options from the data.
   const filterOptions = useMemo(() => {
@@ -92,7 +102,7 @@ export function DataTable<T extends DataObject>({ data, columns, filterColumn }:
       direction = 'descending';
     }
     setSortConfig({ key, direction });
-    setCurrentPage(1); // Reset to first page on sort
+    onPageChange(1); // Reset to first page on sort
   };
 
   return (
@@ -105,7 +115,7 @@ export function DataTable<T extends DataObject>({ data, columns, filterColumn }:
             type="text"
             placeholder="Search..."
             className="pl-10 pr-4 py-2 border border-gray-400 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            onChange={(e) => { setSearchTerm(e.target.value); onPageChange(1); }}
           />
         </div>
         <div className="flex items-center gap-4">
@@ -113,7 +123,7 @@ export function DataTable<T extends DataObject>({ data, columns, filterColumn }:
           <select
             className="px-4 py-2 border border-gray-400 rounded-lg text-gray-800 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
             value={filterValue}
-            onChange={(e) => { setFilterValue(e.target.value); setCurrentPage(1); }}
+            onChange={(e) => { setFilterValue(e.target.value); onPageChange(1); }}
           >
             {filterOptions.map(option => (
               <option key={option} value={option}>{option}</option>
@@ -155,35 +165,6 @@ export function DataTable<T extends DataObject>({ data, columns, filterColumn }:
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-4 flex-wrap gap-4">
-        <div>
-          <span className="mr-2 text-gray-700 text-xs">Items per page:</span>
-          <select
-            className="border border-gray-400 rounded-lg px-2 py-1 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-            value={itemsPerPage}
-            onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-          >
-            {[10, 20, 50, 100].map(size => (
-              <option key={size} value={size}>{size}</option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-center">
-          <Button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={currentPage === 1}
-            variant="secondary"
-          >&lt;</Button>
-          <span className="text-gray-700 text-xs font-normal">Page {currentPage} of {totalPages}</span>
-          <Button
-            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
-            variant="secondary"
-          >&gt;</Button>
-        </div>
       </div>
     </div>
   );

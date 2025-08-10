@@ -14,6 +14,7 @@ import Rating from '@/app/components/Rating';
 import { DataTable, ColumnDef } from '@/app/components/DataTable';
 import SummaryCard from '@/app/components/SummaryCard';
 import { Button } from '@/app/components/ui/Button';
+import Pagination from '@/app/components/Pagination';
 
 type TicketType = Omit<Ticket, 'passengerId' | 'tripId' | 'routeId'> & { route: string, rating: number, comments: string, totalCost: number };
 
@@ -35,15 +36,17 @@ const mockPaymentMethods = [
 
 export default function ProfilePage() {
   const { setTitle } = usePageTitleStore();
-  useEffect(() => {
-    setTitle("My Profile");
-  }, [setTitle]);
-
   const { user } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
   const [avatar, setAvatar] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  useEffect(() => {
+    setTitle("My Profile");
+  }, [setTitle]);
 
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +67,8 @@ export default function ProfilePage() {
     { header: 'Rating', accessorKey: 'rating', cell: (row) => <Rating rating={row.rating} readOnly={row.status !== 'boarded'} /> },
     { header: 'Actions', accessorKey: '_id', cell: () => <Button variant="ghost" size="sm"><FiMessageSquare /></Button> },
   ], []);
+
+  const totalPages = Math.ceil(mockTicketsData.length / itemsPerPage);
 
   return (
     <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice', 'queue_manager']}>
@@ -172,7 +177,22 @@ export default function ProfilePage() {
         {/* My Tickets Table */}
         <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">My Tickets</h2>
-          <DataTable columns={ticketColumns} data={mockTicketsData} filterColumn="status" />
+          <DataTable
+            columns={ticketColumns}
+            data={mockTicketsData}
+            filterColumn="status"
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
         </div>
 
       </div>

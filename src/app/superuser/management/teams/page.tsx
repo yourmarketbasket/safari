@@ -13,6 +13,7 @@ import { User } from "@/app/models/User.model";
 import TeamModal from "@/app/components/TeamModal";
 import ManageTeamMembersModal from "@/app/components/ManageTeamMembersModal";
 import { Button } from "@/app/components/ui/Button";
+import Pagination from "@/app/components/Pagination";
 
 const TeamsPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
@@ -24,6 +25,8 @@ const TeamsPage: NextPage = () => {
     const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
     const [teamToEdit, setTeamToEdit] = useState<Team | null>(null);
     const [teamToManage, setTeamToManage] = useState<Team | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -109,6 +112,8 @@ const TeamsPage: NextPage = () => {
       }
     ];
 
+    const totalPages = Math.ceil(teams.length / itemsPerPage);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen relative">
       {isLoading && <LoadingOverlay />}
@@ -128,7 +133,26 @@ const TeamsPage: NextPage = () => {
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Teams</h2>
         {error && <Message type="error" message={error} />}
-        {!isLoading && !error && <DataTable data={teams} columns={columns} filterColumn="name" />}
+        {!isLoading && !error && (
+            <>
+                <DataTable
+                    data={teams}
+                    columns={columns}
+                    filterColumn="name"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+            </>
+        )}
       </div>
 
       <TeamModal

@@ -8,6 +8,7 @@ import Modal from '@/app/components/Modal';
 import { Chip } from '@/app/components/Chip';
 import Link from 'next/link';
 import { Button } from '@/app/components/ui/Button';
+import Pagination from '@/app/components/Pagination';
 
 interface Trip {
     _id: string;
@@ -96,10 +97,6 @@ const initialMockRegisteredTrips: RegisteredTrip[] = [
 
 const MyTripsPage = () => {
   const { setTitle } = usePageTitleStore();
-  useEffect(() => {
-    setTitle("Trips");
-  }, [setTitle]);
-
   const [registeredTrips, setRegisteredTrips] = useState<RegisteredTrip[]>(initialMockRegisteredTrips);
   const [filteredTrips, setFilteredTrips] = useState<Trip[]>(mockTrips);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -107,6 +104,12 @@ const MyTripsPage = () => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [selectedTrip, setSelectedTrip] = useState<Trip | RegisteredTrip | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  useEffect(() => {
+    setTitle("Trips");
+  }, [setTitle]);
 
   const handleSearch = (searchTerm: string) => {
     const lowercasedSearchTerm = searchTerm.toLowerCase();
@@ -250,6 +253,9 @@ const MyTripsPage = () => {
     []
   );
 
+    const totalPages = Math.ceil(registeredTrips.length / itemsPerPage);
+    const totalPagesSearch = Math.ceil(filteredTrips.length / itemsPerPage);
+
   return (
     <PrivateRoute allowedRoles={['passenger']}>
       <div className="container mx-auto px-6 py-8">
@@ -258,7 +264,22 @@ const MyTripsPage = () => {
                 Search for Trips
             </Button>
         </div>
-        <DataTable columns={myTripsColumns} data={registeredTrips} filterColumn="route" />
+        <DataTable
+            data={registeredTrips}
+            columns={myTripsColumns}
+            filterColumn="route"
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
 
         {/* Search Modal */}
         <Modal isOpen={isSearchModalOpen} onClose={() => setIsSearchModalOpen(false)} widthClass="w-[60vw]">
@@ -271,7 +292,22 @@ const MyTripsPage = () => {
                         className="p-2 border border-gray-400 rounded-md flex-grow text-black placeholder-gray-600 focus:ring-2 focus:ring-blue-500 w-full"
                 />
                 <div className="mt-6">
-                    <DataTable columns={searchColumns} data={filteredTrips} filterColumn="route" />
+                    <DataTable
+                        data={filteredTrips}
+                        columns={searchColumns}
+                        filterColumn="route"
+                        currentPage={currentPage}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                        onItemsPerPageChange={setItemsPerPage}
+                    />
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPagesSearch}
+                        onPageChange={setCurrentPage}
+                        itemsPerPage={itemsPerPage}
+                        onItemsPerPageChange={setItemsPerPage}
+                    />
                 </div>
             </div>
         </Modal>

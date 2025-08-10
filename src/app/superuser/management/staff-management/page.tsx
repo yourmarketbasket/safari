@@ -1,12 +1,13 @@
 "use client";
 
 import { NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
 import { User } from "@/app/models/User.model";
 import { Button } from "@/app/components/ui/Button";
+import Pagination from "@/app/components/Pagination";
 
 // Dummy data for staff, conforming to the User model
 const dummyStaff: User[] = [
@@ -39,10 +40,14 @@ const columns: ColumnDef<User>[] = [
 
 const StaffManagementPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
         setTitle("Staff Management");
     }, [setTitle]);
+
+    const totalPages = Math.ceil(dummyStaff.length / itemsPerPage);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -55,7 +60,22 @@ const StaffManagementPage: NextPage = () => {
 
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Support Staff</h2>
-        <DataTable data={dummyStaff} columns={columns} filterColumn="role" />
+        <DataTable
+            data={dummyStaff}
+            columns={columns}
+            filterColumn="role"
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
       </div>
     </div>
   );

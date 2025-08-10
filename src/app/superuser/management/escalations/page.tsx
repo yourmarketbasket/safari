@@ -1,11 +1,12 @@
 "use client";
 
 import { NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
 import { Button } from "@/app/components/ui/Button";
+import Pagination from "@/app/components/Pagination";
 
 // Type for Escalation data
 type Escalation = {
@@ -51,16 +52,35 @@ const columns: ColumnDef<Escalation>[] = [
 
 const EscalationsPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
         setTitle("Escalation Management");
     }, [setTitle]);
 
+    const totalPages = Math.ceil(dummyEscalations.length / itemsPerPage);
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Escalation Queue</h2>
-        <DataTable data={dummyEscalations} columns={columns} filterColumn="department" />
+        <DataTable
+            data={dummyEscalations}
+            columns={columns}
+            filterColumn="department"
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
       </div>
     </div>
   );

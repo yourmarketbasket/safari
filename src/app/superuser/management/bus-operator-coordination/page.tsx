@@ -1,11 +1,12 @@
 "use client";
 
 import { NextPage } from "next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePageTitleStore } from "@/app/store/pageTitle.store";
 import { DataTable, ColumnDef } from "@/app/components/DataTable";
 import { Chip } from "@/app/components/Chip";
 import { Button } from "@/app/components/ui/Button";
+import Pagination from "@/app/components/Pagination";
 
 // Type for Bus Operator data
 type BusOperator = {
@@ -50,10 +51,14 @@ const columns: ColumnDef<BusOperator>[] = [
 
 const BusOperatorCoordinationPage: NextPage = () => {
     const { setTitle } = usePageTitleStore();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     useEffect(() => {
         setTitle("Bus Operator Coordination");
     }, [setTitle]);
+
+    const totalPages = Math.ceil(dummyOperators.length / itemsPerPage);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -66,7 +71,22 @@ const BusOperatorCoordinationPage: NextPage = () => {
 
       <div>
         <h2 className="text-2xl font-bold mb-4 text-gray-800">Partner Operators</h2>
-        <DataTable data={dummyOperators} columns={columns} filterColumn="performance" />
+        <DataTable
+            data={dummyOperators}
+            columns={columns}
+            filterColumn="performance"
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
+        <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+        />
       </div>
     </div>
   );

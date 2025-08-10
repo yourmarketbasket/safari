@@ -93,7 +93,7 @@ export default function Sidebar() {
 
   return (
     <aside className={`flex-shrink-0 bg-white text-gray-800 flex flex-col transition-all duration-300 shadow-2xl ${isCollapsed ? 'w-20' : 'w-64'}`}>
-      <div className="h-20 flex items-center justify-center px-4 text-2xl font-bold border-b border-gray-200 relative">
+      <div className="h-20 flex items-center justify-center px-4 text-2xl font-normal border-b border-gray-200 relative">
         {!isCollapsed && <Link href="/dashboard" className="text-purple-600">Safary</Link>}
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
             <AnimatedHamburgerIcon isCollapsed={isCollapsed} onClick={() => setIsCollapsed(!isCollapsed)} />
@@ -107,7 +107,7 @@ export default function Sidebar() {
                 <Button
                   variant="ghost"
                   onClick={() => handleSubmenuClick(link.name)}
-                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-light"
+                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-normal"
                 >
                   <div className="flex items-center">
                     <div className="w-5 h-5">{link.icon}</div>
@@ -123,7 +123,7 @@ export default function Sidebar() {
                         <Link
                           key={subLink.name}
                           href={subLink.href}
-                          className={`flex items-center px-4 py-1 text-xs font-medium rounded-lg transition-colors ${
+                          className={`flex items-center px-4 py-1 text-xs font-normal rounded-lg transition-colors ${
                             isActive
                               ? 'bg-purple-500 text-white'
                               : 'text-gray-500 hover:bg-purple-50 hover:text-purple-600'
@@ -141,7 +141,7 @@ export default function Sidebar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`flex items-center px-4 py-2 text-xs font-light rounded-lg transition-colors ${
+                className={`flex items-center px-4 py-2 text-xs font-normal rounded-lg transition-colors ${
                   pathname === link.href
                     ? 'bg-purple-600 text-white shadow-lg'
                     : 'text-gray-600 hover:bg-purple-100 hover:text-purple-600'
@@ -153,7 +153,7 @@ export default function Sidebar() {
             )}
           </div>
         ))}
-        <Link href="/profile" className="flex items-center px-4 py-2 text-xs font-light rounded-lg text-gray-600 hover:bg-purple-100 hover:text-purple-600">
+        <Link href="/profile" className="flex items-center px-4 py-2 text-xs font-normal rounded-lg text-gray-600 hover:bg-purple-100 hover:text-purple-600">
             <FiUser className="w-5 h-5" />
             {!isCollapsed && <span className="ml-3">Profile</span>}
         </Link>
@@ -163,7 +163,7 @@ export default function Sidebar() {
         <Button
           variant="ghost"
           onClick={logout}
-          className="w-full flex items-center px-4 py-2 text-xs font-light"
+          className="w-full flex items-center px-4 py-2 text-xs font-normal"
         >
           <FiLogOut className="w-5 h-5" />
           {!isCollapsed && <span className="ml-3">Logout</span>}

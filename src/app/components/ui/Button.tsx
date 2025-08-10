@@ -12,6 +12,7 @@ const buttonVariants = cva(
         success: 'border border-lime-500 text-lime-600 hover:bg-lime-100 focus:ring-lime-500',
         ghost: 'hover:bg-gray-100',
         link: 'text-purple-600 underline-offset-4 hover:underline',
+        pagination: 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500 rounded-md',
       },
       size: {
         default: 'h-10 py-2 px-4',

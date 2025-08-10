@@ -7,6 +7,7 @@ import { DataTable, ColumnDef } from '@/app/components/DataTable';
 import Modal from '@/app/components/Modal';
 import { Chip } from '@/app/components/Chip';
 import { Button } from '@/app/components/ui/Button';
+import Pagination from '@/app/components/Pagination';
 
 interface Inquiry {
     _id: string;
@@ -25,13 +26,15 @@ const mockInquiries: Inquiry[] = [
 
 const InquiriesPage = () => {
     const { setTitle } = usePageTitleStore();
-    useEffect(() => {
-        setTitle("Passenger Inquiries");
-    }, [setTitle]);
-
     const [inquiries, setInquiries] = useState(mockInquiries);
     const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    useEffect(() => {
+        setTitle("Passenger Inquiries");
+    }, [setTitle]);
 
     const handleViewInquiry = (inquiry: Inquiry) => {
         setSelectedInquiry(inquiry);
@@ -71,10 +74,27 @@ const InquiriesPage = () => {
         }
     ], []);
 
+    const totalPages = Math.ceil(inquiries.length / itemsPerPage);
+
     return (
         <PrivateRoute allowedRoles={['support_staff']}>
             <div className="container mx-auto px-6 py-8">
-                <DataTable columns={columns} data={inquiries} filterColumn="status" />
+                <DataTable
+                    columns={columns}
+                    data={inquiries}
+                    filterColumn="status"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    itemsPerPage={itemsPerPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                />
 
                 <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                     {selectedInquiry && (
