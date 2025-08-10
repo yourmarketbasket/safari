@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiUsers, FiTruck, FiUser, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiMonitor, FiHelpCircle, FiXCircle, FiTrendingUp, FiPlus, FiCheckCircle } from 'react-icons/fi';
+import { FiUsers, FiTruck, FiUser, FiList, FiLogOut, FiChevronDown, FiChevronUp, FiMonitor, FiHelpCircle, FiXCircle, FiTrendingUp, FiPlus, FiCheckCircle, FiHeadphones } from 'react-icons/fi';
 import { useAuth } from '../lib/AuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 import ConnectionStatus from './ConnectionStatus';
@@ -23,8 +23,8 @@ const supportNavLinks = [
       ],
     },
     { name: 'System Monitoring', href: '/support/system-monitoring', icon: <FiMonitor /> },
-    { name: 'Inquiry Management', href: '/support/inquiries', icon: <FiHelpCircle /> },
-    { name: 'Driver Support', href: '/support/driver-support', icon: <FiUser /> },
+    { name: 'Inquiry Management', href: '/support/inquiries', icon: <FiHeadphones /> },
+    { name: 'Driver Support', href: '/support/driver-support', icon: <FiHeadphones /> },
     { name: 'Cancellations & Reallocations', href: '/support/cancellations', icon: <FiXCircle /> },
     { name: 'Payroll Disputes', href: '/support/payroll-disputes', icon: <FiTrendingUp /> },
     { name: 'Reports', href: '/support/reports', icon: <FiList /> },

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiUsers, FiSettings, FiLogOut, FiBriefcase, FiBarChart2, FiHelpCircle, FiChevronDown, FiShield, FiActivity, FiXCircle, FiAlertTriangle, FiTrendingUp, FiTruck, FiFileText, FiGitMerge, FiList, FiCreditCard, FiDollarSign } from 'react-icons/fi';
+import { FiHome, FiUsers, FiSettings, FiLogOut, FiBriefcase, FiBarChart2, FiHelpCircle, FiChevronDown, FiShield, FiActivity, FiXCircle, FiAlertTriangle, FiTrendingUp, FiTruck, FiFileText, FiGitMerge, FiList, FiCreditCard, FiDollarSign, FiHeadphones } from 'react-icons/fi';
 import { useSuperuserAuth } from '../lib/SuperuserAuthContext';
 import AnimatedHamburgerIcon from './AnimatedHamburgerIcon';
 import ConnectionStatus from './ConnectionStatus';
@@ -20,7 +20,7 @@ const navLinks = [
   },
   {
     name: 'Support',
-    icon: <FiHelpCircle />,
+    icon: <FiHeadphones />,
     children: [
       { name: 'Support Tickets', href: '/superuser/support/tickets', icon: <FiList /> },
       { name: 'Passenger & Driver Support', href: '/superuser/support/passenger-driver-support', icon: <FiUsers /> },
