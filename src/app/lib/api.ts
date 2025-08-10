@@ -1,7 +1,13 @@
 import axios from 'axios';
+import { setupCache } from 'axios-cache-interceptor';
 
-const api = axios.create({
+const instance = axios.create({
   baseURL: 'http://localhost:3000/api/v1',
+});
+
+const api = setupCache(instance, {
+  ttl: 1000 * 60 * 5, // 5 minutes
+  methods: ['get'],
 });
 
 // Request interceptor for encrypting data

@@ -4,40 +4,35 @@ import { Dispute } from '../models/Dispute.model';
 
 export type NewSaccoData = Omit<Sacco, 'id' | 'status' | 'createdBy' | 'createdAt'>;
 
-const getAuthHeader = () => {
-    const token = localStorage.getItem('authToken');
-    return { headers: { Authorization: `Bearer ${token}` } };
-}
-
 // SaccoService functions (performed by Support Staff)
 export const getSaccos = async (): Promise<Sacco[]> => {
-  const response = await api.get<Sacco[]>('/saccos', getAuthHeader());
+  const response = await api.get<Sacco[]>('/saccos');
   return response.data;
 };
 
 export const addSacco = async (saccoData: NewSaccoData): Promise<Sacco> => {
-  const response = await api.post<Sacco>('/saccos', saccoData, getAuthHeader());
+  const response = await api.post<Sacco>('/saccos', saccoData);
   return response.data;
 };
 
 export const approveSacco = async (saccoId: string): Promise<Sacco> => {
-  const response = await api.post<Sacco>(`/saccos/${saccoId}/approve`, {}, getAuthHeader());
+  const response = await api.post<Sacco>(`/saccos/${saccoId}/approve`, {});
   return response.data;
 };
 
 // SupportService functions
 export const getInquiries = async (): Promise<Dispute[]> => {
-    const response = await api.get<Dispute[]>('/support/inquiries', getAuthHeader());
+    const response = await api.get<Dispute[]>('/support/inquiries');
     return response.data;
 };
 
 export const resolveInquiry = async (inquiryId: string, resolution: string): Promise<Dispute> => {
-    const response = await api.post<Dispute>(`/support/inquiries/${inquiryId}/resolve`, { resolution }, getAuthHeader());
+    const response = await api.post<Dispute>(`/support/inquiries/${inquiryId}/resolve`, { resolution });
     return response.data;
 };
 
 export const getSystemAlerts = async (): Promise<Record<string, unknown>[]> => {
-    const response = await api.get<Record<string, unknown>[]>('/support/alerts', getAuthHeader());
+    const response = await api.get<Record<string, unknown>[]>('/support/alerts');
     return response.data;
 };
 

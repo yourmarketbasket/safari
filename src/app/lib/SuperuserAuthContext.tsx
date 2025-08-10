@@ -45,7 +45,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
         setUser(responseData.user);
         localStorage.setItem('superuserAuthToken', responseData.token);
         localStorage.setItem('superuser', JSON.stringify(responseData.user));
-        router.push('/superuser/dashboard');
+        window.location.href = '/superuser/dashboard';
     }
   };
 
