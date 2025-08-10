@@ -43,7 +43,6 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     }
     setUser(null);
     setToken(null);
-    setIsInitialized(false);
     localStorage.removeItem('superuserAuthToken');
     localStorage.removeItem('superuser');
     localStorage.removeItem('authToken');

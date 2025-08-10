@@ -27,10 +27,10 @@ export default function PendingApprovalPage() {
   };
 
   const steps = [
-    { name: 'Signed Up', status: 'complete', icon: FiUser },
-    { name: 'Email Verification', status: 'complete', icon: FiMail },
-    { name: 'Logged In', status: 'complete', icon: FiCheck },
-    { name: 'Waiting Approval', status: 'current', icon: FiClock },
+    { status: 'complete', icon: FiUser },
+    { status: 'complete', icon: FiMail },
+    { status: 'complete', icon: FiCheck },
+    { status: 'current', icon: FiClock },
   ];
 
   return (
@@ -40,11 +40,12 @@ export default function PendingApprovalPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Welcome, {user.name}!</h1>
           <p className="text-gray-500 mt-2">Your account is almost ready.</p>
 
+          {/* Stepper navigation */}
           <div className="my-12">
-            <nav aria-label="Progress">
-              <ol role="list" className="flex items-center">
+            <nav aria-label="Progress" className="flex justify-center">
+              <ol role="list" className="flex items-center max-w-2xl">
                 {steps.map((step, stepIdx) => (
-                  <li key={step.name} className={`relative ${stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : ''}`}>
+                  <li key={stepIdx} className={`relative ${stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : ''}`}>
                     {step.status === 'complete' ? (
                       <>
                         <div className="absolute inset-0 flex items-center" aria-hidden="true">
@@ -73,33 +74,30 @@ export default function PendingApprovalPage() {
                         </div>
                       </>
                     )}
-                    <div className="absolute top-12 w-20 text-center">
-                      <p className="text-sm font-medium text-gray-600">{step.name}</p>
-                    </div>
                   </li>
                 ))}
               </ol>
             </nav>
           </div>
 
-          <div className="p-6 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-2xl">
+          <div className="p-6 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-2xl max-w-2xl mx-auto">
             <h2 className="font-semibold">Your account is pending administrator approval.</h2>
             <p className="text-sm mt-1">You will be notified via email once approved. You will not have access to the dashboard until then.</p>
           </div>
         </div>
 
         <div className="mt-8 flex items-center justify-center space-x-6">
-            <Button onClick={() => setIsSupportModalOpen(true)} variant="ghost">
-                <FiHelpCircle className="w-8 h-8" />
-                <span className="sr-only">Contact Support</span>
-            </Button>
-            <Button onClick={logout} variant="ghost">
-                <FiLogOut className="w-8 h-8" />
-                <span className="sr-only">Logout</span>
-            </Button>
+          <Button onClick={() => setIsSupportModalOpen(true)} variant="ghost">
+            <FiHelpCircle className="w-8 h-8" />
+            <span className="sr-only">Contact Support</span>
+          </Button>
+          <Button onClick={logout} variant="ghost">
+            <FiLogOut className="w-8 h-8" />
+            <span className="sr-only">Logout</span>
+          </Button>
         </div>
         {messageSent && (
-          <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-lg shadow-sm text-center">
+          <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-lg shadow-sm text-center max-w-2xl mx-auto">
             <p>Your message has been sent to support.</p>
           </div>
         )}
@@ -120,11 +118,7 @@ export default function PendingApprovalPage() {
             required
           />
           <div className="flex justify-end mt-4">
-            <Button
-              type="submit"
-            >
-              Send Message
-            </Button>
+            <Button type="submit">Send Message</Button>
           </div>
         </form>
       </Modal>
