@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import superuserService, { LoginCredentials } from '../services/superuser.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
@@ -45,11 +45,12 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
         setUser(responseData.user);
         localStorage.setItem('superuserAuthToken', responseData.token);
         localStorage.setItem('superuser', JSON.stringify(responseData.user));
+        localStorage.setItem('logout-event', Date.now().toString());
         window.location.href = '/superuser/dashboard';
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     setUser(null);
     setToken(null);
     setIsInitialized(false); // Reset initialization state
@@ -58,14 +59,15 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     router.push('/superuser/login');
-  };
+  }, [router]);
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'logout-event') {
+        handleLogout();
+      }
       if (event.key === 'superuserAuthToken' && event.newValue === null) {
-        setUser(null);
-        setToken(null);
-        setIsInitialized(false);
+        handleLogout();
       }
     };
 
@@ -73,7 +75,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [handleLogout]);
 
   const value = {
     user,

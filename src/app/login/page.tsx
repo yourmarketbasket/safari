@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../lib/AuthContext';
 import Link from 'next/link';
 import Message from '../components/Message';
 import PublicRoute from '../components/PublicRoute';
+import Modal from '../components/Modal';
 
 // Regex for basic email or phone number validation
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
@@ -17,7 +18,22 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-  
+  const [showSessionConflict, setShowSessionConflict] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setShowSessionConflict(true);
+    }
+  }, []);
+
+  const handleUseHere = () => {
+    setShowSessionConflict(false);
+  };
+
+  const handleClose = () => {
+    window.close();
+  };
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,6 +66,21 @@ export default function LoginPage() {
   return (
     <PublicRoute>
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-200 to-blue-200">
+        <Modal
+          isOpen={showSessionConflict}
+          onClose={() => setShowSessionConflict(false)}
+          title="Session Conflict"
+          description="Another account is already logged in. Do you want to log in here and log out the other session?"
+        >
+          <div className="flex justify-end space-x-4">
+            <button onClick={handleClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+              Close
+            </button>
+            <button onClick={handleUseHere} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+              Use Here
+            </button>
+          </div>
+        </Modal>
         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl">
           <div className="text-center">
               <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>

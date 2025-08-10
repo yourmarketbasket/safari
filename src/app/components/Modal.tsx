@@ -7,9 +7,11 @@ interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
   widthClass?: string;
+  title?: string;
+  description?: string;
 }
 
-export default function Modal({ isOpen, onClose, children, widthClass = 'max-w-lg' }: ModalProps) {
+export default function Modal({ isOpen, onClose, children, widthClass = 'max-w-lg', title, description }: ModalProps) {
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -41,7 +43,11 @@ export default function Modal({ isOpen, onClose, children, widthClass = 'max-w-l
       ></div>
 
       <div className={`relative w-full ${widthClass} p-6 mx-auto bg-white rounded-lg shadow-xl`}>
-        {children}
+        {title && <h2 id="modal-title" className="text-lg font-bold text-gray-900">{title}</h2>}
+        {description && <p className="mt-2 text-sm text-gray-600">{description}</p>}
+        <div className="mt-4">
+          {children}
+        </div>
       </div>
     </div>
   );

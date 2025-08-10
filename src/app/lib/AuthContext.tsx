@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import authService, { LoginCredentials, SignupData, VerifyMfaData } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
@@ -78,6 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(responseData.user);
       localStorage.setItem('authToken', responseData.token);
       localStorage.setItem('user', JSON.stringify(responseData.user));
+      localStorage.setItem('logout-event', Date.now().toString());
       redirectUser(responseData.user.role);
     }
   };
@@ -110,7 +111,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login');
   };
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     setUser(null);
     setToken(null);
     setMfaToken(null);
@@ -121,14 +122,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem('superuser');
     authService.logout();
     router.push('/login');
-  };
+  }, [router]);
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
+        if (event.key === 'logout-event') {
+            handleLogout();
+        }
         if (event.key === 'authToken' && event.newValue === null) {
-            setUser(null);
-            setToken(null);
-            setIsLoading(true);
+            handleLogout();
         }
     };
 
@@ -136,7 +138,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
         window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [handleLogout]);
 
   const value = {
     user,
