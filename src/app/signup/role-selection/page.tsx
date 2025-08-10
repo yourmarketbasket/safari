@@ -7,32 +7,46 @@ export const metadata: Metadata = {
 };
 
 const roles = [
-  { name: 'Passenger', href: '/signup/passenger', icon: <FiUser className="h-16 w-16" />, color: 'bg-blue-500', pulse: 'animate-pulse-blue' },
-  { name: 'Sacco', href: '/signup/sacco', icon: <FiUsers className="h-16 w-16" />, color: 'bg-green-500', pulse: 'animate-pulse-green' },
-  { name: 'Owner', href: '/signup/owner', icon: <FiBriefcase className="h-16 w-16" />, color: 'bg-purple-500', pulse: 'animate-pulse-purple' },
-  { name: 'Queue Manager', href: '/signup/queue-manager', icon: <FiClipboard className="h-16 w-16" />, color: 'bg-pink-500', pulse: 'animate-pulse-pink' },
-  { name: 'Driver', href: '/signup/driver', icon: <FiTruck className="h-16 w-16" />, color: 'bg-yellow-500', pulse: 'animate-pulse-yellow' },
-  { name: 'Staff', href: '/signup/staff', icon: <FiUserCheck className="h-16 w-16" />, color: 'bg-teal-500', pulse: 'animate-pulse-teal' },
+  { name: 'Passenger', href: '/signup/passenger', icon: <FiUser className="h-12 w-12" />, description: 'For booking trips and managing your travel.', color: 'text-blue-500' },
+  { name: 'Sacco', href: '/signup/sacco', icon: <FiUsers className="h-12 w-12" />, description: 'For managing your transport business.', color: 'text-green-500' },
+  { name: 'Owner', href: '/signup/owner', icon: <FiBriefcase className="h-12 w-12" />, description: 'For managing your vehicles and income.', color: 'text-purple-500' },
+  { name: 'Queue Manager', href: '/signup/queue-manager', icon: <FiClipboard className="h-12 w-12" />, description: 'For managing queues and ticketing.', color: 'text-pink-500' },
+  { name: 'Driver', href: '/signup/driver', icon: <FiTruck className="h-12 w-12" />, description: 'For managing your trips and earnings.', color: 'text-yellow-500' },
+  { name: 'Staff', href: '/signup/staff', icon: <FiUserCheck className="h-12 w-12" />, description: 'For internal staff members.', color: 'text-teal-500' },
 ];
 
 export default function RoleSelectionPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white py-12">
-      <div className="w-full max-w-5xl p-8 space-y-12 text-center">
-        <h1 className="text-5xl font-bold">Choose Your Role</h1>
-        <p className="mt-4 text-xl text-gray-400">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-blue-100 py-12">
+      <div className="w-full max-w-6xl p-8 space-y-12 text-center">
+        <h1 className="text-5xl font-bold text-gray-800">Choose Your Role</h1>
+        <p className="mt-4 text-xl text-gray-600">
           Select the role that best describes you to get started with Safary.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-12 pt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 pt-12">
           {roles.map((role) => (
-            <Link href={role.href} key={role.name} passHref>
-              <div className="group flex flex-col items-center space-y-4 cursor-pointer">
-                <div className={`relative w-40 h-40 rounded-full flex items-center justify-center text-white transition-transform duration-300 ease-in-out transform group-hover:scale-110 ${role.color} ${role.pulse}`}>
+            <div key={role.name} className="relative flex flex-col rounded-2xl bg-white shadow-2xl transform hover:scale-105 transition-transform duration-300 ease-in-out">
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2">
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center bg-white shadow-xl ${role.color}`}>
                   {role.icon}
                 </div>
-                <p className="text-2xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">{role.name}</p>
               </div>
-            </Link>
+              <div className="flex-grow p-8 pt-20">
+                <h3 className="text-3xl font-bold text-gray-800">{role.name}</h3>
+                <p className="mt-4 text-gray-600">{role.description}</p>
+                <div className="mt-8">
+                  <p className="text-5xl font-extrabold text-gray-800">Free</p>
+                  <p className="text-sm text-gray-500">Forever</p>
+                </div>
+              </div>
+              <div className="bg-gray-50 p-6 rounded-b-2xl">
+                <Link href={role.href} passHref>
+                  <div className="block w-full py-3 px-6 text-center text-lg font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">
+                    Select
+                  </div>
+                </Link>
+              </div>
+            </div>
           ))}
         </div>
       </div>
