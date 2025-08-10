@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import superuserService, { LoginCredentials } from '../services/superuser.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
@@ -20,48 +20,45 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isTabActive, setIsTabActive] = useState(false);
-  const [tabId, setTabId] = useState<string | null>(null);
+  const [isTabActive, setIsTabActive] = useState(true); // Assume active at first
+  const tabId = useRef<string | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const id = sessionStorage.getItem('tabId') || `${Date.now()}-${Math.random()}`;
-    sessionStorage.setItem('tabId', id);
-    setTabId(id);
-  }, []);
-
   const handleTakeOver = useCallback(() => {
-    if (tabId) {
-      localStorage.setItem('activeTabId', tabId);
+    if (tabId.current) {
+      localStorage.setItem('activeTabId', tabId.current);
       setIsTabActive(true);
     }
-  }, [tabId]);
+  }, []);
 
   const handleLogout = useCallback(() => {
     setUser(null);
     setToken(null);
     setIsInitialized(false);
-    const activeTabId = localStorage.getItem('activeTabId');
-    if (tabId && activeTabId === tabId) {
-      localStorage.removeItem('activeTabId');
+    if (tabId.current) {
+      const activeTabId = localStorage.getItem('activeTabId');
+      if (activeTabId === tabId.current) {
+        localStorage.removeItem('activeTabId');
+      }
     }
     localStorage.removeItem('superuserAuthToken');
     localStorage.removeItem('superuser');
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     router.push('/superuser/login');
-  }, [router, tabId]);
+  }, [router]);
 
   useEffect(() => {
-    if (!tabId) return;
+    tabId.current = sessionStorage.getItem('tabId') || `${Date.now()}-${Math.random()}`;
+    sessionStorage.setItem('tabId', tabId.current);
 
     const checkActiveTab = () => {
       const activeTabId = localStorage.getItem('activeTabId');
       if (!activeTabId) {
-        localStorage.setItem('activeTabId', tabId);
+        localStorage.setItem('activeTabId', tabId.current!);
         setIsTabActive(true);
       } else {
-        setIsTabActive(activeTabId === tabId);
+        setIsTabActive(activeTabId === tabId.current);
       }
     };
 
@@ -69,19 +66,28 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
 
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'activeTabId') {
-        setIsTabActive(event.newValue === tabId);
+        setIsTabActive(event.newValue === tabId.current);
       }
-      if (event.key === 'logout-event' || (event.key === 'superuserAuthToken' && event.newValue === null)) {
+      if (event.key === 'logout-event') {
         handleLogout();
       }
     };
 
+    const releaseTab = () => {
+        const activeTabId = localStorage.getItem('activeTabId');
+        if (activeTabId === tabId.current) {
+            localStorage.removeItem('activeTabId');
+        }
+    };
+
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('beforeunload', releaseTab);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('beforeunload', releaseTab);
     };
-  }, [tabId, handleLogout]);
+  }, [handleLogout]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('superuserAuthToken');
@@ -106,28 +112,14 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
         setUser(responseData.user);
         localStorage.setItem('superuserAuthToken', responseData.token);
         localStorage.setItem('superuser', JSON.stringify(responseData.user));
-        if (tabId) {
-          localStorage.setItem('activeTabId', tabId);
+        if (tabId.current) {
+          localStorage.setItem('activeTabId', tabId.current);
         }
         localStorage.setItem('logout-event', Date.now().toString());
         setIsTabActive(true);
         window.location.href = '/superuser/dashboard';
     }
   };
-
-  useEffect(() => {
-    if (!tabId) return;
-      const releaseTab = () => {
-          const activeTabId = localStorage.getItem('activeTabId');
-          if (activeTabId === tabId) {
-              localStorage.removeItem('activeTabId');
-          }
-      };
-      window.addEventListener('beforeunload', releaseTab);
-      return () => {
-          window.removeEventListener('beforeunload', releaseTab);
-      };
-  }, [tabId]);
 
   const value = {
     user,
