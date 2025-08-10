@@ -2,9 +2,9 @@
 
 import { useAuth } from '../lib/AuthContext';
 import { useState } from 'react';
-import Image from 'next/image';
 import LoadingOverlay from '../components/LoadingOverlay';
 import Modal from '../components/Modal';
+import { FiCheck, FiClock, FiHelpCircle, FiLogOut, FiUser } from 'react-icons/fi';
 
 export default function PendingApprovalPage() {
   const { user, logout } = useAuth();
@@ -18,58 +18,91 @@ export default function PendingApprovalPage() {
 
   const handleSupportSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send the message to a support service
     console.log('Support message:', supportMessage);
     setSupportMessage('');
     setIsSupportModalOpen(false);
     setMessageSent(true);
-    setTimeout(() => setMessageSent(false), 3000); // Hide message after 3 seconds
+    setTimeout(() => setMessageSent(false), 3000);
   };
 
+  const steps = [
+    { name: 'Signed Up', status: 'complete', icon: FiUser },
+    { name: 'Logged In', status: 'complete', icon: FiCheck },
+    { name: 'Pending Approval', status: 'current', icon: FiClock },
+  ];
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-2xl p-8 space-y-6 bg-white rounded-2xl shadow-xl text-center">
-        <div className="flex flex-col items-center">
-          {user.avatar ? (
-            <Image
-              src={user.avatar}
-              alt="User Avatar"
-              width={128}
-              height={128}
-              className="rounded-full mb-4"
-            />
-          ) : (
-            <div className="w-32 h-32 rounded-full bg-gray-300 mb-4 flex items-center justify-center">
-              <span className="text-4xl text-gray-500">{user.name.charAt(0)}</span>
-            </div>
-          )}
-          <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
-          <p className="text-gray-600">{user.email}</p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="w-full max-w-3xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Welcome, {user.name}!</h1>
+          <p className="text-gray-500 mt-2">Your account is almost ready.</p>
+
+          <div className="my-12">
+            <nav aria-label="Progress">
+              <ol role="list" className="flex items-center">
+                {steps.map((step, stepIdx) => (
+                  <li key={step.name} className={`relative ${stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : ''}`}>
+                    {step.status === 'complete' ? (
+                      <>
+                        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                          <div className="h-0.5 w-full bg-indigo-600" />
+                        </div>
+                        <div className="relative w-10 h-10 flex items-center justify-center bg-indigo-600 rounded-full">
+                          <step.icon className="w-6 h-6 text-white" aria-hidden="true" />
+                        </div>
+                      </>
+                    ) : step.status === 'current' ? (
+                      <>
+                        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                          <div className="h-0.5 w-full bg-gray-200" />
+                        </div>
+                        <div className="relative w-10 h-10 flex items-center justify-center bg-white border-2 border-indigo-600 rounded-full">
+                          <step.icon className="w-6 h-6 text-indigo-600" aria-hidden="true" />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                          <div className="h-0.5 w-full bg-gray-200" />
+                        </div>
+                        <div className="relative w-10 h-10 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full">
+                          <step.icon className="w-6 h-6 text-gray-400" aria-hidden="true" />
+                        </div>
+                      </>
+                    )}
+                    <div className="absolute top-12 w-20 text-center">
+                      <p className="text-sm font-medium text-gray-600">{step.name}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </div>
+
+          <div className="p-6 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-2xl">
+            <h2 className="font-semibold">Your account is pending administrator approval.</h2>
+            <p className="text-sm mt-1">You will be notified via email once approved. You will not have access to the dashboard until then.</p>
+          </div>
         </div>
-        <div className="p-6 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg">
-          <h2 className="font-bold">Account Pending Approval</h2>
-          <p>Your account has been created successfully, but it is currently pending approval from an administrator. You will be notified once your account is approved. You will not have access to the dashboard until your account is approved.</p>
+
+        <div className="mt-8 flex items-center justify-center space-x-6">
+            <button onClick={() => setIsSupportModalOpen(true)} className="text-gray-500 hover:text-indigo-600 transition-colors">
+                <FiHelpCircle className="w-8 h-8" />
+                <span className="sr-only">Contact Support</span>
+            </button>
+            <button onClick={logout} className="text-gray-500 hover:text-red-600 transition-colors">
+                <FiLogOut className="w-8 h-8" />
+                <span className="sr-only">Logout</span>
+            </button>
         </div>
         {messageSent && (
-          <div className="p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded-lg">
-            <p>Your message has been sent to support. We will get back to you shortly.</p>
+          <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-lg shadow-sm text-center">
+            <p>Your message has been sent to support.</p>
           </div>
         )}
-        <div className="flex flex-col space-y-4">
-          <button
-            onClick={() => setIsSupportModalOpen(true)}
-            className="w-full px-4 py-3 font-bold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
-          >
-            Contact Support
-          </button>
-          <button
-            onClick={logout}
-            className="w-full px-4 py-3 font-bold text-indigo-600 bg-transparent border border-indigo-600 rounded-lg hover:bg-indigo-50"
-          >
-            Logout
-          </button>
-        </div>
       </div>
+
       <Modal
         isOpen={isSupportModalOpen}
         onClose={() => setIsSupportModalOpen(false)}
@@ -80,7 +113,7 @@ export default function PendingApprovalPage() {
           <textarea
             value={supportMessage}
             onChange={(e) => setSupportMessage(e.target.value)}
-            className="w-full h-32 p-2 border border-gray-300 rounded-md"
+            className="w-full h-32 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
             placeholder="Type your message here..."
             required
           />
