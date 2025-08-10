@@ -4,7 +4,7 @@ import { useAuth } from '../lib/AuthContext';
 import { useState } from 'react';
 import LoadingOverlay from '../components/LoadingOverlay';
 import Modal from '../components/Modal';
-import { FiCheck, FiClock, FiHelpCircle, FiLogOut, FiUser, FiMail } from 'react-icons/fi';
+import { FiCheck, FiClock, FiHeadphones, FiLogOut, FiUser, FiMail } from 'react-icons/fi';
 import { Button } from '../components/ui/Button';
 
 export default function PendingApprovalPage() {
@@ -88,7 +88,7 @@ export default function PendingApprovalPage() {
 
         <div className="mt-8 flex items-center justify-center space-x-6">
           <Button onClick={() => setIsSupportModalOpen(true)} variant="ghost">
-            <FiHelpCircle className="w-8 h-8" />
+            <FiHeadphones className="w-8 h-8" />
             <span className="sr-only">Contact Support</span>
           </Button>
           <Button onClick={logout} variant="ghost">
