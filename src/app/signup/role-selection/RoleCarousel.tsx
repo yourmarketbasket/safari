@@ -128,7 +128,7 @@ export default function RoleCarousel() {
           <FiChevronLeft className="h-8 w-8 text-gray-800" />
         </button>
       )}
-      <div ref={carouselRef} onScroll={checkScroll} className="flex space-x-8 overflow-x-auto py-16 snap-x snap-mandatory no-scrollbar">
+      <div ref={carouselRef} onScroll={checkScroll} className="flex space-x-8 overflow-x-auto py-16 px-12 snap-x snap-mandatory no-scrollbar">
         {roles.map((role) => (
           <div key={role.name} className="snap-center flex-shrink-0 w-80">
             <div className="relative flex flex-col rounded-2xl bg-white shadow-2xl transform hover:scale-105 transition-transform duration-300 ease-in-out h-full">
