@@ -4,7 +4,7 @@ import { useAuth } from '../lib/AuthContext';
 import { useState } from 'react';
 import LoadingOverlay from '../components/LoadingOverlay';
 import Modal from '../components/Modal';
-import { FiCheck, FiClock, FiHelpCircle, FiLogOut, FiUser } from 'react-icons/fi';
+import { FiCheck, FiClock, FiHelpCircle, FiLogOut, FiUser, FiMail } from 'react-icons/fi';
 
 export default function PendingApprovalPage() {
   const { user, logout } = useAuth();
@@ -27,8 +27,9 @@ export default function PendingApprovalPage() {
 
   const steps = [
     { name: 'Signed Up', status: 'complete', icon: FiUser },
+    { name: 'Email Verification', status: 'complete', icon: FiMail },
     { name: 'Logged In', status: 'complete', icon: FiCheck },
-    { name: 'Pending Approval', status: 'current', icon: FiClock },
+    { name: 'Waiting Approval', status: 'current', icon: FiClock },
   ];
 
   return (

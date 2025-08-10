@@ -1,9 +1,13 @@
 "use client";
 
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import authService, { LoginCredentials, SignupData, VerifyMfaData } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
+import InactiveTab from '../components/InactiveTab';
+import LoadingOverlay from '../components/LoadingOverlay';
+
+type TabStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE';
 
 interface AuthContextType {
   user: User | null;
@@ -24,11 +28,66 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [mfaToken, setMfaToken] = useState<string | null>(null);
+  const [tabStatus, setTabStatus] = useState<TabStatus>('PENDING');
+  const tabId = useRef<string | null>(null);
+  const channel = useRef<BroadcastChannel | null>(null);
 
   const isMfaRequired = !!mfaToken;
   const router = useRouter();
 
+  const handleTakeOver = useCallback(() => {
+    if (tabId.current) {
+      channel.current?.postMessage({ type: 'ACTIVATE_TAB', tabId: tabId.current });
+    }
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    channel.current?.postMessage({ type: 'LOGOUT' });
+    setUser(null);
+    setToken(null);
+    setMfaToken(null);
+    setIsLoading(true);
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    localStorage.removeItem('superuserAuthToken');
+    localStorage.removeItem('superuser');
+    authService.logout();
+    router.push('/login');
+  }, [router]);
+
   useEffect(() => {
+    tabId.current = sessionStorage.getItem('tabId') || `${Date.now()}-${Math.random()}`;
+    sessionStorage.setItem('tabId', tabId.current);
+
+    if ('BroadcastChannel' in window) {
+      channel.current = new BroadcastChannel('app_session');
+
+      const handleMessage = (event: MessageEvent) => {
+        const { type, tabId: newActiveTabId } = event.data;
+        if (type === 'ACTIVATE_TAB') {
+          if (tabId.current !== newActiveTabId) {
+            setTabStatus('INACTIVE');
+          } else {
+            setTabStatus('ACTIVE');
+          }
+        } else if (type === 'LOGOUT') {
+          handleLogout();
+        }
+      };
+
+      channel.current.addEventListener('message', handleMessage);
+
+      // Check for active tab on initial load
+      setTimeout(() => {
+        channel.current?.postMessage({ type: 'ACTIVATE_TAB', tabId: tabId.current });
+      }, 200);
+
+    } else {
+        // Fallback for browsers that don't support BroadcastChannel
+        setTabStatus('ACTIVE');
+    }
+
+    // Initial load of user from storage
     const storedToken = localStorage.getItem('authToken');
     const storedUser = localStorage.getItem('user');
     if (storedToken && storedUser && storedUser !== 'undefined') {
@@ -36,7 +95,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(JSON.parse(storedUser));
     }
     setIsLoading(false);
-  }, []);
+
+    return () => {
+      channel.current?.close();
+    };
+  }, [handleLogout]);
 
   const redirectUser = (user: User) => {
     if (user.role === 'ordinary' && user.rank === 'Ordinary' && user.approvedStatus === 'pending') {
@@ -68,6 +131,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(responseData.user);
       localStorage.setItem('authToken', responseData.token);
       localStorage.setItem('user', JSON.stringify(responseData.user));
+      channel.current?.postMessage({ type: 'ACTIVATE_TAB', tabId: tabId.current });
       redirectUser(responseData.user);
     }
   };
@@ -87,6 +151,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem('authToken', responseData.token);
     localStorage.setItem('user', JSON.stringify(responseData.user));
     setMfaToken(null);
+    channel.current?.postMessage({ type: 'ACTIVATE_TAB', tabId: tabId.current });
     redirectUser(responseData.user);
   };
 
@@ -99,19 +164,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push('/login');
   };
 
-  const handleLogout = useCallback(() => {
-    setUser(null);
-    setToken(null);
-    setMfaToken(null);
-    setIsLoading(true);
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    localStorage.removeItem('superuserAuthToken');
-    localStorage.removeItem('superuser');
-    authService.logout();
-    router.push('/login');
-  }, [router]);
-
   const value = {
     user,
     token,
@@ -123,6 +175,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     verifyMfa: handleVerifyMfa,
     cancelMfa: handleCancelMfa,
   };
+
+  if (isLoading || tabStatus === 'PENDING') {
+    return <LoadingOverlay />;
+  }
+
+  if (tabStatus === 'INACTIVE' && token) {
+    return <InactiveTab onTakeOver={handleTakeOver} />;
+  }
 
   return (
     <AuthContext.Provider value={value}>
