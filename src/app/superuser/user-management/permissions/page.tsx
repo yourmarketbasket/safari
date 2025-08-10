@@ -14,7 +14,7 @@ import PermissionModal from "@/app/components/PermissionModal";
 import { Chip } from "@/app/components/Chip";
 import SummaryCard from "@/app/components/SummaryCard";
 
-const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "superuser"];
+const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "superuser", "ordinary"];
 
 const roleDisplayConfig: Record<UserRole, { icon: React.ElementType, color: string }> = {
     sacco: { icon: FiTruck, color: 'blue' },
@@ -25,6 +25,7 @@ const roleDisplayConfig: Record<UserRole, { icon: React.ElementType, color: stri
     support_staff: { icon: FiHelpCircle, color: 'pink' },
     queue_manager: { icon: FiList, color: 'teal' },
     superuser: { icon: FiShield, color: 'red' },
+    ordinary: { icon: FiUser, color: 'gray' },
 };
 
 const PermissionsPage: NextPage = () => {

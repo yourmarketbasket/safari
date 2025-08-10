@@ -5,6 +5,9 @@ import authService, { LoginCredentials, SignupData, VerifyMfaData } from '../ser
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
 import InactiveTab from '../components/InactiveTab';
+import LoadingOverlay from '../components/LoadingOverlay';
+
+type TabStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE';
 
 interface AuthContextType {
   user: User | null;
@@ -25,7 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [mfaToken, setMfaToken] = useState<string | null>(null);
-  const [isTabActive, setIsTabActive] = useState(true); // Assume active at first
+  const [tabStatus, setTabStatus] = useState<TabStatus>('PENDING');
   const tabId = useRef<string | null>(null);
 
   const isMfaRequired = !!mfaToken;
@@ -34,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const handleTakeOver = useCallback(() => {
     if (tabId.current) {
       localStorage.setItem('activeTabId', tabId.current);
-      setIsTabActive(true);
+      setTabStatus('ACTIVE');
     }
   }, []);
 
@@ -65,9 +68,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const activeTabId = localStorage.getItem('activeTabId');
       if (!activeTabId) {
         localStorage.setItem('activeTabId', tabId.current!);
-        setIsTabActive(true);
+        setTabStatus('ACTIVE');
       } else {
-        setIsTabActive(activeTabId === tabId.current);
+        setTabStatus(activeTabId === tabId.current ? 'ACTIVE' : 'INACTIVE');
       }
     };
 
@@ -75,7 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'activeTabId') {
-        setIsTabActive(event.newValue === tabId.current);
+        setTabStatus(event.newValue === tabId.current ? 'ACTIVE' : 'INACTIVE');
       }
       if (event.key === 'logout-event') {
         handleLogout();
@@ -108,8 +111,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  const redirectUser = (role: string) => {
-    switch (role) {
+  const redirectUser = (user: User) => {
+    if (user.role === 'ordinary' && user.rank === 'Ordinary' && user.approvedStatus === 'pending') {
+      router.push('/pending-approval');
+      return;
+    }
+
+    switch (user.role) {
       case 'admin': router.push('/admin'); break;
       case 'sacco': router.push('/sacco'); break;
       case 'owner': router.push('/owner'); break;
@@ -137,8 +145,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem('activeTabId', tabId.current);
       }
       localStorage.setItem('logout-event', Date.now().toString());
-      setIsTabActive(true);
-      redirectUser(responseData.user.role);
+      setTabStatus('ACTIVE');
+      redirectUser(responseData.user);
     }
   };
 
@@ -157,7 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem('authToken', responseData.token);
     localStorage.setItem('user', JSON.stringify(responseData.user));
     setMfaToken(null);
-    redirectUser(responseData.user.role);
+    redirectUser(responseData.user);
   };
 
   const handleCancelMfa = () => {
@@ -181,7 +189,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     cancelMfa: handleCancelMfa,
   };
 
-  if (!isTabActive && token) {
+  if (tabStatus === 'PENDING') {
+    return <LoadingOverlay />;
+  }
+
+  if (tabStatus === 'INACTIVE' && token) {
     return <InactiveTab onTakeOver={handleTakeOver} />;
   }
 

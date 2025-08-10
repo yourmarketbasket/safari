@@ -5,6 +5,9 @@ import superuserService, { LoginCredentials } from '../services/superuser.servic
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
 import InactiveTab from '../components/InactiveTab';
+import LoadingOverlay from '../components/LoadingOverlay';
+
+type TabStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE';
 
 interface SuperuserAuthContextType {
   user: User | null;
@@ -20,14 +23,14 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [isTabActive, setIsTabActive] = useState(true); // Assume active at first
+  const [tabStatus, setTabStatus] = useState<TabStatus>('PENDING');
   const tabId = useRef<string | null>(null);
   const router = useRouter();
 
   const handleTakeOver = useCallback(() => {
     if (tabId.current) {
       localStorage.setItem('activeTabId', tabId.current);
-      setIsTabActive(true);
+      setTabStatus('ACTIVE');
     }
   }, []);
 
@@ -56,9 +59,9 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
       const activeTabId = localStorage.getItem('activeTabId');
       if (!activeTabId) {
         localStorage.setItem('activeTabId', tabId.current!);
-        setIsTabActive(true);
+        setTabStatus('ACTIVE');
       } else {
-        setIsTabActive(activeTabId === tabId.current);
+        setTabStatus(activeTabId === tabId.current ? 'ACTIVE' : 'INACTIVE');
       }
     };
 
@@ -66,7 +69,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
 
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'activeTabId') {
-        setIsTabActive(event.newValue === tabId.current);
+        setTabStatus(event.newValue === tabId.current ? 'ACTIVE' : 'INACTIVE');
       }
       if (event.key === 'logout-event') {
         handleLogout();
@@ -116,7 +119,7 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
           localStorage.setItem('activeTabId', tabId.current);
         }
         localStorage.setItem('logout-event', Date.now().toString());
-        setIsTabActive(true);
+        setTabStatus('ACTIVE');
         window.location.href = '/superuser/dashboard';
     }
   };
@@ -129,7 +132,11 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
     logout: handleLogout,
   };
 
-  if (!isTabActive && token) {
+  if (tabStatus === 'PENDING') {
+    return <LoadingOverlay />;
+  }
+
+  if (tabStatus === 'INACTIVE' && token) {
     return <InactiveTab onTakeOver={handleTakeOver} />;
   }
 
