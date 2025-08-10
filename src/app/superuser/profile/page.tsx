@@ -28,7 +28,7 @@ export default function SuperuserProfilePage() {
     setIsEditing(false);
   };
 
-  const handleFileChange = (file: File) => {
+  const handleFileChange = (file: File | null) => {
     setAvatar(file);
   };
 
@@ -39,7 +39,7 @@ export default function SuperuserProfilePage() {
           {isEditing ? (
             <form onSubmit={handleUpdate} className="space-y-6">
               <div className="flex justify-center mb-6">
-                <FileUpload onFileChange={handleFileChange} />
+                <FileUpload onFileSelect={handleFileChange} />
               </div>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>

@@ -15,6 +15,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: '/signup',
+        destination: '/signup/role-selection',
+        permanent: true,
+      },
+    ]
+  },
 };
 
 export default nextConfig;

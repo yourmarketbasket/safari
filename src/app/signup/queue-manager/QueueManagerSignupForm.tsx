@@ -246,7 +246,7 @@ export default function QueueManagerSignUpForm() {
         )}
         <div className="mt-8 flex justify-between">
           {currentStep > 1 && currentStep < 5 && (
-            <Button onClick={handleBack} variant="outline">Back</Button>
+            <Button onClick={handleBack} variant="secondary">Back</Button>
           )}
           {currentStep < 4 && (
             <Button onClick={handleNext}>Next</Button>
