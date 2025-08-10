@@ -34,3 +34,40 @@ body {
     @apply border-gray-400 text-black placeholder-gray-600;
   }
 }
+
+@keyframes pulse-blue {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+  50% { box-shadow: 0 0 0 20px rgba(59, 130, 246, 0); }
+}
+
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  50% { box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
+}
+
+@keyframes pulse-purple {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+  50% { box-shadow: 0 0 0 20px rgba(139, 92, 246, 0); }
+}
+
+@keyframes pulse-pink {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
+  50% { box-shadow: 0 0 0 20px rgba(236, 72, 153, 0); }
+}
+
+@keyframes pulse-yellow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+  50% { box-shadow: 0 0 0 20px rgba(245, 158, 11, 0); }
+}
+
+@keyframes pulse-teal {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7); }
+  50% { box-shadow: 0 0 0 20px rgba(20, 184, 166, 0); }
+}
+
+.animate-pulse-blue { animation: pulse-blue 2s infinite; }
+.animate-pulse-green { animation: pulse-green 2s infinite; }
+.animate-pulse-purple { animation: pulse-purple 2s infinite; }
+.animate-pulse-pink { animation: pulse-pink 2s infinite; }
+.animate-pulse-yellow { animation: pulse-yellow 2s infinite; }
+.animate-pulse-teal { animation: pulse-teal 2s infinite; }
