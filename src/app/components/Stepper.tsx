@@ -1,41 +1,60 @@
 import React from 'react';
+import { IconType } from 'react-icons';
 
-interface StepperProps {
-  currentStep: number;
-  totalSteps: number;
-  stepLabels: string[];
+export type StepStatus = 'complete' | 'current' | 'upcoming';
+
+interface Step {
+  status: StepStatus;
+  icon: IconType;
+  label: string;
 }
 
-const Stepper: React.FC<StepperProps> = ({ currentStep, totalSteps, stepLabels }) => {
+interface StepperProps {
+  steps: Step[];
+}
+
+const Stepper: React.FC<StepperProps> = ({ steps }) => {
   return (
     <div className="w-full py-4">
-      <div className="flex items-center justify-between">
-        {Array.from({ length: totalSteps }, (_, index) => {
-          const step = index + 1;
-          const isCompleted = step < currentStep;
-          const isActive = step === currentStep;
-
-          return (
-            <React.Fragment key={step}>
-              <div className="flex flex-col items-center">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white ${
-                    isCompleted ? 'bg-green-500' : isActive ? 'bg-indigo-600' : 'bg-gray-300'
-                  }`}
-                >
-                  {isCompleted ? '✔' : step}
-                </div>
-                <p className={`mt-2 text-sm text-center ${isActive ? 'text-indigo-600 font-bold' : 'text-gray-500'}`}>
-                  {stepLabels[index]}
-                </p>
-              </div>
-              {step < totalSteps && (
-                <div className={`flex-1 h-1 ${isCompleted ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+      <nav aria-label="Progress">
+        <ol role="list" className="flex items-center">
+          {steps.map((step, stepIdx) => (
+            <li key={step.label} className={`relative ${stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : ''}`}>
+              {step.status === 'complete' ? (
+                <>
+                  <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div className="h-0.5 w-full bg-indigo-600" />
+                  </div>
+                  <div className="relative w-4 h-4 flex items-center justify-center bg-indigo-600 rounded-full">
+                    <step.icon className="w-2 h-2 text-white" aria-hidden="true" />
+                  </div>
+                  <p className="mt-2 text-sm text-center text-indigo-600 font-bold">{step.label}</p>
+                </>
+              ) : step.status === 'current' ? (
+                <>
+                  <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div className="h-0.5 w-full bg-gray-200" />
+                  </div>
+                  <div className="relative w-4 h-4 flex items-center justify-center bg-white border-2 border-indigo-600 rounded-full">
+                    <step.icon className="w-2 h-2 text-indigo-600" aria-hidden="true" />
+                  </div>
+                  <p className="mt-2 text-sm text-center text-indigo-600 font-bold">{step.label}</p>
+                </>
+              ) : (
+                <>
+                  <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div className="h-0.5 w-full bg-gray-200" />
+                  </div>
+                  <div className="relative w-4 h-4 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full">
+                    <step.icon className="w-2 h-2 text-gray-400" aria-hidden="true" />
+                  </div>
+                  <p className="mt-2 text-sm text-center text-gray-500">{step.label}</p>
+                </>
               )}
-            </React.Fragment>
-          );
-        })}
-      </div>
+            </li>
+          ))}
+        </ol>
+      </nav>
     </div>
   );
 };

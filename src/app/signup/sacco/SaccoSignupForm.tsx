@@ -8,11 +8,12 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
+import { FiBriefcase, FiMapPin, FiFileText, FiCreditCard, FiMail, FiLock, FiCheck } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-const stepLabels = ["SACCO Details", "Address", "Documents", "Payment", "Verify Email", "Password", "Done"];
+type StepStatus = 'complete' | 'current' | 'upcoming';
 
 export default function SaccoSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -157,9 +158,25 @@ export default function SaccoSignUpForm() {
   const inputClasses = "block w-full px-4 py-3 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
   const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
 
+  const getStepStatus = (step: number): StepStatus => {
+    if (currentStep === step) return 'current';
+    if (currentStep > step) return 'complete';
+    return 'upcoming';
+  };
+
+  const steps = [
+    { status: getStepStatus(1), icon: FiBriefcase, label: 'SACCO Details' },
+    { status: getStepStatus(2), icon: FiMapPin, label: 'Address' },
+    { status: getStepStatus(3), icon: FiFileText, label: 'Documents' },
+    { status: getStepStatus(4), icon: FiCreditCard, label: 'Payment' },
+    { status: getStepStatus(5), icon: FiMail, label: 'Verify Email' },
+    { status: getStepStatus(6), icon: FiLock, label: 'Password' },
+    { status: getStepStatus(7), icon: FiCheck, label: 'Done' },
+  ];
+
   return (
     <div>
-      <Stepper currentStep={currentStep} totalSteps={7} stepLabels={stepLabels}/>
+      <Stepper steps={steps}/>
       <div className="my-4">
         {error && <Message message={error} type="error" />}
         {otpError && <Message message={otpError} type="error" />}
