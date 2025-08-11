@@ -39,7 +39,35 @@ export interface User {
   dob?: string;
   gender?: string;
   deviceDetails?: string;
+
+  // Driver fields
+  idNumber?: string;
+  idFrontPhotoUrl?: string;
+  idBackPhotoUrl?: string;
+  licenseNumber?: string;
+  licenseExpiry?: string;
+  licenseIssueDate?: string;
+  licenseClass?: string;
+  endorsements?: string;
   drivingLicenseUrl?: string;
-  saccoLicenseUrl?: string;
+
+  // Passenger fields
+  profilePhotoUrl?: string;
+
+  // SACCO fields
+  registrationCertificateUrl?: string;
+  formalIntentRequestUrl?: string;
+  byLawsUrl?: string;
+  leadershipInfoUrl?: string;
+  proofOfPaymentUrl?: string;
   saccoRegistrationNumber?: string;
+
+  // Queue Manager fields
+  nationalIdUrl?: string;
+  medicalCertificateUrl?: string;
+
+  // Owner fields
+  kraPinCertificateUrl?: string;
+  certificateOfIncorporationUrl?: string;
+  saccoAffiliation?: string;
 }

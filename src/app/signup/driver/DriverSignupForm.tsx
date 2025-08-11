@@ -12,7 +12,7 @@ import FileUpload from '@/app/components/FileUpload';
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-const stepLabels = ["Personal Info", "Contact", "Details", "License", "Verify Email", "Password", "Done"];
+const stepLabels = ["Personal Info", "Identification", "Contact", "License Details", "License Upload", "Verify Email", "Password", "Done"];
 
 export default function DriverSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -23,6 +23,14 @@ export default function DriverSignUpForm() {
     address: string;
     dob: string;
     gender: string;
+    idNumber: string;
+    idFrontPhoto: File | null;
+    idBackPhoto: File | null;
+    licenseNumber: string;
+    licenseExpiry: string;
+    licenseIssueDate: string;
+    licenseClass: string;
+    endorsements: string;
     drivingLicense: File | null;
     password: string;
     confirmPassword: string;
@@ -35,6 +43,14 @@ export default function DriverSignUpForm() {
     address: '',
     dob: '',
     gender: '',
+    idNumber: '',
+    idFrontPhoto: null,
+    idBackPhoto: null,
+    licenseNumber: '',
+    licenseExpiry: '',
+    licenseIssueDate: '',
+    licenseClass: '',
+    endorsements: '',
     drivingLicense: null,
     password: '',
     confirmPassword: '',
@@ -64,12 +80,46 @@ export default function DriverSignUpForm() {
     }
   };
 
-  const handleFileChange = (file: File | null) => {
-    setFormData(prev => ({ ...prev, drivingLicense: file }));
+  const handleFileChange = (name: string) => (file: File | null) => {
+    setFormData(prev => ({ ...prev, [name]: file }));
   };
 
   const handleNext = () => {
     setError('');
+    if (currentStep === 1) {
+        if (!formData.dob) {
+            setError('Please enter your date of birth.');
+            return;
+        }
+        const today = new Date();
+        const birthDate = new Date(formData.dob);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age < 24) {
+            setError('You must be at least 24 years old to register as a driver.');
+            return;
+        }
+    }
+    if (currentStep === 4) {
+        if (!formData.licenseIssueDate) {
+            setError('Please enter your license issue date.');
+            return;
+        }
+        const today = new Date();
+        const issueDate = new Date(formData.licenseIssueDate);
+        let yearsHeld = today.getFullYear() - issueDate.getFullYear();
+        const m = today.getMonth() - issueDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < issueDate.getDate())) {
+            yearsHeld--;
+        }
+        if (yearsHeld < 4) {
+            setError('You must have held your driving license for at least 4 years.');
+            return;
+        }
+    }
     setCurrentStep(prev => prev + 1);
   };
 
@@ -153,7 +203,7 @@ export default function DriverSignUpForm() {
 
   return (
     <div>
-      <Stepper currentStep={currentStep} totalSteps={7} stepLabels={stepLabels}/>
+      <Stepper currentStep={currentStep} totalSteps={8} stepLabels={stepLabels}/>
       <div className="my-4">
         {error && <Message message={error} type="error" />}
         {otpError && <Message message={otpError} type="error" />}
@@ -167,13 +217,42 @@ export default function DriverSignUpForm() {
                 <label htmlFor="name" className={labelClasses}>Full Name</label>
             </div>
             <div className="relative">
-                <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                <label htmlFor="email" className={labelClasses}>Email Address</label>
+                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
+            </div>
+            <div className="relative">
+                <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                <label htmlFor="gender" className={labelClasses}>Gender</label>
             </div>
           </div>
         )}
         {currentStep === 2 && (
             <div className="space-y-6">
+                <div className="relative">
+                    <input id="idNumber" name="idNumber" type="text" required value={formData.idNumber} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="idNumber" className={labelClasses}>ID Number</label>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Front Photo</label>
+                    <FileUpload onFileSelect={handleFileChange('idFrontPhoto')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Back Photo</label>
+                    <FileUpload onFileSelect={handleFileChange('idBackPhoto')} />
+                </div>
+            </div>
+        )}
+        {currentStep === 3 && (
+            <div className="space-y-6">
+                <div className="relative">
+                    <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="email" className={labelClasses}>Email Address</label>
+                </div>
                 <div className="relative">
                     <input id="phone" name="phone" type="tel" required value={formData.phone} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="phone" className={labelClasses}>Phone Number</label>
@@ -184,29 +263,37 @@ export default function DriverSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 3 && (
-            <div className="space-y-6">
-                <div className="relative">
-                    <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
-                </div>
-                <div className="relative">
-                    <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <label htmlFor="gender" className={labelClasses}>Gender</label>
-                </div>
-            </div>
-        )}
         {currentStep === 4 && (
             <div className="space-y-6">
-                <FileUpload onFileSelect={handleFileChange} />
+                <div className="relative">
+                    <input id="licenseNumber" name="licenseNumber" type="text" required value={formData.licenseNumber} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="licenseNumber" className={labelClasses}>License Number</label>
+                </div>
+                <div className="relative">
+                    <input id="licenseClass" name="licenseClass" type="text" required value={formData.licenseClass} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="licenseClass" className={labelClasses}>License Class</label>
+                </div>
+                <div className="relative">
+                    <input id="licenseIssueDate" name="licenseIssueDate" type="date" required value={formData.licenseIssueDate} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="licenseIssueDate" className={labelClasses}>License Issue Date</label>
+                </div>
+                <div className="relative">
+                    <input id="licenseExpiry" name="licenseExpiry" type="date" required value={formData.licenseExpiry} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="licenseExpiry" className={labelClasses}>License Expiry Date</label>
+                </div>
+                <div className="relative">
+                    <input id="endorsements" name="endorsements" type="text" required value={formData.endorsements} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="endorsements" className={labelClasses}>Endorsements</label>
+                </div>
             </div>
         )}
         {currentStep === 5 && (
+            <div className="space-y-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Driving License Scan</label>
+                <FileUpload onFileSelect={handleFileChange('drivingLicense')} />
+            </div>
+        )}
+        {currentStep === 6 && (
           <div className="text-center">
             <p className="text-gray-700 mb-4">An OTP will be sent to {formData.email}.</p>
             {!isOtpSent ? (
@@ -223,7 +310,7 @@ export default function DriverSignUpForm() {
             )}
           </div>
         )}
-        {currentStep === 6 && (
+        {currentStep === 7 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -235,7 +322,7 @@ export default function DriverSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 7 && (
+        {currentStep === 8 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Review Your Details</h2>
             <div className="text-left mt-4 bg-gray-50 p-4 rounded-lg">
@@ -245,7 +332,15 @@ export default function DriverSignUpForm() {
               <p><strong>Address:</strong> {formData.address}</p>
               <p><strong>Date of Birth:</strong> {formData.dob}</p>
               <p><strong>Gender:</strong> {formData.gender}</p>
-              <p><strong>Driving License:</strong> {formData.drivingLicense ? (formData.drivingLicense as File).name : 'Not uploaded'}</p>
+              <p><strong>ID Number:</strong> {formData.idNumber}</p>
+              <p><strong>ID Front Photo:</strong> {formData.idFrontPhoto ? formData.idFrontPhoto.name : 'Not uploaded'}</p>
+              <p><strong>ID Back Photo:</strong> {formData.idBackPhoto ? formData.idBackPhoto.name : 'Not uploaded'}</p>
+              <p><strong>License Number:</strong> {formData.licenseNumber}</p>
+              <p><strong>License Class:</strong> {formData.licenseClass}</p>
+              <p><strong>License Issue Date:</strong> {formData.licenseIssueDate}</p>
+              <p><strong>License Expiry Date:</strong> {formData.licenseExpiry}</p>
+              <p><strong>Endorsements:</strong> {formData.endorsements}</p>
+              <p><strong>Driving License:</strong> {formData.drivingLicense ? formData.drivingLicense.name : 'Not uploaded'}</p>
             </div>
             <div className="flex items-center mt-4">
                 <input id="terms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
@@ -257,10 +352,10 @@ export default function DriverSignUpForm() {
           </div>
         )}
         <div className="mt-8 flex justify-between">
-          {currentStep > 1 && currentStep < 6 && (
+          {currentStep > 1 && currentStep < 7 && (
             <Button onClick={handleBack} variant="secondary">Back</Button>
           )}
-          {currentStep < 5 && (
+          {currentStep < 6 && (
             <Button onClick={handleNext}>Next</Button>
           )}
         </div>

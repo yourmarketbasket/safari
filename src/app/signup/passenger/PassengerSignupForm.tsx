@@ -7,11 +7,12 @@ import Message from '@/app/components/Message';
 import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
+import FileUpload from '@/app/components/FileUpload';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-const stepLabels = ["Personal Info", "Contact", "Details", "Verify Email", "Password", "Done"];
+const stepLabels = ["Personal Info", "Contact", "Details", "Profile Photo", "Verify Email", "Password", "Done"];
 
 export default function PassengerSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -22,6 +23,7 @@ export default function PassengerSignUpForm() {
     address: '',
     dob: '',
     gender: '',
+    profilePhoto: null as File | null,
     password: '',
     confirmPassword: '',
     agreedToTerms: false,
@@ -50,6 +52,10 @@ export default function PassengerSignUpForm() {
     }
   };
 
+  const handleFileChange = (file: File | null) => {
+    setFormData(prev => ({ ...prev, profilePhoto: file }));
+  };
+
   const handleNext = () => {
     if (currentStep === 1 && (!formData.name || !formData.email)) {
       setError('Please fill in your name and email.');
@@ -59,9 +65,22 @@ export default function PassengerSignUpForm() {
         setError('Please fill in your phone and address.');
         return;
     }
-    if (currentStep === 3 && (!formData.dob || !formData.gender)) {
-        setError('Please fill in your date of birth and gender.');
-        return;
+    if (currentStep === 3) {
+        if (!formData.dob || !formData.gender) {
+            setError('Please fill in your date of birth and gender.');
+            return;
+        }
+        const today = new Date();
+        const birthDate = new Date(formData.dob);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age < 18) {
+            setError('You must be at least 18 years old to register.');
+            return;
+        }
     }
     setError('');
     setCurrentStep(prev => prev + 1);
@@ -147,7 +166,7 @@ export default function PassengerSignUpForm() {
 
   return (
     <div>
-      <Stepper currentStep={currentStep} totalSteps={6} stepLabels={stepLabels}/>
+      <Stepper currentStep={currentStep} totalSteps={7} stepLabels={stepLabels}/>
       <div className="my-4">
         {error && <Message message={error} type="error" />}
         {otpError && <Message message={otpError} type="error" />}
@@ -196,6 +215,12 @@ export default function PassengerSignUpForm() {
             </div>
         )}
         {currentStep === 4 && (
+            <div className="space-y-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Profile Photo (Optional)</label>
+                <FileUpload onFileSelect={handleFileChange} />
+            </div>
+        )}
+        {currentStep === 5 && (
           <div className="text-center">
             <p className="text-gray-700 mb-4">An OTP will be sent to {formData.email}.</p>
             {!isOtpSent ? (
@@ -212,7 +237,7 @@ export default function PassengerSignUpForm() {
             )}
           </div>
         )}
-        {currentStep === 5 && (
+        {currentStep === 6 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -224,7 +249,7 @@ export default function PassengerSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 6 && (
+        {currentStep === 7 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Review Your Details</h2>
             <div className="text-left mt-4 bg-gray-50 p-4 rounded-lg">
@@ -234,6 +259,7 @@ export default function PassengerSignUpForm() {
               <p><strong>Address:</strong> {formData.address}</p>
               <p><strong>Date of Birth:</strong> {formData.dob}</p>
               <p><strong>Gender:</strong> {formData.gender}</p>
+              <p><strong>Profile Photo:</strong> {formData.profilePhoto ? formData.profilePhoto.name : 'Not uploaded'}</p>
             </div>
             <div className="flex items-center mt-4">
                 <input id="terms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
@@ -245,10 +271,10 @@ export default function PassengerSignUpForm() {
           </div>
         )}
         <div className="mt-8 flex justify-between">
-          {currentStep > 1 && currentStep < 5 && (
+          {currentStep > 1 && currentStep < 6 && (
             <Button onClick={handleBack} variant="secondary">Back</Button>
           )}
-          {currentStep < 4 && (
+          {currentStep < 5 && (
             <Button onClick={handleNext}>Next</Button>
           )}
         </div>

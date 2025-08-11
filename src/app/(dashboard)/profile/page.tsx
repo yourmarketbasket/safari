@@ -6,7 +6,7 @@ import PrivateRoute from '@/app/components/PrivateRoute';
 import { usePageTitleStore } from '@/app/store/pageTitle.store';
 import FileUpload from '@/app/components/FileUpload';
 import { FaUserCircle } from 'react-icons/fa';
-import { FiEdit, FiSave, FiX, FiMessageSquare, FiCreditCard, FiPlus, FiGift } from 'react-icons/fi';
+import { FiEdit, FiSave, FiX, FiMessageSquare, FiCreditCard, FiPlus, FiGift, FiFileText, FiList } from 'react-icons/fi';
 import Image from 'next/image';
 import { Ticket } from '@/app/models/Ticket.model';
 import { Chip } from '@/app/components/Chip';
@@ -70,8 +70,91 @@ export default function ProfilePage() {
 
   const totalPages = Math.ceil(mockTicketsData.length / itemsPerPage);
 
+  const renderRoleSpecificDetails = () => {
+    if (!user) return null;
+
+    switch (user.role) {
+      case 'driver':
+        return (
+          <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+            <h3 className="font-bold text-lg text-gray-900 mb-4">Driver Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <p><strong>ID Number:</strong> {user.idNumber || 'N/A'}</p>
+              <p><strong>License Number:</strong> {user.licenseNumber || 'N/A'}</p>
+              <p><strong>License Class:</strong> {user.licenseClass || 'N/A'}</p>
+              <p><strong>License Expiry:</strong> {user.licenseExpiry || 'N/A'}</p>
+              <p><strong>Endorsements:</strong> {user.endorsements || 'N/A'}</p>
+            </div>
+            <h4 className="font-semibold text-md text-gray-800 mt-6 mb-2">Documents</h4>
+            <div className="flex flex-wrap gap-4">
+              <Button variant="secondary"><FiFileText className="mr-2" /> ID Front</Button>
+              <Button variant="secondary"><FiFileText className="mr-2" /> ID Back</Button>
+              <Button variant="secondary"><FiFileText className="mr-2" /> Driving License</Button>
+            </div>
+          </div>
+        );
+      case 'sacco':
+        return (
+          <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+            <h3 className="font-bold text-lg text-gray-900 mb-4">SACCO Details</h3>
+            <p><strong>Registration Number:</strong> {user.saccoRegistrationNumber || 'N/A'}</p>
+            <h4 className="font-semibold text-md text-gray-800 mt-6 mb-2">Documents</h4>
+            <div className="flex flex-wrap gap-4">
+              <Button variant="secondary"><FiFileText className="mr-2" /> Registration Certificate</Button>
+              <Button variant="secondary"><FiFileText className="mr-2" /> Formal Intent Request</Button>
+              <Button variant="secondary"><FiFileText className="mr-2" /> By-Laws</Button>
+              <Button variant="secondary"><FiFileText className="mr-2" /> Leadership Info</Button>
+              <Button variant="secondary"><FiFileText className="mr-2" /> Proof of Payment</Button>
+            </div>
+          </div>
+        );
+      case 'queue_manager':
+        return (
+          <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+            <h3 className="font-bold text-lg text-gray-900 mb-4">Queue Manager Details</h3>
+            <h4 className="font-semibold text-md text-gray-800 mt-6 mb-2">Documents</h4>
+            <div className="flex flex-wrap gap-4">
+                <Button variant="secondary"><FiFileText className="mr-2" /> National ID</Button>
+                <Button variant="secondary"><FiFileText className="mr-2" /> Medical Certificate</Button>
+                <Button variant="secondary"><FiFileText className="mr-2" /> Driving License</Button>
+            </div>
+          </div>
+        );
+      case 'owner':
+        return (
+          <>
+            <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+              <h3 className="font-bold text-lg text-gray-900 mb-4">Owner Details</h3>
+              <p><strong>SACCO Affiliation:</strong> {user.saccoAffiliation || 'N/A'}</p>
+              <h4 className="font-semibold text-md text-gray-800 mt-6 mb-2">Documents</h4>
+              <div className="flex flex-wrap gap-4">
+                <Button variant="secondary"><FiFileText className="mr-2" /> National ID</Button>
+                <Button variant="secondary"><FiFileText className="mr-2" /> KRA PIN Certificate</Button>
+                <Button variant="secondary"><FiFileText className="mr-2" /> Certificate of Incorporation</Button>
+              </div>
+            </div>
+            <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+              <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-lg text-gray-900">My Vehicles</h3>
+                  <Button>
+                      <FiPlus className="mr-1"/>
+                      Add Vehicle
+                  </Button>
+              </div>
+              <div className="text-center text-gray-500">
+                <FiList className="w-12 h-12 mx-auto mb-2" />
+                <p>No vehicles added yet.</p>
+              </div>
+            </div>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice', 'queue_manager']}>
+    <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice', 'queue_manager', 'driver']}>
       <div className="container mx-auto">
         <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
@@ -120,8 +203,8 @@ export default function ProfilePage() {
                     </form>
                     ) : (
                     <div className="text-center">
-                        {user.avatar ? (
-                            <Image src={user.avatar} alt="Avatar" width={100} height={100} className="rounded-full mx-auto" />
+                        {user.avatar || user.profilePhotoUrl ? (
+                            <Image src={user.avatar || user.profilePhotoUrl} alt="Avatar" width={100} height={100} className="rounded-full mx-auto" />
                         ) : (
                         <FaUserCircle className="w-24 h-24 text-gray-300 mx-auto" />
                         )}
@@ -141,59 +224,67 @@ export default function ProfilePage() {
                     )
                 )}
             </div>
-            <div className="flex-1">
-                <SummaryCard
-                    icon={FiGift}
-                    title="Loyalty Points"
-                    value={mockLoyalty.points}
-                    color="purple"
-                />
-            </div>
-            <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-lg text-gray-900">Payment Methods</h3>
-                    <Button variant="link">
-                        <FiPlus className="mr-1"/>
-                        Add Method
-                    </Button>
+            {user?.role === 'passenger' && (
+              <>
+                <div className="flex-1">
+                    <SummaryCard
+                        icon={FiGift}
+                        title="Loyalty Points"
+                        value={mockLoyalty.points}
+                        color="purple"
+                    />
                 </div>
-                <div className="space-y-3">
-                {mockPaymentMethods.map((method) => (
-                    <div key={method._id} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <div className="flex items-center">
-                            <FiCreditCard className="w-6 h-6 text-gray-400 mr-4"/>
-                            <div>
-                                <p className="text-gray-800 font-semibold">{method.type}</p>
-                                <p className="text-sm text-gray-500">**** **** **** {method.last4}</p>
-                            </div>
-                        </div>
-                        {method.isDefault && <span className="text-xs font-semibold text-green-800 bg-green-100 px-3 py-1 rounded-full">Default</span>}
+                <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-bold text-lg text-gray-900">Payment Methods</h3>
+                        <Button variant="link">
+                            <FiPlus className="mr-1"/>
+                            Add Method
+                        </Button>
                     </div>
-                ))}
+                    <div className="space-y-3">
+                    {mockPaymentMethods.map((method) => (
+                        <div key={method._id} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <div className="flex items-center">
+                                <FiCreditCard className="w-6 h-6 text-gray-400 mr-4"/>
+                                <div>
+                                    <p className="text-gray-800 font-semibold">{method.type}</p>
+                                    <p className="text-sm text-gray-500">**** **** **** {method.last4}</p>
+                                </div>
+                            </div>
+                            {method.isDefault && <span className="text-xs font-semibold text-green-800 bg-green-100 px-3 py-1 rounded-full">Default</span>}
+                        </div>
+                    ))}
+                    </div>
                 </div>
-            </div>
+              </>
+            )}
         </div>
 
+        {renderRoleSpecificDetails()}
+
         {/* My Tickets Table */}
-        <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">My Tickets</h2>
-          <DataTable
-            columns={ticketColumns}
-            data={mockTicketsData}
-            filterColumn="status"
-            currentPage={currentPage}
-            itemsPerPage={itemsPerPage}
-            onPageChange={setCurrentPage}
-            onItemsPerPageChange={setItemsPerPage}
-          />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-            itemsPerPage={itemsPerPage}
-            onItemsPerPageChange={setItemsPerPage}
-          />
-        </div>
+        {user?.role === 'passenger' && (
+          <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">My Tickets</h2>
+            <DataTable
+              columns={ticketColumns}
+              data={mockTicketsData}
+              filterColumn="status"
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={setItemsPerPage}
+            />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              itemsPerPage={itemsPerPage}
+              onItemsPerPageChange={setItemsPerPage}
+            />
+          </div>
+        )}
 
       </div>
     </PrivateRoute>

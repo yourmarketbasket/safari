@@ -12,7 +12,7 @@ import FileUpload from '@/app/components/FileUpload';
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-const stepLabels = ["Sacco Details", "Contact", "Address", "License", "Verify Email", "Password", "Done"];
+const stepLabels = ["Sacco Details", "Contact", "Address", "Documents", "Verify Email", "Password", "Done"];
 
 export default function SaccoSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -22,7 +22,11 @@ export default function SaccoSignUpForm() {
     email: string;
     phone: string;
     address: string;
-    saccoLicense: File | null;
+    registrationCertificate: File | null;
+    formalIntentRequest: File | null;
+    byLaws: File | null;
+    leadershipInfo: File | null;
+    proofOfPayment: File | null;
     password: string;
     confirmPassword: string;
     agreedToTerms: boolean;
@@ -33,7 +37,11 @@ export default function SaccoSignUpForm() {
     email: '',
     phone: '',
     address: '',
-    saccoLicense: null,
+    registrationCertificate: null,
+    formalIntentRequest: null,
+    byLaws: null,
+    leadershipInfo: null,
+    proofOfPayment: null,
     password: '',
     confirmPassword: '',
     agreedToTerms: false,
@@ -62,8 +70,8 @@ export default function SaccoSignUpForm() {
     }
   };
 
-  const handleFileChange = (file: File | null) => {
-    setFormData(prev => ({ ...prev, saccoLicense: file }));
+  const handleFileChange = (name: string) => (file: File | null) => {
+    setFormData(prev => ({ ...prev, [name]: file }));
   };
 
   const handleNext = () => {
@@ -192,7 +200,26 @@ export default function SaccoSignUpForm() {
         )}
         {currentStep === 4 && (
             <div className="space-y-6">
-                <FileUpload onFileSelect={handleFileChange} />
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Registration Certificate</label>
+                    <FileUpload onFileSelect={handleFileChange('registrationCertificate')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Formal Intent Request</label>
+                    <FileUpload onFileSelect={handleFileChange('formalIntentRequest')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">By-Laws</label>
+                    <FileUpload onFileSelect={handleFileChange('byLaws')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Leadership Information</label>
+                    <FileUpload onFileSelect={handleFileChange('leadershipInfo')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Proof of Payment</label>
+                    <FileUpload onFileSelect={handleFileChange('proofOfPayment')} />
+                </div>
             </div>
         )}
         {currentStep === 5 && (
@@ -233,7 +260,11 @@ export default function SaccoSignUpForm() {
               <p><strong>Email:</strong> {formData.email}</p>
               <p><strong>Phone:</strong> {formData.phone}</p>
               <p><strong>Address:</strong> {formData.address}</p>
-              <p><strong>Sacco License:</strong> {formData.saccoLicense ? (formData.saccoLicense as File).name : 'Not uploaded'}</p>
+              <p><strong>Registration Certificate:</strong> {formData.registrationCertificate ? formData.registrationCertificate.name : 'Not uploaded'}</p>
+              <p><strong>Formal Intent Request:</strong> {formData.formalIntentRequest ? formData.formalIntentRequest.name : 'Not uploaded'}</p>
+              <p><strong>By-Laws:</strong> {formData.byLaws ? formData.byLaws.name : 'Not uploaded'}</p>
+              <p><strong>Leadership Information:</strong> {formData.leadershipInfo ? formData.leadershipInfo.name : 'Not uploaded'}</p>
+              <p><strong>Proof of Payment:</strong> {formData.proofOfPayment ? formData.proofOfPayment.name : 'Not uploaded'}</p>
             </div>
             <div className="flex items-center mt-4">
                 <input id="terms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>

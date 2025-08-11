@@ -7,11 +7,12 @@ import Message from '@/app/components/Message';
 import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
+import FileUpload from '@/app/components/FileUpload';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-const stepLabels = ["Personal Info", "Contact", "Details", "Verify Email", "Password", "Done"];
+const stepLabels = ["Personal Info", "Contact", "Details", "Documents", "Affiliation", "Verify Email", "Password", "Done"];
 
 export default function OwnerSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -22,6 +23,10 @@ export default function OwnerSignUpForm() {
     address: '',
     dob: '',
     gender: '',
+    nationalId: null as File | null,
+    kraPinCertificate: null as File | null,
+    certificateOfIncorporation: null as File | null,
+    saccoAffiliation: '',
     password: '',
     confirmPassword: '',
     agreedToTerms: false,
@@ -48,6 +53,10 @@ export default function OwnerSignUpForm() {
     } else {
         setFormData(prev => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handleFileChange = (name: string) => (file: File | null) => {
+    setFormData(prev => ({ ...prev, [name]: file }));
   };
 
   const handleNext = () => {
@@ -147,7 +156,7 @@ export default function OwnerSignUpForm() {
 
   return (
     <div>
-      <Stepper currentStep={currentStep} totalSteps={6} stepLabels={stepLabels}/>
+      <Stepper currentStep={currentStep} totalSteps={8} stepLabels={stepLabels}/>
       <div className="my-4">
         {error && <Message message={error} type="error" />}
         {otpError && <Message message={otpError} type="error" />}
@@ -196,6 +205,30 @@ export default function OwnerSignUpForm() {
             </div>
         )}
         {currentStep === 4 && (
+            <div className="space-y-6">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">National ID</label>
+                    <FileUpload onFileSelect={handleFileChange('nationalId')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">KRA PIN Certificate</label>
+                    <FileUpload onFileSelect={handleFileChange('kraPinCertificate')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Certificate of Incorporation (Optional)</label>
+                    <FileUpload onFileSelect={handleFileChange('certificateOfIncorporation')} />
+                </div>
+            </div>
+        )}
+        {currentStep === 5 && (
+            <div className="space-y-6">
+                <div className="relative">
+                    <input id="saccoAffiliation" name="saccoAffiliation" type="text" value={formData.saccoAffiliation} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="saccoAffiliation" className={labelClasses}>SACCO Affiliation (Optional)</label>
+                </div>
+            </div>
+        )}
+        {currentStep === 6 && (
           <div className="text-center">
             <p className="text-gray-700 mb-4">An OTP will be sent to {formData.email}.</p>
             {!isOtpSent ? (
@@ -212,7 +245,7 @@ export default function OwnerSignUpForm() {
             )}
           </div>
         )}
-        {currentStep === 5 && (
+        {currentStep === 7 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -224,7 +257,7 @@ export default function OwnerSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 6 && (
+        {currentStep === 8 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Review Your Details</h2>
             <div className="text-left mt-4 bg-gray-50 p-4 rounded-lg">
@@ -234,6 +267,10 @@ export default function OwnerSignUpForm() {
               <p><strong>Address:</strong> {formData.address}</p>
               <p><strong>Date of Birth:</strong> {formData.dob}</p>
               <p><strong>Gender:</strong> {formData.gender}</p>
+              <p><strong>National ID:</strong> {formData.nationalId ? formData.nationalId.name : 'Not uploaded'}</p>
+              <p><strong>KRA PIN Certificate:</strong> {formData.kraPinCertificate ? formData.kraPinCertificate.name : 'Not uploaded'}</p>
+              <p><strong>Certificate of Incorporation:</strong> {formData.certificateOfIncorporation ? formData.certificateOfIncorporation.name : 'Not uploaded'}</p>
+              <p><strong>SACCO Affiliation:</strong> {formData.saccoAffiliation || 'N/A'}</p>
             </div>
             <div className="flex items-center mt-4">
                 <input id="terms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
@@ -245,10 +282,10 @@ export default function OwnerSignUpForm() {
           </div>
         )}
         <div className="mt-8 flex justify-between">
-          {currentStep > 1 && currentStep < 5 && (
+          {currentStep > 1 && currentStep < 7 && (
             <Button onClick={handleBack} variant="secondary">Back</Button>
           )}
-          {currentStep < 4 && (
+          {currentStep < 6 && (
             <Button onClick={handleNext}>Next</Button>
           )}
         </div>
