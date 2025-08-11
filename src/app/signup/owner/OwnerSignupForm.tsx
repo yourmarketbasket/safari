@@ -12,7 +12,7 @@ import FileUpload from '@/app/components/FileUpload';
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-const stepLabels = ["Personal Info", "Contact", "Details", "Documents", "Affiliation", "Verify Email", "Password", "Done"];
+const stepLabels = ["Personal Info", "Contact Info", "Documents", "Affiliation", "Verify Email", "Password", "Done"];
 
 export default function OwnerSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -60,18 +60,6 @@ export default function OwnerSignUpForm() {
   };
 
   const handleNext = () => {
-    if (currentStep === 1 && (!formData.name || !formData.email)) {
-      setError('Please fill in your name and email.');
-      return;
-    }
-    if (currentStep === 2 && (!formData.phone || !formData.address)) {
-        setError('Please fill in your phone and address.');
-        return;
-    }
-    if (currentStep === 3 && (!formData.dob || !formData.gender)) {
-        setError('Please fill in your date of birth and gender.');
-        return;
-    }
     setError('');
     setCurrentStep(prev => prev + 1);
   };
@@ -156,7 +144,7 @@ export default function OwnerSignUpForm() {
 
   return (
     <div>
-      <Stepper currentStep={currentStep} totalSteps={8} stepLabels={stepLabels}/>
+      <Stepper currentStep={currentStep} totalSteps={7} stepLabels={stepLabels}/>
       <div className="my-4">
         {error && <Message message={error} type="error" />}
         {otpError && <Message message={otpError} type="error" />}
@@ -168,6 +156,19 @@ export default function OwnerSignUpForm() {
             <div className="relative">
                 <input id="name" name="name" type="text" required value={formData.name} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="name" className={labelClasses}>Full Name</label>
+            </div>
+            <div className="relative">
+                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
+            </div>
+            <div className="relative">
+                <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                <label htmlFor="gender" className={labelClasses}>Gender</label>
             </div>
             <div className="relative">
                 <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -189,23 +190,6 @@ export default function OwnerSignUpForm() {
         )}
         {currentStep === 3 && (
             <div className="space-y-6">
-                <div className="relative">
-                    <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
-                </div>
-                <div className="relative">
-                    <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
-                        <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <label htmlFor="gender" className={labelClasses}>Gender</label>
-                </div>
-            </div>
-        )}
-        {currentStep === 4 && (
-            <div className="space-y-6">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">National ID</label>
                     <FileUpload onFileSelect={handleFileChange('nationalId')} />
@@ -220,7 +204,7 @@ export default function OwnerSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 5 && (
+        {currentStep === 4 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="saccoAffiliation" name="saccoAffiliation" type="text" value={formData.saccoAffiliation} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -228,7 +212,7 @@ export default function OwnerSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 6 && (
+        {currentStep === 5 && (
           <div className="text-center">
             <p className="text-gray-700 mb-4">An OTP will be sent to {formData.email}.</p>
             {!isOtpSent ? (
@@ -245,7 +229,7 @@ export default function OwnerSignUpForm() {
             )}
           </div>
         )}
-        {currentStep === 7 && (
+        {currentStep === 6 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -257,7 +241,7 @@ export default function OwnerSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 8 && (
+        {currentStep === 7 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Review Your Details</h2>
             <div className="text-left mt-4 bg-gray-50 p-4 rounded-lg">

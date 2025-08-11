@@ -12,7 +12,7 @@ import FileUpload from '@/app/components/FileUpload';
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-const stepLabels = ["Sacco Details", "Contact", "Address", "Documents", "Verify Email", "Password", "Done"];
+const stepLabels = ["SACCO Details", "Address", "Documents", "Payment", "Verify Email", "Password", "Done"];
 
 export default function SaccoSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -176,21 +176,17 @@ export default function SaccoSignUpForm() {
                 <input id="registrationNumber" name="registrationNumber" type="text" required value={formData.registrationNumber} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="registrationNumber" className={labelClasses}>Registration Number</label>
             </div>
+            <div className="relative">
+                <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                <label htmlFor="email" className={labelClasses}>Email Address</label>
+            </div>
+            <div className="relative">
+                <input id="phone" name="phone" type="tel" required value={formData.phone} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                <label htmlFor="phone" className={labelClasses}>Phone Number</label>
+            </div>
           </div>
         )}
         {currentStep === 2 && (
-            <div className="space-y-6">
-                <div className="relative">
-                    <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="email" className={labelClasses}>Email Address</label>
-                </div>
-                <div className="relative">
-                    <input id="phone" name="phone" type="tel" required value={formData.phone} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="phone" className={labelClasses}>Phone Number</label>
-                </div>
-            </div>
-        )}
-        {currentStep === 3 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="address" name="address" type="text" required value={formData.address} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -198,7 +194,7 @@ export default function SaccoSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 4 && (
+        {currentStep === 3 && (
             <div className="space-y-6">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Registration Certificate</label>
@@ -216,6 +212,10 @@ export default function SaccoSignUpForm() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Leadership Information</label>
                     <FileUpload onFileSelect={handleFileChange('leadershipInfo')} />
                 </div>
+            </div>
+        )}
+        {currentStep === 4 && (
+            <div className="space-y-6">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Proof of Payment</label>
                     <FileUpload onFileSelect={handleFileChange('proofOfPayment')} />
@@ -276,10 +276,10 @@ export default function SaccoSignUpForm() {
           </div>
         )}
         <div className="mt-8 flex justify-between">
-          {currentStep > 1 && currentStep < 6 && (
+          {currentStep > 1 && currentStep < 7 && (
             <Button onClick={handleBack} variant="secondary">Back</Button>
           )}
-          {currentStep < 5 && (
+          {currentStep < 6 && (
             <Button onClick={handleNext}>Next</Button>
           )}
         </div>

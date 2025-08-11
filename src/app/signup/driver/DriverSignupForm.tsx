@@ -12,7 +12,7 @@ import FileUpload from '@/app/components/FileUpload';
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-const stepLabels = ["Personal Info", "Identification", "Contact", "License Details", "License Upload", "Verify Email", "Password", "Done"];
+const stepLabels = ["Personal Info", "Contact Info", "License Details", "Documents", "Verify Email", "Password", "Done"];
 
 export default function DriverSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -103,7 +103,7 @@ export default function DriverSignUpForm() {
             return;
         }
     }
-    if (currentStep === 4) {
+    if (currentStep === 3) {
         if (!formData.licenseIssueDate) {
             setError('Please enter your license issue date.');
             return;
@@ -203,7 +203,7 @@ export default function DriverSignUpForm() {
 
   return (
     <div>
-      <Stepper currentStep={currentStep} totalSteps={8} stepLabels={stepLabels}/>
+      <Stepper currentStep={currentStep} totalSteps={7} stepLabels={stepLabels}/>
       <div className="my-4">
         {error && <Message message={error} type="error" />}
         {otpError && <Message message={otpError} type="error" />}
@@ -229,25 +229,13 @@ export default function DriverSignUpForm() {
                 </select>
                 <label htmlFor="gender" className={labelClasses}>Gender</label>
             </div>
+            <div className="relative">
+                <input id="idNumber" name="idNumber" type="text" required value={formData.idNumber} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                <label htmlFor="idNumber" className={labelClasses}>ID Number</label>
+            </div>
           </div>
         )}
         {currentStep === 2 && (
-            <div className="space-y-6">
-                <div className="relative">
-                    <input id="idNumber" name="idNumber" type="text" required value={formData.idNumber} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="idNumber" className={labelClasses}>ID Number</label>
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Front Photo</label>
-                    <FileUpload onFileSelect={handleFileChange('idFrontPhoto')} />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Back Photo</label>
-                    <FileUpload onFileSelect={handleFileChange('idBackPhoto')} />
-                </div>
-            </div>
-        )}
-        {currentStep === 3 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -263,7 +251,7 @@ export default function DriverSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 4 && (
+        {currentStep === 3 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="licenseNumber" name="licenseNumber" type="text" required value={formData.licenseNumber} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -281,19 +269,29 @@ export default function DriverSignUpForm() {
                     <input id="licenseExpiry" name="licenseExpiry" type="date" required value={formData.licenseExpiry} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="licenseExpiry" className={labelClasses}>License Expiry Date</label>
                 </div>
-                <div className="relative">
+            </div>
+        )}
+        {currentStep === 4 && (
+            <div className="space-y-6">
+                 <div className="relative">
                     <input id="endorsements" name="endorsements" type="text" required value={formData.endorsements} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="endorsements" className={labelClasses}>Endorsements</label>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Front Photo</label>
+                    <FileUpload onFileSelect={handleFileChange('idFrontPhoto')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Back Photo</label>
+                    <FileUpload onFileSelect={handleFileChange('idBackPhoto')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Driving License Scan</label>
+                    <FileUpload onFileSelect={handleFileChange('drivingLicense')} />
                 </div>
             </div>
         )}
         {currentStep === 5 && (
-            <div className="space-y-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Driving License Scan</label>
-                <FileUpload onFileSelect={handleFileChange('drivingLicense')} />
-            </div>
-        )}
-        {currentStep === 6 && (
           <div className="text-center">
             <p className="text-gray-700 mb-4">An OTP will be sent to {formData.email}.</p>
             {!isOtpSent ? (
@@ -310,7 +308,7 @@ export default function DriverSignUpForm() {
             )}
           </div>
         )}
-        {currentStep === 7 && (
+        {currentStep === 6 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -322,7 +320,7 @@ export default function DriverSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 8 && (
+        {currentStep === 7 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Review Your Details</h2>
             <div className="text-left mt-4 bg-gray-50 p-4 rounded-lg">

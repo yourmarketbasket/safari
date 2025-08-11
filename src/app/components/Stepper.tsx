@@ -30,7 +30,7 @@ const Stepper: React.FC<StepperProps> = ({ currentStep, totalSteps, stepLabels }
                 </p>
               </div>
               {step < totalSteps && (
-                <div className={`flex-1 h-1 mx-2 ${isCompleted ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                <div className={`flex-1 h-1 ${isCompleted ? 'bg-green-500' : 'bg-gray-300'}`}></div>
               )}
             </React.Fragment>
           );
