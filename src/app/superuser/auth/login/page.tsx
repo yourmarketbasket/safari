@@ -100,7 +100,7 @@ function SuperuserLoginPageContent() {
           </form>
           <div className="text-sm text-center text-gray-400">
             Don&apos;t have a superuser account?{' '}
-            <Link href="/superuser/register" title="Superuser Registration" className="font-medium text-cyan-400 hover:text-cyan-300">
+            <Link href="/superuser/auth/register" title="Superuser Registration" className="font-medium text-cyan-400 hover:text-cyan-300">
               Register
             </Link>
           </div>

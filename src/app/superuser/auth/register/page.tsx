@@ -54,7 +54,7 @@ function SuperuserRegisterPageContent() {
         password,
       };
       await superuserService.register(userData, adminKey);
-      router.push('/superuser/login');
+      router.push('/superuser/auth/login');
     } catch (err) {
       setError('Failed to register. Please check the admin key and try again.');
       console.error(err);
@@ -131,7 +131,7 @@ function SuperuserRegisterPageContent() {
           </form>
           <div className="text-sm text-center text-gray-400">
             Already have a superuser account?{' '}
-            <Link href="/superuser/login" title="Superuser Login" className="font-medium text-cyan-400 hover:text-cyan-300">
+            <Link href="/superuser/auth/login" title="Superuser Login" className="font-medium text-cyan-400 hover:text-cyan-300">
               Log in
             </Link>
           </div>
