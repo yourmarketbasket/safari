@@ -19,7 +19,7 @@ const Stepper: React.FC<StepperProps> = ({ steps }) => {
       <nav aria-label="Progress">
         <ol role="list" className="flex items-center">
           {steps.map((step, stepIdx) => (
-            <li key={step.label} className={`relative ${stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : ''}`}>
+            <li key={step.label} className={`relative ${stepIdx !== steps.length - 1 ? 'flex-1' : ''}`}>
               {step.status === 'complete' ? (
                 <>
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
@@ -28,7 +28,6 @@ const Stepper: React.FC<StepperProps> = ({ steps }) => {
                   <div className="relative w-4 h-4 flex items-center justify-center bg-indigo-600 rounded-full">
                     <step.icon className="w-2 h-2 text-white" aria-hidden="true" />
                   </div>
-                  <p className="mt-2 text-sm text-center text-indigo-600 font-bold">{step.label}</p>
                 </>
               ) : step.status === 'current' ? (
                 <>
@@ -38,7 +37,6 @@ const Stepper: React.FC<StepperProps> = ({ steps }) => {
                   <div className="relative w-4 h-4 flex items-center justify-center bg-white border-2 border-indigo-600 rounded-full">
                     <step.icon className="w-2 h-2 text-indigo-600" aria-hidden="true" />
                   </div>
-                  <p className="mt-2 text-sm text-center text-indigo-600 font-bold">{step.label}</p>
                 </>
               ) : (
                 <>
@@ -48,7 +46,6 @@ const Stepper: React.FC<StepperProps> = ({ steps }) => {
                   <div className="relative w-4 h-4 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full">
                     <step.icon className="w-2 h-2 text-gray-400" aria-hidden="true" />
                   </div>
-                  <p className="mt-2 text-sm text-center text-gray-500">{step.label}</p>
                 </>
               )}
             </li>
