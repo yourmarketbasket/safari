@@ -8,12 +8,12 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
-import { FiUser, FiPhone, FiFileText, FiMail, FiLock, FiCheck } from 'react-icons/fi';
+import { FiUser, FiPhone, FiFileText, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
 
-type StepStatus = 'complete' | 'current' | 'upcoming';
+type StepStatus = 'complete' | 'current' | 'upcoming' | 'error';
 
 export default function QueueManagerSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -59,9 +59,9 @@ export default function QueueManagerSignUpForm() {
     setFormData(prev => ({ ...prev, [name]: file }));
   };
 
-  const validateStep = () => {
+  const validateStep = (step: number) => {
     const errors: Record<string, string> = {};
-    if (currentStep === 1) {
+    if (step === 1) {
       if (!formData.name) errors.name = 'Full name is required.';
       if (!formData.dob) {
         errors.dob = 'Date of birth is required.';
@@ -84,7 +84,7 @@ export default function QueueManagerSignUpForm() {
         errors.email = 'Invalid email address.';
       }
     }
-    if (currentStep === 2) {
+    if (step === 2) {
         if (!formData.phone) {
             errors.phone = 'Phone number is required.';
         } else if (!phoneRegex.test(formData.phone)) {
@@ -92,22 +92,23 @@ export default function QueueManagerSignUpForm() {
         }
         if (!formData.address) errors.address = 'Address is required.';
     }
-    if (currentStep === 3) {
+    if (step === 3) {
         if (!formData.nationalId) errors.nationalId = 'National ID is required.';
         if (!formData.medicalCertificate) errors.medicalCertificate = 'Medical certificate is required.';
     }
-    if (currentStep === 5) {
+    if (step === 5) {
         if (!formData.password) errors.password = 'Password is required.';
         if (formData.password !== formData.confirmPassword) errors.confirmPassword = 'Passwords do not match.';
     }
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+    return errors;
   };
 
   const handleNext = () => {
-    if (validateStep()) {
+    const errors = validateStep(currentStep);
+    if (Object.keys(errors).length === 0) {
       setCurrentStep(prev => prev + 1);
     }
+    setFormErrors(errors);
   };
 
   const handleBack = () => {
@@ -162,7 +163,11 @@ export default function QueueManagerSignUpForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateStep()) return;
+    const errors = validateStep(currentStep);
+    if (Object.keys(errors).length > 0) {
+        setFormErrors(errors);
+        return;
+    }
 
     if (!formData.agreedToTerms) {
       setFormErrors({ agreedToTerms: 'You must agree to the terms and conditions.' });
@@ -191,17 +196,21 @@ export default function QueueManagerSignUpForm() {
   const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
 
   const getStepStatus = (step: number): StepStatus => {
+    const errors = validateStep(step);
+    if (Object.keys(errors).length > 0 && currentStep > step) {
+        return 'error';
+    }
     if (currentStep === step) return 'current';
     if (currentStep > step) return 'complete';
     return 'upcoming';
   };
 
   const steps = [
-    { status: getStepStatus(1), icon: FiUser, label: 'Personal Info' },
-    { status: getStepStatus(2), icon: FiPhone, label: 'Contact Info' },
-    { status: getStepStatus(3), icon: FiFileText, label: 'Documents' },
+    { status: getStepStatus(1), icon: FiUser, label: 'Personal Info', hasError: Object.keys(validateStep(1)).length > 0 && currentStep > 1 },
+    { status: getStepStatus(2), icon: FiPhone, label: 'Contact Info', hasError: Object.keys(validateStep(2)).length > 0 && currentStep > 2 },
+    { status: getStepStatus(3), icon: FiFileText, label: 'Documents', hasError: Object.keys(validateStep(3)).length > 0 && currentStep > 3 },
     { status: getStepStatus(4), icon: FiMail, label: 'Verify Email' },
-    { status: getStepStatus(5), icon: FiLock, label: 'Password' },
+    { status: getStepStatus(5), icon: FiLock, label: 'Password', hasError: Object.keys(validateStep(5)).length > 0 && currentStep > 5 },
     { status: getStepStatus(6), icon: FiCheck, label: 'Done' },
   ];
 
@@ -332,10 +341,16 @@ export default function QueueManagerSignUpForm() {
         )}
         <div className="mt-8 flex justify-between">
           {currentStep > 1 && currentStep < 6 && (
-            <Button onClick={handleBack} variant="secondary">Back</Button>
+            <Button onClick={handleBack} variant="flat">
+                <FiArrowLeft className="mr-2"/>
+                Back
+            </Button>
           )}
           {currentStep < 5 && (
-            <Button onClick={handleNext}>Next</Button>
+            <Button onClick={handleNext} variant="flat">
+                Next
+                <FiArrowRight className="ml-2"/>
+            </Button>
           )}
         </div>
       </div>
