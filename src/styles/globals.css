@@ -76,6 +76,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
 }
 
-input[type="date"]:not(:valid) {
+input[type="date"]::placeholder {
   color: transparent;
 }
