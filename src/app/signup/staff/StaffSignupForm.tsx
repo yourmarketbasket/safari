@@ -110,8 +110,8 @@ export default function StaffSignUpForm() {
     }
   };
 
-  const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
-  const inputClasses = "block w-full px-4 py-3 bg-transparent text-gray-900 border-b-2 border-gray-300 focus:outline-none focus:border-indigo-500 peer";
+  const labelClasses = "absolute left-3 -top-2.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5 peer-focus:-top-2.5 peer-focus:text-gray-600 peer-focus:text-sm";
+  const inputClasses = "block w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500";
   const isEmailValid = emailRegex.test(email);
 
   return (
