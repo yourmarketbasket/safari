@@ -403,7 +403,7 @@ export default function DriverSignUpForm() {
         {currentStep === 7 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Preview Your Details</h2>
-            <div className="text-left mt-4 bg-gray-50 p-4 rounded-lg">
+            <div className="text-left mt-4 bg-gray-50 p-4 rounded-lg text-gray-800">
               <p><strong>Name:</strong> {formData.name}</p>
               <p><strong>Email:</strong> {formData.email}</p>
               <p><strong>Phone:</strong> {formData.phone}</p>
