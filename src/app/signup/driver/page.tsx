@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import PublicRoute from '@/app/components/PublicRoute';
 import DriverSignUpForm from './DriverSignupForm';
+import AuthLayout from '@/app/components/AuthLayout';
 
 export const metadata: Metadata = {
     title: 'Driver Signup',
@@ -10,17 +11,17 @@ export default function DriverSignupPage() {
 
   return (
     <PublicRoute>
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-blue-100 py-12">
-        <div className="w-full max-w-lg p-8 space-y-8 bg-white rounded-2xl shadow-xl">
+      <AuthLayout>
+        <div className="w-full">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900">Driver Signup</h1>
-            <p className="mt-2 text-lg text-gray-700">
-              Register as a driver to start your journey with Safary.
+            <h1 className="text-2xl font-bold text-gray-900">Become a Safary Driver</h1>
+            <p className="mt-2 text-gray-600">
+              Start your journey with us and drive your way to success.
             </p>
           </div>
           <DriverSignUpForm />
         </div>
-      </div>
+      </AuthLayout>
     </PublicRoute>
   );
 }

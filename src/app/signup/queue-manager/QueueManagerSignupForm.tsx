@@ -8,7 +8,8 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
-import { FiUser, FiPhone, FiFileText, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
+import { DatePicker } from '@/app/components/DatePicker';
+import { FiUser, FiPhone, FiFileText, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye, FiChevronDown } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -52,6 +53,12 @@ export default function QueueManagerSignUpForm() {
         setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
         setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    if (date) {
+      setFormData(prev => ({ ...prev, dob: date.toISOString().split('T')[0] }));
     }
   };
 
@@ -206,7 +213,7 @@ export default function QueueManagerSignUpForm() {
     }
   };
 
-  const inputClasses = "block w-full px-4 py-3 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+  const inputClasses = "block w-full px-4 py-3 bg-transparent text-gray-900 border-b-2 border-gray-300 focus:outline-none focus:border-indigo-500 peer";
   const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
 
   const getStepStatus = (step: number): StepStatus => {
@@ -246,18 +253,18 @@ export default function QueueManagerSignUpForm() {
                 {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
             </div>
             <div className="relative">
-                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
+                <DatePicker date={formData.dob ? new Date(formData.dob) : undefined} setDate={handleDateChange} />
                 {formErrors.dob && <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>}
             </div>
             <div className="relative">
-                <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
+                <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={`${inputClasses} appearance-none`}>
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                 </select>
                 <label htmlFor="gender" className={labelClasses}>Gender</label>
+                <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
                 {formErrors.gender && <p className="text-red-500 text-xs mt-1">{formErrors.gender}</p>}
             </div>
             <div className="relative">

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import PublicRoute from '@/app/components/PublicRoute';
 import QueueManagerSignUpForm from './QueueManagerSignupForm';
+import AuthLayout from '@/app/components/AuthLayout';
 
 export const metadata: Metadata = {
     title: 'Queue Manager Signup',
@@ -10,17 +11,17 @@ export default function QueueManagerSignupPage() {
 
   return (
     <PublicRoute>
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-blue-100 py-12">
-        <div className="w-full max-w-lg p-8 space-y-8 bg-white rounded-2xl shadow-xl">
+      <AuthLayout>
+        <div className="w-full">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900">Queue Manager Signup</h1>
-            <p className="mt-2 text-lg text-gray-700">
-              Register as a queue manager to help us manage queues.
+            <h1 className="text-2xl font-bold text-gray-900">Become a Queue Manager</h1>
+            <p className="mt-2 text-gray-600">
+              Help us ensure a smooth and efficient boarding process for our passengers.
             </p>
           </div>
           <QueueManagerSignUpForm />
         </div>
-      </div>
+      </AuthLayout>
     </PublicRoute>
   );
 }

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Message from '../components/Message';
 import PublicRoute from '../components/PublicRoute';
 import { Button } from '../components/ui/Button';
+import AuthLayout from '../components/AuthLayout';
 
 // Regex for basic email or phone number validation
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
@@ -44,15 +45,17 @@ export default function LoginPage() {
   };
 
   const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
-  const inputClasses = "block w-full px-4 py-3 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+  const inputClasses = "block w-full px-4 py-3 bg-transparent text-gray-900 border-b-2 border-gray-300 focus:outline-none focus:border-indigo-500 peer";
 
   return (
     <PublicRoute>
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-200 to-blue-200">
-        <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl">
+      <AuthLayout>
+        <div className="w-full">
           <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-              <p className="mt-2 text-gray-800">Login to your Safary account</p>
+              <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
+              <p className="mt-2 text-gray-600">
+                Login to your Safary account to continue your journey. We are excited to have you back.
+              </p>
           </div>
           <div className="my-4">
             {error && <Message message={error} type="error" />}
@@ -108,7 +111,7 @@ export default function LoginPage() {
             </Link>
           </div>
         </div>
-      </div>
+      </AuthLayout>
     </PublicRoute>
   );
 }

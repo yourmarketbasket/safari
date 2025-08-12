@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import PublicRoute from '@/app/components/PublicRoute';
 import PassengerSignUpForm from './PassengerSignupForm';
+import AuthLayout from '@/app/components/AuthLayout';
 
 export const metadata: Metadata = {
     title: 'Passenger Signup',
@@ -10,17 +11,17 @@ export default function PassengerSignupPage() {
 
   return (
     <PublicRoute>
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-blue-100 py-12">
-        <div className="w-full max-w-lg p-8 space-y-8 bg-white rounded-2xl shadow-xl">
+      <AuthLayout>
+        <div className="w-full">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900">Passenger Signup</h1>
-            <p className="mt-2 text-lg text-gray-700">
-              Create your Safary account to start booking your trips.
+            <h1 className="text-2xl font-bold text-gray-900">Create Your Passenger Account</h1>
+            <p className="mt-2 text-gray-600">
+              Join Safary today and enjoy seamless travel. Let&apos;s get you set up in a few simple steps.
             </p>
           </div>
           <PassengerSignUpForm />
         </div>
-      </div>
+      </AuthLayout>
     </PublicRoute>
   );
 }

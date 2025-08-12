@@ -213,7 +213,7 @@ export default function SaccoSignUpForm() {
     }
   };
 
-  const inputClasses = "block w-full px-4 py-3 bg-indigo-50 text-gray-900 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer";
+  const inputClasses = "block w-full px-4 py-3 bg-transparent text-gray-900 border-b-2 border-gray-300 focus:outline-none focus:border-indigo-500 peer";
   const labelClasses = "absolute left-4 top-3 text-black transition-all duration-200 pointer-events-none peer-focus:top-[-10px] peer-focus:text-xs peer-focus:text-indigo-600 peer-[:not(:placeholder-shown)]:top-[-10px] peer-[:not(:placeholder-shown)]:text-xs";
 
   const getStepStatus = (step: number): StepStatus => {
