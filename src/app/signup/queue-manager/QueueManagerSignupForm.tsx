@@ -85,6 +85,12 @@ export default function QueueManagerSignUpForm() {
     setCurrentStep(prev => prev - 1);
   };
 
+  const handleStepClick = (step: number) => {
+    if (step < currentStep) {
+      setCurrentStep(step);
+    }
+  };
+
   const handleSendOtp = async () => {
     if (!emailRegex.test(formData.email)) {
       setError('Please enter a valid email address to receive an OTP.');
@@ -176,7 +182,7 @@ export default function QueueManagerSignUpForm() {
 
   return (
     <div>
-      <Stepper steps={steps}/>
+      <Stepper steps={steps} onStepClick={handleStepClick}/>
       <div className="my-4">
         {error && <Message message={error} type="error" />}
         {otpError && <Message message={otpError} type="error" />}

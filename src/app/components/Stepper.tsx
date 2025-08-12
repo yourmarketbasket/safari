@@ -11,22 +11,23 @@ interface Step {
 
 interface StepperProps {
   steps: Step[];
+  onStepClick: (step: number) => void;
 }
 
-const Stepper: React.FC<StepperProps> = ({ steps }) => {
+const Stepper: React.FC<StepperProps> = ({ steps, onStepClick }) => {
   return (
     <div className="w-full py-4">
       <nav aria-label="Progress">
         <ol role="list" className="flex items-center">
           {steps.map((step, stepIdx) => (
-            <li key={step.label} className={`relative ${stepIdx !== steps.length - 1 ? 'flex-1' : ''}`}>
+            <li key={step.label} className={`relative ${stepIdx !== steps.length - 1 ? 'flex-1' : ''}`} onClick={() => onStepClick(stepIdx + 1)}>
               {step.status === 'complete' ? (
                 <>
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div className="h-0.5 w-full bg-indigo-600" />
+                    <div className="h-0.5 w-full bg-green-500" />
                   </div>
-                  <div className="relative w-4 h-4 flex items-center justify-center bg-indigo-600 rounded-full">
-                    <step.icon className="w-2 h-2 text-white" aria-hidden="true" />
+                  <div className="relative w-6 h-6 flex items-center justify-center bg-green-500 rounded-full">
+                    <step.icon className="w-3 h-3 text-white" aria-hidden="true" />
                   </div>
                 </>
               ) : step.status === 'current' ? (
@@ -34,8 +35,8 @@ const Stepper: React.FC<StepperProps> = ({ steps }) => {
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
                     <div className="h-0.5 w-full bg-gray-200" />
                   </div>
-                  <div className="relative w-4 h-4 flex items-center justify-center bg-white border-2 border-indigo-600 rounded-full">
-                    <step.icon className="w-2 h-2 text-indigo-600" aria-hidden="true" />
+                  <div className="relative w-6 h-6 flex items-center justify-center bg-white border-2 border-indigo-600 rounded-full">
+                    <step.icon className="w-3 h-3 text-indigo-600" aria-hidden="true" />
                   </div>
                 </>
               ) : (
@@ -43,8 +44,8 @@ const Stepper: React.FC<StepperProps> = ({ steps }) => {
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
                     <div className="h-0.5 w-full bg-gray-200" />
                   </div>
-                  <div className="relative w-4 h-4 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full">
-                    <step.icon className="w-2 h-2 text-gray-400" aria-hidden="true" />
+                  <div className="relative w-6 h-6 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full">
+                    <step.icon className="w-3 h-3 text-gray-400" aria-hidden="true" />
                   </div>
                 </>
               )}
