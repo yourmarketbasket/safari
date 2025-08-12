@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import authService, { LoginCredentials, SignupData, VerifyMfaData } from '../services/auth.service';
+import authService, { LoginCredentials, VerifyMfaData } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
@@ -13,7 +13,6 @@ interface AuthContextType {
   isMfaRequired: boolean;
   login: (loginData: LoginCredentials) => Promise<void>;
   logout: () => void;
-  signup: (signupData: SignupData) => Promise<void>;
   verifyMfa: (mfaCode: string) => Promise<void>;
   cancelMfa: () => void;
 }
@@ -30,18 +29,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isMfaRequired = !!mfaToken;
 
   const redirectUser = (user: User, router: AppRouterInstance) => {
-    if (user.role === 'ordinary') {
+    if (user.role === 'Ordinary') {
       router.push('/pending-approval');
       return;
     }
 
     switch (user.role) {
-      case 'admin': router.push('/admin'); break;
-      case 'sacco': router.push('/sacco'); break;
-      case 'owner': router.push('/owner'); break;
-      case 'passenger': router.push('/passenger'); break;
-      case 'support_staff': router.push('/support'); break;
-      case 'queue_manager': router.push('/queue-manager'); break;
+      case 'Admin': router.push('/admin'); break;
+      case 'Sacco': router.push('/sacco'); break;
+      case 'Owner': router.push('/owner'); break;
+      case 'Passenger': router.push('/passenger'); break;
+      case 'Support_staff': router.push('/support'); break;
+      case 'QueueManager': router.push('/queue-manager'); break;
       default: router.push('/login');
     }
   };
@@ -118,11 +117,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setMfaToken(null);
   };
 
-  const signup = async (signupData: SignupData) => {
-    await authService.signup(signupData);
-    router.push('/login');
-  };
-
   const value = {
     user,
     token,
@@ -130,7 +124,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isMfaRequired,
     login,
     logout,
-    signup,
     verifyMfa,
     cancelMfa,
   };

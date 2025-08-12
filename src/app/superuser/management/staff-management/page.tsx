@@ -11,10 +11,10 @@ import Pagination from "@/app/components/Pagination";
 
 // Dummy data for staff, conforming to the User model
 const dummyStaff: User[] = [
-  { _id: "60d0fe4f5311236168a10d01", name: "Manager Mike", email: "mike@example.com", phone: "234-567-8901", role: "admin", rank: "Manager", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
-  { _id: "60d0fe4f5311236168a10d02", name: "Agent Alice", email: "alice@example.com", phone: "234-567-8902", role: "support_staff", rank: "Staff", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
-  { _id: "60d0fe4f5311236168a10d03", name: "Tech Tom", email: "tom@example.com", phone: "234-567-8903", role: "support_staff", rank: "Staff", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
-  { _id: "60d0fe4f5311236168a10d04", name: "Agent Bob", email: "bob@example.com", phone: "234-567-8904", role: "support_staff", rank: "Staff", approvedStatus: "suspended", permissions: [], verified: { email: true, phone: false }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10d01", name: "Manager Mike", email: "mike@example.com", phone: "234-567-8901", role: "Admin", rank: "Manager", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10d02", name: "Agent Alice", email: "alice@example.com", phone: "234-567-8902", role: "Support_staff", rank: "Staff", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10d03", name: "Tech Tom", email: "tom@example.com", phone: "234-567-8903", role: "Support_staff", rank: "Staff", approvedStatus: "approved", permissions: [], verified: { email: true, phone: true }, createdAt: new Date() },
+  { _id: "60d0fe4f5311236168a10d04", name: "Agent Bob", email: "bob@example.com", phone: "234-567-8904", role: "Support_staff", rank: "Staff", approvedStatus: "suspended", permissions: [], verified: { email: true, phone: false }, createdAt: new Date() },
 ];
 
 // Column definitions for the staff table

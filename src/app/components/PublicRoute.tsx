@@ -14,19 +14,19 @@ export default function PublicRoute({ children }: { children: React.ReactNode })
     if (token && user) {
       // Redirect to a default page or an unauthorized page
       switch (user.role) {
-        case 'admin':
+        case 'Admin':
           router.push('/admin');
           break;
-        case 'sacco':
+        case 'Sacco':
           router.push('/sacco');
           break;
-        case 'owner':
+        case 'Owner':
           router.push('/owner');
           break;
-        case 'passenger':
+        case 'Passenger':
           router.push('/passenger');
           break;
-        case 'support_staff':
+        case 'Support_staff':
           router.push('/support');
           break;
         default:

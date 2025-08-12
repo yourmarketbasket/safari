@@ -8,47 +8,6 @@ export type LoginCredentials = {
   // mfaCode is removed from initial login
 }
 
-import { UserRole } from '../models/User.model';
-
-export type SignupData = {
-    // Common fields
-    name: string;
-    email: string;
-    phone: string;
-    role: UserRole;
-    password?: string;
-    verifiedToken?: string;
-    address?: string;
-    dob?: string;
-    gender?: string;
-    deviceDetails?: string;
-    idNumber?: string;
-
-    // Driver specific
-    saccoId?: string;
-    licenseNumber?: string;
-    drivingLicenseExpiry?: string;
-    idPhotoFront?: string | null;
-    idPhotoBack?: string | null;
-    drivingLicensePhoto?: string | null;
-
-    // Owner specific
-    idNumberOrBusinessRegNo?: string;
-    kraPinCertificate?: string | null;
-    saccoAffiliation?: string;
-    certificateOfIncorporation?: string | null;
-
-    // Sacco specific
-    registrationNumber?: string;
-    byLawsDocument?: string;
-    leadershipInfoDocument?: string;
-    registrationFeePaymentProof?: string;
-    saccoLicense?: string | null;
-
-    // Queue Manager specific
-    drivingLicense?: string;
-    medicalCertificate?: string | null;
-};
 
 export type ForgotPasswordData = {
     emailOrPhone: string;
@@ -105,12 +64,92 @@ export const verifyMfa = async (verifyData: VerifyMfaData): Promise<AuthData> =>
     return response.data.data;
 }
 
-/**
- * Signs up a new user.
- */
-export const signup = async (signupData: SignupData): Promise<AuthData> => {
-    const response = await api.post<AuthResponse>('/auth/signup', signupData);
-    return response.data.data;
+// Signup data types
+export type PassengerSignupData = {
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+  verifiedToken?: string;
+  dob?: string;
+};
+
+export type SaccoSignupData = {
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+  registrationNumber?: string;
+  byLawsDocument?: string;
+  leadershipInfoDocument?: string;
+  registrationFeePaymentProof?: string;
+  address?: object;
+  verifiedToken?: string;
+};
+
+export type OwnerSignupData = {
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+  idNumberOrBusinessRegNo?: string;
+  kraPinCertificate?: string;
+  saccoAffiliation?: string;
+  verifiedToken?: string;
+};
+
+export type QueueManagerSignupData = {
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+  idNumber?: string;
+  drivingLicense?: string;
+  dob?: string;
+  verifiedToken?: string;
+};
+
+export type DriverSignupData = {
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+  licenseNumber?: string;
+  saccoId?: string;
+  idNumber?: string;
+  idPhotoFront?: string;
+  idPhotoBack?: string;
+  drivingLicenseExpiry?: string;
+  drivingLicensePhoto?: string;
+  dob?: string;
+  gender?: string;
+  verifiedToken?: string;
+};
+
+// Signup functions
+export const signupPassenger = async (data: PassengerSignupData): Promise<AuthData> => {
+  const response = await api.post<AuthResponse>('/passengers/signup', data);
+  return response.data.data;
+};
+
+export const signupSacco = async (data: SaccoSignupData): Promise<AuthData> => {
+  const response = await api.post<AuthResponse>('/saccos/signup', data);
+  return response.data.data;
+};
+
+export const signupOwner = async (data: OwnerSignupData): Promise<AuthData> => {
+  const response = await api.post<AuthResponse>('/owners/signup', data);
+  return response.data.data;
+};
+
+export const signupQueueManager = async (data: QueueManagerSignupData): Promise<AuthData> => {
+  const response = await api.post<AuthResponse>('/queue-managers/signup', data);
+  return response.data.data;
+};
+
+export const signupDriver = async (data: DriverSignupData): Promise<AuthData> => {
+  const response = await api.post<AuthResponse>('/drivers/signup', data);
+  return response.data.data;
 };
 
 /**
@@ -160,13 +199,17 @@ export const getProfile = async (): Promise<User> => {
 const authService = {
   login,
   verifyMfa,
-  signup,
   sendSignupOtp,
   verifySignupOtp,
   forgotPassword,
   resetPassword,
   logout,
   getProfile,
+  signupPassenger,
+  signupSacco,
+  signupOwner,
+  signupQueueManager,
+  signupDriver,
 };
 
 export default authService;

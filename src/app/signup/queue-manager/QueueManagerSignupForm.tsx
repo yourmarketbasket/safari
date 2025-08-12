@@ -6,7 +6,6 @@ import { Button } from '@/app/components/ui/Button';
 import Message from '@/app/components/Message';
 import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
-import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
 import { uploadToCloudinary } from '@/app/services/cloudinary.service';
 import { FiUser, FiPhone, FiFileText, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
@@ -38,7 +37,6 @@ export default function QueueManagerSignUpForm() {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
 
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -196,40 +194,19 @@ export default function QueueManagerSignUpForm() {
     setFormErrors({});
 
     try {
-      // Step 1: Upload files to Cloudinary
-      const fileUploadPromises = [];
-      const fileFields = ['idPhotoFront', 'idPhotoBack', 'drivingLicensePhoto', 'medicalCertificate'];
-      const uploadedUrls: { [key: string]: string } = {};
-
-      for (const field of fileFields) {
-        const file = formData[field as keyof typeof formData] as File | null;
-        if (file) {
-          fileUploadPromises.push(
-            uploadToCloudinary(file).then(url => {
-              uploadedUrls[field] = url;
-            })
-          );
-        }
-      }
-
-      await Promise.all(fileUploadPromises);
-
-      // Step 2: Prepare data for your backend
-      const { idPhotoFront: _idPhotoFront, idPhotoBack: _idPhotoBack, drivingLicensePhoto: _drivingLicensePhoto, medicalCertificate: _medicalCertificate, ...restOfFormData } = formData;
-
       const finalFormData = {
-        ...restOfFormData,
-        idPhotoFront: uploadedUrls.idPhotoFront || null,
-        idPhotoBack: uploadedUrls.idPhotoBack || null,
-        drivingLicensePhoto: uploadedUrls.drivingLicensePhoto || null,
-        medicalCertificate: uploadedUrls.medicalCertificate || null,
-        role: 'queue_manager' as const,
-        deviceDetails: navigator.userAgent,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        idNumber: formData.idNumber,
+        drivingLicense: formData.drivingLicense,
+        dob: formData.dob,
         verifiedToken
       };
 
       // Step 3: Call your backend signup service
-      await signup(finalFormData);
+      await authService.signupQueueManager(finalFormData);
 
       setSuccessMessage("Account created successfully! Redirecting...");
     } catch (err) {

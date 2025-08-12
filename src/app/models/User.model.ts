@@ -1,4 +1,4 @@
-export type UserRole = 'passenger' | 'sacco' | 'owner' | 'queue_manager' | 'driver' | 'support_staff' | 'admin' | 'Superuser' | 'ordinary';
+export type UserRole = 'Passenger' | 'Sacco' | 'Owner' | 'QueueManager' | 'Driver' | 'Support_staff' | 'Admin' | 'Superuser' | 'Ordinary';
 
 export type UserRank =
   | 'CEO'

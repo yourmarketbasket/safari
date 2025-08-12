@@ -31,18 +31,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
 
   useEffect(() => {
-    if (user && user.role === 'ordinary') {
+    if (user && user.role === 'Ordinary') {
       router.push('/pending-approval');
     }
   }, [user, router]);
 
-  if (!user || user.role === 'ordinary') {
+  if (!user || user.role === 'Ordinary') {
     return null;
   }
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {user?.role === 'support_staff' ? <SupportSidebar /> : <Sidebar />}
+      {user?.role === 'Support_staff' ? <SupportSidebar /> : <Sidebar />}
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">

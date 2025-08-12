@@ -22,14 +22,14 @@ interface NavLink {
 }
 
 const allNavLinks: { [key in UserRole]?: NavLink[] } = {
-  admin: [
+  Admin: [
     { name: 'Dashboard', href: '/admin', icon: <FiShield /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Performance Monitoring', href: '/admin/performance-monitoring', icon: <FiTrendingUp /> },
     { name: 'Escalation Queue', href: '/admin/escalation-queue', icon: <FiList /> },
     { name: 'System Reports', href: '/admin/system-reports', icon: <FiList /> },
   ],
-  sacco: [
+  Sacco: [
     { name: 'Dashboard', href: '/sacco', icon: <FiTruck /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Route Management', href: '/sacco/route-management', icon: <FiList /> },
@@ -40,7 +40,7 @@ const allNavLinks: { [key in UserRole]?: NavLink[] } = {
     { name: 'Promotions', href: '/sacco/promotions', icon: <FiGift /> },
     { name: 'HR/Payroll', href: '/sacco/hr-payroll', icon: <FiUsers /> },
   ],
-  owner: [
+  Owner: [
     { name: 'Dashboard', href: '/owner', icon: <FiUser /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
     { name: 'Trips', href: '/owner/trips', icon: <FiList /> },
@@ -48,12 +48,12 @@ const allNavLinks: { [key in UserRole]?: NavLink[] } = {
     { name: 'Vehicle Details', href: '/owner/vehicle-details', icon: <FiTruck /> },
     { name: 'HR/Payroll', href: '/owner/hr-payroll', icon: <FiUsers /> },
   ],
-  passenger: [
+  Passenger: [
     { name: 'Dashboard', href: '/passenger', icon: <FiPocket /> },
     { name: 'Trips', href: '/passenger/trips', icon: <FiList /> },
     { name: 'Routes', href: '/routes', icon: <FiTruck /> },
   ],
-  support_staff: [
+  Support_staff: [
     { name: 'Dashboard', href: '/support/dashboard', icon: <FiMonitor /> },
     { name: 'Passenger Inquiries', href: '/support/inquiries', icon: <FiHelpCircle /> },
     { name: 'Driver Support', href: '/support/driver-support', icon: <FiTool /> },
@@ -62,12 +62,12 @@ const allNavLinks: { [key in UserRole]?: NavLink[] } = {
     { name: 'Reports', href: '/support/reports', icon: <FiFileText /> },
     { name: 'Escalations', href: '/support/escalations', icon: <FiChevronsUp /> },
   ],
-  queue_manager: [
+  QueueManager: [
     { name: 'Dashboard', href: '/queue-manager', icon: <FiList /> },
     { name: 'Ticket Scanning', href: '/queue-manager/ticket-scanning', icon: <FiPocket /> },
     { name: 'Boarding Stats', href: '/queue-manager/boarding-stats', icon: <FiTrendingUp /> },
   ],
-  driver: [
+  Driver: [
     { name: 'Dashboard', href: '/driver', icon: <FiUser /> },
     { name: 'Trip Registration', href: '/driver/trip-registration', icon: <FiList /> },
     { name: 'Trip Monitoring', href: '/driver/trip-monitoring', icon: <FiTrendingUp /> },

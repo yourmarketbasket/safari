@@ -6,7 +6,6 @@ import { Button } from '@/app/components/ui/Button';
 import Message from '@/app/components/Message';
 import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
-import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
 import { FiBriefcase, FiMapPin, FiFileText, FiCreditCard, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
@@ -50,7 +49,6 @@ export default function SaccoSignUpForm() {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
 
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -198,12 +196,18 @@ export default function SaccoSignUpForm() {
     setLoading(true);
     try {
       const finalFormData = {
-        ...formData,
-        role: 'sacco' as const,
-        deviceDetails: navigator.userAgent,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        registrationNumber: formData.registrationNumber,
+        byLawsDocument: formData.byLaws?.name, // Assuming File object has name property as URL
+        leadershipInfoDocument: formData.leadershipInfo?.name, // Assuming File object has name property as URL
+        registrationFeePaymentProof: formData.proofOfPayment?.name, // Assuming File object has name property as URL
+        address: { fullAddress: formData.address }, // Assuming the API expects an object with a fullAddress property
         verifiedToken
       };
-      await signup(finalFormData);
+      await authService.signupSacco(finalFormData);
       setSuccessMessage("Account created successfully! Redirecting...");
     } catch (err) {
       setFormErrors({ submit: 'Failed to create account. Please try again.' });

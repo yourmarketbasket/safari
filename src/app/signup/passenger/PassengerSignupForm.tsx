@@ -6,7 +6,6 @@ import { Button } from '@/app/components/ui/Button';
 import Message from '@/app/components/Message';
 import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
-import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
 import { FiUser, FiPhone, FiCamera, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
@@ -32,7 +31,6 @@ export default function PassengerSignUpForm() {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
 
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -185,12 +183,14 @@ export default function PassengerSignUpForm() {
     setLoading(true);
     try {
       const finalFormData = {
-        ...formData,
-        role: 'passenger' as const,
-        deviceDetails: navigator.userAgent,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        dob: formData.dob,
         verifiedToken
       };
-      await signup(finalFormData);
+      await authService.signupPassenger(finalFormData);
       setSuccessMessage("Account created successfully! Redirecting...");
     } catch (err) {
       setFormErrors({ submit: 'Failed to create account. Please try again.' });

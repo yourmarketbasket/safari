@@ -16,18 +16,18 @@ import SummaryCard from "@/app/components/SummaryCard";
 import { Button } from "@/app/components/ui/Button";
 import Pagination from "@/app/components/Pagination";
 
-const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "Superuser", "ordinary"];
+const allRoles: UserRole[] = ["Sacco", "Owner", "Admin", "Driver", "Passenger", "Support_staff", "QueueManager", "Superuser", "Ordinary"];
 
 const roleDisplayConfig: Record<UserRole, { icon: React.ElementType, color: string }> = {
-    sacco: { icon: FiTruck, color: 'blue' },
-    owner: { icon: FiKey, color: 'yellow' },
-    admin: { icon: FiUserCheck, color: 'green' },
-    driver: { icon: FiUser, color: 'purple' },
-    passenger: { icon: FiPocket, color: 'indigo' },
-    support_staff: { icon: FiHelpCircle, color: 'pink' },
-    queue_manager: { icon: FiList, color: 'teal' },
+    Sacco: { icon: FiTruck, color: 'blue' },
+    Owner: { icon: FiKey, color: 'yellow' },
+    Admin: { icon: FiUserCheck, color: 'green' },
+    Driver: { icon: FiUser, color: 'purple' },
+    Passenger: { icon: FiPocket, color: 'indigo' },
+    Support_staff: { icon: FiHelpCircle, color: 'pink' },
+    QueueManager: { icon: FiList, color: 'teal' },
     Superuser: { icon: FiShield, color: 'red' },
-    ordinary: { icon: FiUser, color: 'gray' },
+    Ordinary: { icon: FiUser, color: 'gray' },
 };
 
 const PermissionsPage: NextPage = () => {

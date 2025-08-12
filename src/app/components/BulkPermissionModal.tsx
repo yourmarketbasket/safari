@@ -16,7 +16,7 @@ interface BulkPermissionModalProps {
   onSave: (permissions: Permission[]) => void;
 }
 
-const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "Superuser"];
+const allRoles: UserRole[] = ["Sacco", "Owner", "Admin", "Driver", "Passenger", "Support_staff", "QueueManager", "Superuser"];
 
 export default function BulkPermissionModal({ isOpen, onClose, onSave }: BulkPermissionModalProps) {
   const [permissions, setPermissions] = useState<NewPermission[]>([{ permissionNumber: '', description: '', roles: [] }]);

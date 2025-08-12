@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from 'react';
-import { useAuth } from '../../lib/AuthContext';
 import Link from 'next/link';
 import Message from '../../components/Message';
 import PublicRoute from '../../components/PublicRoute';
@@ -25,7 +24,6 @@ export default function SignupPage() {
   const [confirmedDetails, setConfirmedDetails] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
 
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -103,7 +101,7 @@ export default function SignupPage() {
 
     setLoading(true);
     try {
-      await signup({ name, email, phone, password, verifiedToken, role: 'ordinary' });
+      await authService.signupPassenger({ name, email, phone, password, verifiedToken });
     } catch (err) {
       setError('Failed to create account. Please try again.');
       console.error(err);

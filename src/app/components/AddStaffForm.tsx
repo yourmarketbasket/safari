@@ -6,13 +6,13 @@ import { User, UserRole } from '../models/User.model';
 import { Button } from './ui/Button';
 
 const availableRoles: UserRole[] = [
-  "support_staff",
-  "admin",
-  "sacco",
-  "owner",
-  "queue_manager",
-  "driver",
-  "passenger",
+  "Support_staff",
+  "Admin",
+  "Sacco",
+  "Owner",
+  "QueueManager",
+  "Driver",
+  "Passenger",
   "Superuser",
 ];
 
@@ -28,7 +28,7 @@ export default function AddStaffForm({ onClose, onSubmit, isLoading, error, init
   const [name, setName] = useState(initialData?.name || '');
   const [email, setEmail] = useState(initialData?.email || '');
   const [phone, setPhone] = useState(initialData?.phone || '');
-  const [role, setRole] = useState<UserRole>(initialData?.role || 'support_staff');
+  const [role, setRole] = useState<UserRole>(initialData?.role || 'Support_staff');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -74,7 +74,7 @@ export default function ProfilePage() {
     if (!user) return null;
 
     switch (user.role) {
-      case 'driver':
+      case 'Driver':
         return (
           <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
             <h3 className="font-bold text-lg text-gray-900 mb-4">Driver Details</h3>
@@ -93,7 +93,7 @@ export default function ProfilePage() {
             </div>
           </div>
         );
-      case 'sacco':
+      case 'Sacco':
         return (
           <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
             <h3 className="font-bold text-lg text-gray-900 mb-4">SACCO Details</h3>
@@ -108,7 +108,7 @@ export default function ProfilePage() {
             </div>
           </div>
         );
-      case 'queue_manager':
+      case 'QueueManager':
         return (
           <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
             <h3 className="font-bold text-lg text-gray-900 mb-4">Queue Manager Details</h3>
@@ -120,7 +120,7 @@ export default function ProfilePage() {
             </div>
           </div>
         );
-      case 'owner':
+      case 'Owner':
         return (
           <>
             <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
@@ -154,7 +154,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <PrivateRoute allowedRoles={['admin', 'sacco', 'owner', 'passenger', 'support_staff', 'headoffice', 'queue_manager', 'driver']}>
+    <PrivateRoute allowedRoles={['Admin', 'Sacco', 'Owner', 'Passenger', 'Support_staff', 'QueueManager', 'Driver']}>
       <div className="container mx-auto">
         <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
@@ -224,7 +224,7 @@ export default function ProfilePage() {
                     )
                 )}
             </div>
-            {user?.role === 'passenger' && (
+            {user?.role === 'Passenger' && (
               <>
                 <div className="flex-1">
                     <SummaryCard
@@ -264,7 +264,7 @@ export default function ProfilePage() {
         {renderRoleSpecificDetails()}
 
         {/* My Tickets Table */}
-        {user?.role === 'passenger' && (
+        {user?.role === 'Passenger' && (
           <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">My Tickets</h2>
             <DataTable
