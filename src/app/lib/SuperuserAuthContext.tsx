@@ -4,7 +4,6 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import superuserService, { LoginCredentials } from '../services/superuser.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
-import * as jose from 'jose';
 
 interface SuperuserAuthContextType {
   user: User | null;
@@ -31,20 +30,15 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
   }, [router]);
 
   useEffect(() => {
-    const initializeAuth = async () => {
+    const initializeAuth = () => {
       const storedToken = localStorage.getItem('superuserAuthToken');
-      if (storedToken) {
+      const storedUser = localStorage.getItem('superuser');
+      if (storedToken && storedUser) {
         try {
-          const decodedToken = jose.decodeJwt(storedToken) as { id: string };
-          if (decodedToken && decodedToken.id) {
-            const userData = await superuserService.getUserById(decodedToken.id);
-            setUser(userData);
-            setToken(storedToken);
-          } else {
-            logout();
-          }
+          setUser(JSON.parse(storedUser));
+          setToken(storedToken);
         } catch (error) {
-          console.error("Failed to initialize auth:", error);
+          console.error("Failed to parse stored user:", error);
           logout();
         }
       }
