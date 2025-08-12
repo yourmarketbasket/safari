@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Message from '../../../components/Message';
-import superuserService, { SignupData } from '../../../services/superuser.service';
+import superuserService, { SuperuserRegistrationData } from '../../../services/superuser.service';
 import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 import { Button } from '@/app/components/ui/Button';
 
@@ -47,12 +47,11 @@ function SuperuserRegisterPageContent() {
 
     setLoading(true);
     try {
-      const userData: SignupData = {
+      const userData: SuperuserRegistrationData = {
         name,
         email,
         phone,
         password,
-        role: 'superuser',
       };
       await superuserService.register(userData, adminKey);
       router.push('/superuser/login');

@@ -84,11 +84,22 @@ export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
   }
 };
 
+export type SuperuserRegistrationData = {
+    name: string;
+    email: string;
+    phone?: string;
+    password?: string;
+};
+
 /**
  * Registers a new superuser.
  */
-export const register = async (userData: SignupData, adminKey: string): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>('/superuser/register', { userData, adminKey });
+export const register = async (userData: SuperuserRegistrationData, adminKey: string): Promise<AuthResponse> => {
+  const payload = {
+    adminKey,
+    userData,
+  };
+  const response = await api.post<AuthResponse>('/superuser/register', payload);
   return response.data;
 };
 
