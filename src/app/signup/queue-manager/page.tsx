@@ -6,7 +6,7 @@ import AuthLayout from '@/app/components/AuthLayout';
 export const metadata: Metadata = {
     title: 'Queue Manager Signup',
 };
-
+// force
 export default function QueueManagerSignupPage() {
 
   return (
