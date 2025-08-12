@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Message from '../../components/Message';
-import authService, { SignupData } from '../../services/superuser.service';
+import { SignupData } from '../../services/superuser.service';
 import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 import OtpInput from '@/app/components/OtpInput';
 import superuserService from '@/app/services/superuser.service';
@@ -109,8 +109,8 @@ function SuperuserRegisterPageContent() {
         role: 'superuser',
         verifiedToken,
       };
-      await authService.register(userData, adminKey);
-      router.push('/superuser/login');
+      await superuserService.register(userData, adminKey);
+      router.push('/superuser/auth/login');
     } catch (err) {
       setError('Failed to register. Please check the admin key and try again.');
       console.error(err);
@@ -213,7 +213,7 @@ function SuperuserRegisterPageContent() {
           </form>
           <div className="text-sm text-center text-gray-400">
             Already have a superuser account?{' '}
-            <Link href="/superuser/login" title="Superuser Login" className="font-medium text-cyan-400 hover:text-cyan-300">
+            <Link href="/superuser/auth/login" title="Superuser Login" className="font-medium text-cyan-400 hover:text-cyan-300">
               Log in
             </Link>
           </div>
