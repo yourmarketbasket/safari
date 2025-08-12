@@ -139,7 +139,7 @@ export default function RoleCarousel() {
                 </div>
                 <div className="flex-grow p-8 pt-20 text-center">
                     <h3 className="text-3xl font-bold text-gray-800">{role.name}</h3>
-                    <ul className="mt-6 text-gray-600 text-left space-y-2">
+                    <ul className="mt-6 text-gray-800 text-left space-y-2">
                         {role.description.map((item, index) => (
                             <li key={index} className="flex items-start">
                                 <FiCheck className="w-5 h-5 mr-2 mt-1 text-green-500 flex-shrink-0"/>
@@ -148,7 +148,7 @@ export default function RoleCarousel() {
                         ))}
                     </ul>
                     <div className="mt-8">
-                      <p className="text-3xl font-bold text-gray-500">Free</p>
+                      <p className="text-3xl font-bold text-gray-700">Free</p>
                     </div>
                 </div>
                 <div className="bg-gray-50 p-6 rounded-b-2xl">

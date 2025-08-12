@@ -31,7 +31,7 @@ body {
     @apply text-xs font-light;
   }
   input, select, textarea {
-    @apply border-gray-400 text-black placeholder-gray-600;
+    @apply border-gray-400 text-black placeholder-gray-800;
   }
 }
 

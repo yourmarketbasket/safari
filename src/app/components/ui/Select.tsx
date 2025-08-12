@@ -6,7 +6,31 @@ import { Check, ChevronDown } from "lucide-react";
 
 import { cn } from "@/app/utils/cn";
 
-const Select = SelectPrimitive.Root;
+const Select = ({
+  label,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Root> & { label: string }) => {
+  const [value, setValue] = React.useState("");
+  const id = React.useId();
+  const labelClasses = "absolute left-2 top-3.5 text-gray-400 text-base transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-indigo-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2.5 peer-[:not(:placeholder-shown)]:text-sm peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1";
+
+  return (
+    <div className="relative">
+      <SelectPrimitive.Root
+        {...props}
+        onValueChange={(value) => {
+          setValue(value);
+          props.onValueChange?.(value);
+        }}
+      >
+        {props.children}
+      </SelectPrimitive.Root>
+      <label htmlFor={id} className={cn(labelClasses, value && "-top-2.5 text-sm bg-white px-1")}>
+        {label}
+      </label>
+    </div>
+  );
+};
 
 const SelectGroup = SelectPrimitive.Group;
 

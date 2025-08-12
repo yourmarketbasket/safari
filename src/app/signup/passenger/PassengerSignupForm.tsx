@@ -245,13 +245,14 @@ export default function PassengerSignUpForm() {
                 {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
             </div>
             <div className="relative">
-                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder="Date of Birth" className={`${inputClasses} pt-3`}/>
+                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={`${inputClasses} pt-3`}/>
+                <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
                 {formErrors.dob && <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>}
             </div>
             <div className="relative">
-              <Select onValueChange={handleSelectChange('gender')} value={formData.gender}>
+              <Select onValueChange={handleSelectChange('gender')} value={formData.gender} label="Gender">
                 <SelectTrigger className={inputClasses}>
-                  <SelectValue placeholder="Gender" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="male">Male</SelectItem>

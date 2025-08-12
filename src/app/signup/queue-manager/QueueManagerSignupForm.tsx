@@ -256,9 +256,9 @@ export default function QueueManagerSignUpForm() {
                 {formErrors.dob && <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>}
             </div>
             <div className="relative">
-              <Select onValueChange={handleSelectChange('gender')} value={formData.gender}>
+              <Select onValueChange={handleSelectChange('gender')} value={formData.gender} label="Gender">
                 <SelectTrigger className={inputClasses}>
-                  <SelectValue placeholder="Gender" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="male">Male</SelectItem>
