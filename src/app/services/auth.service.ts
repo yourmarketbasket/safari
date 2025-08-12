@@ -72,6 +72,7 @@ export type PassengerSignupData = {
   password?: string;
   verifiedToken?: string;
   dob?: string;
+  profilePhoto?: string;
 };
 
 export type SaccoSignupData = {

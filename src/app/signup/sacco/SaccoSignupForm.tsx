@@ -7,6 +7,7 @@ import Message from '@/app/components/Message';
 import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import FileUpload from '@/app/components/FileUpload';
+import { uploadToCloudinary } from '@/app/services/cloudinary.service';
 import { FiBriefcase, FiMapPin, FiFileText, FiCreditCard, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -195,15 +196,19 @@ export default function SaccoSignUpForm() {
     }
     setLoading(true);
     try {
+      const byLawsDocumentUrl = formData.byLaws ? await uploadToCloudinary(formData.byLaws) : '';
+      const leadershipInfoDocumentUrl = formData.leadershipInfo ? await uploadToCloudinary(formData.leadershipInfo) : '';
+      const registrationFeePaymentProofUrl = formData.proofOfPayment ? await uploadToCloudinary(formData.proofOfPayment) : '';
+
       const finalFormData = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
         registrationNumber: formData.registrationNumber,
-        byLawsDocument: formData.byLaws?.name, // Assuming File object has name property as URL
-        leadershipInfoDocument: formData.leadershipInfo?.name, // Assuming File object has name property as URL
-        registrationFeePaymentProof: formData.proofOfPayment?.name, // Assuming File object has name property as URL
+        byLawsDocument: byLawsDocumentUrl,
+        leadershipInfoDocument: leadershipInfoDocumentUrl,
+        registrationFeePaymentProof: registrationFeePaymentProofUrl,
         address: { fullAddress: formData.address }, // Assuming the API expects an object with a fullAddress property
         verifiedToken
       };

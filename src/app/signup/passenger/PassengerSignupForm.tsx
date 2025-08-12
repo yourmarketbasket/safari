@@ -7,6 +7,7 @@ import Message from '@/app/components/Message';
 import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import FileUpload from '@/app/components/FileUpload';
+import { uploadToCloudinary } from '@/app/services/cloudinary.service';
 import { FiUser, FiPhone, FiCamera, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -182,12 +183,15 @@ export default function PassengerSignUpForm() {
     }
     setLoading(true);
     try {
+      const profilePhotoUrl = formData.profilePhoto ? await uploadToCloudinary(formData.profilePhoto) : '';
+
       const finalFormData = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
         dob: formData.dob,
+        profilePhoto: profilePhotoUrl,
         verifiedToken
       };
       await authService.signupPassenger(finalFormData);
