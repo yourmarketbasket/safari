@@ -14,19 +14,13 @@ export default function SuperuserPrivateRoute({ children }: SuperuserPrivateRout
   const router = useRouter();
 
   useEffect(() => {
-    if (!isInitialized) return;
-
-    if (!token || (user && user.role !== 'superuser')) {
+    if (isInitialized && (!token || (user && user.role !== 'superuser'))) {
       router.push('/superuser/login');
     }
   }, [user, token, isInitialized, router]);
 
-  if (!isInitialized || !token) {
+  if (!isInitialized || !token || (user && user.role !== 'superuser')) {
     return <LoadingOverlay />;
-  }
-
-  if (user && user.role !== 'superuser') {
-    return null;
   }
 
   return <>{children}</>;

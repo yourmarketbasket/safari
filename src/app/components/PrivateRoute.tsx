@@ -3,6 +3,7 @@
 import { useAuth } from '../lib/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import LoadingOverlay from './LoadingOverlay';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -21,18 +22,20 @@ export default function PrivateRoute({ children, allowedRoles }: PrivateRoutePro
       return;
     }
 
-    if (user && user.role === 'ordinary') {
-      router.push('/pending-approval');
-      return;
-    }
+    if (user) {
+      if (user.role === 'ordinary') {
+        router.push('/pending-approval');
+        return;
+      }
 
-    if (user && !allowedRoles.includes(user.role)) {
-      router.push('/dashboard');
+      if (!allowedRoles.includes(user.role)) {
+        router.push('/dashboard');
+      }
     }
   }, [user, token, isInitialized, router, allowedRoles]);
 
   if (!isInitialized || !token || (user && !allowedRoles.includes(user.role))) {
-    return null;
+    return <LoadingOverlay />;
   }
 
   return <>{children}</>;
