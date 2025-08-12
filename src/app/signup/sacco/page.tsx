@@ -1,11 +1,12 @@
 import { Metadata } from 'next';
 import PublicRoute from '@/app/components/PublicRoute';
 import SaccoSignUpForm from './SaccoSignupForm';
-import AuthLayout from '@/app/components/AuthLayout';
 
 export const metadata: Metadata = {
     title: 'Sacco Signup',
 };
+
+import AuthLayout from '@/app/components/AuthLayout';
 
 export default function SaccoSignupPage() {
 
@@ -14,9 +15,9 @@ export default function SaccoSignupPage() {
       <AuthLayout>
         <div className="w-full">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900">Register Your Sacco</h1>
-            <p className="mt-2 text-gray-600">
-              Join our platform and streamline your Sacco&apos;s operations.
+            <h1 className="text-4xl font-bold text-gray-900">Sacco Signup</h1>
+            <p className="mt-2 text-lg text-gray-700">
+              Register your Sacco to manage your transport business.
             </p>
           </div>
           <SaccoSignUpForm />

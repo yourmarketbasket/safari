@@ -8,8 +8,7 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
-import { DatePicker } from '@/app/components/DatePicker';
-import { FiUser, FiPhone, FiCamera, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye, FiChevronDown } from 'react-icons/fi';
+import { FiUser, FiPhone, FiCamera, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -51,12 +50,6 @@ export default function PassengerSignUpForm() {
         setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
         setFormData(prev => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleDateChange = (date: Date | undefined) => {
-    if (date) {
-      setFormData(prev => ({ ...prev, dob: date.toISOString().split('T')[0] }));
     }
   };
 
@@ -207,8 +200,8 @@ export default function PassengerSignUpForm() {
     }
   };
 
-  const inputClasses = "block w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500";
-  const labelClasses = "absolute left-3 -top-2.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5 peer-focus:-top-2.5 peer-focus:text-gray-600 peer-focus:text-sm bg-white px-1";
+  const inputClasses = "peer h-12 w-full border border-gray-300 rounded-md bg-transparent px-4 text-gray-900 placeholder-transparent focus:border-indigo-500 focus:outline-none";
+  const labelClasses = "absolute left-2 -top-2.5 bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-indigo-600";
 
   const getStepStatus = (step: number): StepStatus => {
     const errors = validateStep(step);
@@ -247,18 +240,18 @@ export default function PassengerSignUpForm() {
                 {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
             </div>
             <div className="relative">
-                <DatePicker date={formData.dob ? new Date(formData.dob) : undefined} setDate={handleDateChange} />
+                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={`${inputClasses} pt-3`}/>
+                <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
                 {formErrors.dob && <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>}
             </div>
             <div className="relative">
-                <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={`${inputClasses} appearance-none`}>
+                <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                 </select>
                 <label htmlFor="gender" className={labelClasses}>Gender</label>
-                <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
                 {formErrors.gender && <p className="text-red-500 text-xs mt-1">{formErrors.gender}</p>}
             </div>
             <div className="relative">
