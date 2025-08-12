@@ -130,22 +130,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleLogin = async (loginData: LoginCredentials) => {
-    const responseData = await authService.login(loginData);
+    try {
+      const responseData = await authService.login(loginData);
 
-    if (responseData.mfaRequired) {
-      setMfaToken(responseData.mfaToken);
-    } else {
-      localStorage.removeItem('superuserAuthToken');
-      localStorage.removeItem('superuser');
-      if (tabId.current) {
-        localStorage.setItem('activeTabId', tabId.current);
+      if (responseData.mfaRequired) {
+        setMfaToken(responseData.mfaToken);
+      } else {
+        localStorage.removeItem('superuserAuthToken');
+        localStorage.removeItem('superuser');
+        if (tabId.current) {
+          localStorage.setItem('activeTabId', tabId.current);
+        }
+        setTabStatus('ACTIVE');
+        setToken(responseData.token);
+        setUser(responseData.user);
+        localStorage.setItem('authToken', responseData.token);
+        localStorage.setItem('user', JSON.stringify(responseData.user));
+        redirectUser(responseData.user, router);
       }
-      setTabStatus('ACTIVE');
-      setToken(responseData.token);
-      setUser(responseData.user);
-      localStorage.setItem('authToken', responseData.token);
-      localStorage.setItem('user', JSON.stringify(responseData.user));
-      redirectUser(responseData.user, router);
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw error;
     }
   };
 

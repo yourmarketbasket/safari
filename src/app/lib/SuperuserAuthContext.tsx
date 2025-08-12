@@ -104,21 +104,26 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
 
 
   const handleLogin = async (loginData: LoginCredentials) => {
-    const responseData = await superuserService.login(loginData);
-    if (responseData.mfaRequired) {
-        // Superusers might not have MFA
-    } else {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        if (tabId.current) {
-          localStorage.setItem('activeTabId', tabId.current);
-        }
-        setTabStatus('ACTIVE');
-        setToken(responseData.token);
-        setUser(responseData.user);
-        localStorage.setItem('superuserAuthToken', responseData.token);
-        localStorage.setItem('superuser', JSON.stringify(responseData.user));
-        router.push('/superuser/dashboard');
+    try {
+      const responseData = await superuserService.login(loginData);
+      if (responseData.mfaRequired) {
+          // Superusers might not have MFA
+      } else {
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('user');
+          if (tabId.current) {
+            localStorage.setItem('activeTabId', tabId.current);
+          }
+          setTabStatus('ACTIVE');
+          setToken(responseData.token);
+          setUser(responseData.user);
+          localStorage.setItem('superuserAuthToken', responseData.token);
+          localStorage.setItem('superuser', JSON.stringify(responseData.user));
+          router.push('/superuser/dashboard');
+      }
+    } catch (error) {
+      console.error("Superuser login failed:", error);
+      throw error;
     }
   };
 

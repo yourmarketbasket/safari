@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useSuperuserAuth } from '../../../lib/SuperuserAuthContext';
 import Link from 'next/link';
 import Message from '../../../components/Message';
-import { SuperuserAuthProvider } from '@/app/lib/SuperuserAuthContext';
 import { Button } from '@/app/components/ui/Button';
 
 const emailOrPhoneRegex = /^(?:\d{10,12}|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
@@ -30,8 +29,12 @@ function SuperuserLoginPageContent() {
     setLoading(true);
     try {
       await login({ emailOrPhone, password });
-    } catch (err) {
-      setError('Failed to login. Please check your credentials.');
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setError(err.message || 'Failed to login. Please check your credentials.');
+        } else {
+            setError('An unknown error occurred.');
+        }
       console.error(err);
     } finally {
       setLoading(false);
@@ -47,6 +50,9 @@ function SuperuserLoginPageContent() {
           <div className="text-center">
               <h1 className="text-3xl font-bold text-white">Superuser Login</h1>
               <p className="mt-2 text-gray-400">Access the superuser dashboard</p>
+          </div>
+          <div className="my-4">
+            {error && <Message message={error} type="error" />}
           </div>
           <form onSubmit={handleSubmit} className="space-y-6 pt-4">
             <div className="relative">
@@ -86,7 +92,6 @@ function SuperuserLoginPageContent() {
                 </Link>
               </div>
             </div>
-            {error && <Message message={error} type="error" />}
             <div>
               <Button type="submit" disabled={loading} className="w-full">
                 {loading ? 'Logging in...' : 'Login'}
@@ -106,8 +111,6 @@ function SuperuserLoginPageContent() {
 
 export default function SuperuserLoginPage() {
   return (
-    <SuperuserAuthProvider>
       <SuperuserLoginPageContent />
-    </SuperuserAuthProvider>
   );
 }
