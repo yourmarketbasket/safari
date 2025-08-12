@@ -8,6 +8,7 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
+import { uploadToCloudinary } from '@/app/services/cloudinary.service';
 import { FiUser, FiPhone, FiFileText, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -24,9 +25,12 @@ export default function QueueManagerSignUpForm() {
     address: '',
     dob: '',
     gender: '',
-    nationalId: null as File | null,
+    idNumber: '',
+    idPhotoFront: null as File | null,
+    idPhotoBack: null as File | null,
+    drivingLicense: '',
+    drivingLicensePhoto: null as File | null,
     medicalCertificate: null as File | null,
-    drivingLicense: null as File | null,
     password: '',
     confirmPassword: '',
     agreedToTerms: false,
@@ -77,7 +81,7 @@ export default function QueueManagerSignUpForm() {
             errors.dob = 'You must be between 21 and 60 years old.';
         }
       }
-      if (!formData.gender) errors.gender = 'Gender is required.';
+      if (!formData.idNumber) errors.idNumber = 'ID number is required.';
       if (!formData.email) {
         errors.email = 'Email is required.';
       } else if (!emailRegex.test(formData.email)) {
@@ -90,11 +94,11 @@ export default function QueueManagerSignUpForm() {
         } else if (!phoneRegex.test(formData.phone)) {
             errors.phone = 'Invalid phone number.';
         }
-        if (!formData.address) errors.address = 'Address is required.';
     }
     if (step === 3) {
-        if (!formData.nationalId) errors.nationalId = 'National ID is required.';
-        if (!formData.medicalCertificate) errors.medicalCertificate = 'Medical certificate is required.';
+        if (!formData.idPhotoFront) errors.idPhotoFront = 'ID front photo is required.';
+        if (!formData.idPhotoBack) errors.idPhotoBack = 'ID back photo is required.';
+        if (!formData.drivingLicense) errors.drivingLicense = 'Driving license number is required.';
     }
     if (step === 5) {
         if (!formData.password) errors.password = 'Password is required.';
@@ -189,17 +193,47 @@ export default function QueueManagerSignUpForm() {
       return;
     }
     setLoading(true);
+    setFormErrors({});
+
     try {
+      // Step 1: Upload files to Cloudinary
+      const fileUploadPromises = [];
+      const fileFields = ['idPhotoFront', 'idPhotoBack', 'drivingLicensePhoto', 'medicalCertificate'];
+      const uploadedUrls: { [key: string]: string } = {};
+
+      for (const field of fileFields) {
+        const file = formData[field as keyof typeof formData] as File | null;
+        if (file) {
+          fileUploadPromises.push(
+            uploadToCloudinary(file).then(url => {
+              uploadedUrls[field] = url;
+            })
+          );
+        }
+      }
+
+      await Promise.all(fileUploadPromises);
+
+      // Step 2: Prepare data for your backend
+      const { idPhotoFront: _idPhotoFront, idPhotoBack: _idPhotoBack, drivingLicensePhoto: _drivingLicensePhoto, medicalCertificate: _medicalCertificate, ...restOfFormData } = formData;
+
       const finalFormData = {
-        ...formData,
+        ...restOfFormData,
+        idPhotoFront: uploadedUrls.idPhotoFront || null,
+        idPhotoBack: uploadedUrls.idPhotoBack || null,
+        drivingLicensePhoto: uploadedUrls.drivingLicensePhoto || null,
+        medicalCertificate: uploadedUrls.medicalCertificate || null,
         role: 'queue_manager' as const,
         deviceDetails: navigator.userAgent,
         verifiedToken
       };
+
+      // Step 3: Call your backend signup service
       await signup(finalFormData);
+
       setSuccessMessage("Account created successfully! Redirecting...");
     } catch (err) {
-      setFormErrors({ submit: 'Failed to create account. Please try again.' });
+      setFormErrors({ submit: 'Failed to create account. Please check your details and try again.' });
       console.error(err);
     } finally {
       setLoading(false);
@@ -251,14 +285,19 @@ export default function QueueManagerSignUpForm() {
                 {formErrors.dob && <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>}
             </div>
             <div className="relative">
-                <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
-                    <option value="">Select Gender</option>
+                <select id="gender" name="gender" value={formData.gender} onChange={handleChange} className={inputClasses}>
+                    <option value="">Select Gender (Optional)</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                 </select>
                 <label htmlFor="gender" className={labelClasses}>Gender</label>
                 {formErrors.gender && <p className="text-red-500 text-xs mt-1">{formErrors.gender}</p>}
+            </div>
+            <div className="relative">
+                <input id="idNumber" name="idNumber" type="text" required value={formData.idNumber} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                <label htmlFor="idNumber" className={labelClasses}>ID Number</label>
+                {formErrors.idNumber && <p className="text-red-500 text-xs mt-1">{formErrors.idNumber}</p>}
             </div>
             <div className="relative">
                 <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -275,27 +314,39 @@ export default function QueueManagerSignUpForm() {
                     {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
                 </div>
                 <div className="relative">
-                    <input id="address" name="address" type="text" required value={formData.address} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="address" className={labelClasses}>Address</label>
+                    <input id="address" name="address" type="text" value={formData.address} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="address" className={labelClasses}>Address (Optional)</label>
                     {formErrors.address && <p className="text-red-500 text-xs mt-1">{formErrors.address}</p>}
                 </div>
             </div>
         )}
         {currentStep === 3 && (
             <div className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">National ID</label>
-                    <FileUpload onFileSelect={handleFileChange('nationalId')} />
-                    {formErrors.nationalId && <p className="text-red-500 text-xs mt-1">{formErrors.nationalId}</p>}
+                <div className="flex space-x-4">
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">ID Front Photo</label>
+                        <FileUpload onFileSelect={handleFileChange('idPhotoFront')} />
+                        {formErrors.idPhotoFront && <p className="text-red-500 text-xs mt-1">{formErrors.idPhotoFront}</p>}
+                    </div>
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">ID Back Photo</label>
+                        <FileUpload onFileSelect={handleFileChange('idPhotoBack')} />
+                        {formErrors.idPhotoBack && <p className="text-red-500 text-xs mt-1">{formErrors.idPhotoBack}</p>}
+                    </div>
+                </div>
+                <div className="relative">
+                    <input id="drivingLicense" name="drivingLicense" type="text" required value={formData.drivingLicense} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="drivingLicense" className={labelClasses}>Driving License Number</label>
+                    {formErrors.drivingLicense && <p className="text-red-500 text-xs mt-1">{formErrors.drivingLicense}</p>}
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Medical Certificate</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Driving License Photo (Optional)</label>
+                    <FileUpload onFileSelect={handleFileChange('drivingLicensePhoto')} />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Medical Certificate (Optional)</label>
                     <FileUpload onFileSelect={handleFileChange('medicalCertificate')} />
                     {formErrors.medicalCertificate && <p className="text-red-500 text-xs mt-1">{formErrors.medicalCertificate}</p>}
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Driving License (Optional)</label>
-                    <FileUpload onFileSelect={handleFileChange('drivingLicense')} />
                 </div>
             </div>
         )}
@@ -337,12 +388,15 @@ export default function QueueManagerSignUpForm() {
               <p><strong>Name:</strong> {formData.name}</p>
               <p><strong>Email:</strong> {formData.email}</p>
               <p><strong>Phone:</strong> {formData.phone}</p>
-              <p><strong>Address:</strong> {formData.address}</p>
+              <p><strong>Address:</strong> {formData.address || 'N/A'}</p>
               <p><strong>Date of Birth:</strong> {formData.dob}</p>
-              <p><strong>Gender:</strong> {formData.gender}</p>
-              <p><strong>National ID:</strong> {formData.nationalId ? formData.nationalId.name : 'Not uploaded'}</p>
+              <p><strong>Gender:</strong> {formData.gender || 'N/A'}</p>
+              <p><strong>ID Number:</strong> {formData.idNumber}</p>
+              <p><strong>ID Front Photo:</strong> {formData.idPhotoFront ? formData.idPhotoFront.name : 'Not uploaded'}</p>
+              <p><strong>ID Back Photo:</strong> {formData.idPhotoBack ? formData.idPhotoBack.name : 'Not uploaded'}</p>
+              <p><strong>Driving License Number:</strong> {formData.drivingLicense}</p>
+              <p><strong>Driving License Photo:</strong> {formData.drivingLicensePhoto ? formData.drivingLicensePhoto.name : 'Not uploaded'}</p>
               <p><strong>Medical Certificate:</strong> {formData.medicalCertificate ? formData.medicalCertificate.name : 'Not uploaded'}</p>
-              <p><strong>Driving License:</strong> {formData.drivingLicense ? formData.drivingLicense.name : 'Not uploaded'}</p>
             </div>
             <div className="flex items-center mt-4">
                 <input id="agreedToTerms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>

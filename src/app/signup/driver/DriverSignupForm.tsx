@@ -8,6 +8,7 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
+import { uploadToCloudinary } from '@/app/services/cloudinary.service';
 import { FiUser, FiPhone, FiFileText, FiUpload, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -15,29 +16,32 @@ const phoneRegex = /^\d{10,12}$/;
 
 type StepStatus = 'complete' | 'current' | 'upcoming' | 'error';
 
+type DriverFormData = {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  dob: string;
+  gender: string;
+  idNumber: string;
+  saccoId: string;
+  idPhotoFront: File | null;
+  idPhotoBack: File | null;
+  licenseNumber: string;
+  licenseExpiry: string;
+  licenseIssueDate: string;
+  licenseClass: string;
+  endorsements: string;
+  drivingLicensePhoto: File | null;
+  password: string;
+  confirmPassword: string;
+  agreedToTerms: boolean;
+  deviceDetails: string;
+};
+
 export default function DriverSignUpForm() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<{
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-    dob: string;
-    gender: string;
-    idNumber: string;
-    idFrontPhoto: File | null;
-    idBackPhoto: File | null;
-    licenseNumber: string;
-    licenseExpiry: string;
-    licenseIssueDate: string;
-    licenseClass: string;
-    endorsements: string;
-    drivingLicense: File | null;
-    password: string;
-    confirmPassword: string;
-    agreedToTerms: boolean;
-    deviceDetails: string;
-  }>({
+  const [formData, setFormData] = useState<DriverFormData>({
     name: '',
     email: '',
     phone: '',
@@ -45,14 +49,15 @@ export default function DriverSignUpForm() {
     dob: '',
     gender: '',
     idNumber: '',
-    idFrontPhoto: null,
-    idBackPhoto: null,
+    saccoId: '',
+    idPhotoFront: null,
+    idPhotoBack: null,
     licenseNumber: '',
     licenseExpiry: '',
     licenseIssueDate: '',
     licenseClass: '',
     endorsements: '',
-    drivingLicense: null,
+    drivingLicensePhoto: null,
     password: '',
     confirmPassword: '',
     agreedToTerms: false,
@@ -105,6 +110,7 @@ export default function DriverSignUpForm() {
       }
       if (!formData.gender) errors.gender = 'Gender is required.';
       if (!formData.idNumber) errors.idNumber = 'ID number is required.';
+      if (!formData.saccoId) errors.saccoId = 'SACCO ID is required.';
     }
     if (step === 2) {
         if (!formData.email) {
@@ -117,32 +123,15 @@ export default function DriverSignUpForm() {
         } else if (!phoneRegex.test(formData.phone)) {
             errors.phone = 'Invalid phone number.';
         }
-        if (!formData.address) errors.address = 'Address is required.';
     }
     if (step === 3) {
         if (!formData.licenseNumber) errors.licenseNumber = 'License number is required.';
-        if (!formData.licenseClass) errors.licenseClass = 'License class is required.';
-        if (!formData.licenseIssueDate) {
-            errors.licenseIssueDate = 'License issue date is required.';
-        } else {
-            const today = new Date();
-            const issueDate = new Date(formData.licenseIssueDate);
-            let yearsHeld = today.getFullYear() - issueDate.getFullYear();
-            const m = today.getMonth() - issueDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < issueDate.getDate())) {
-                yearsHeld--;
-            }
-            if (yearsHeld < 4) {
-                errors.licenseIssueDate = 'You must have held your license for at least 4 years.';
-            }
-        }
         if (!formData.licenseExpiry) errors.licenseExpiry = 'License expiry date is required.';
     }
     if (step === 4) {
-        if (!formData.endorsements) errors.endorsements = 'Endorsements are required.';
-        if (!formData.idFrontPhoto) errors.idFrontPhoto = 'ID front photo is required.';
-        if (!formData.idBackPhoto) errors.idBackPhoto = 'ID back photo is required.';
-        if (!formData.drivingLicense) errors.drivingLicense = 'Driving license scan is required.';
+        if (!formData['idPhotoFront']) errors['idPhotoFront'] = 'ID front photo is required.';
+        if (!formData['idPhotoBack']) errors['idPhotoBack'] = 'ID back photo is required.';
+        if (!formData['drivingLicensePhoto']) errors['drivingLicensePhoto'] = 'Driving license scan is required.';
     }
     if (step === 6) {
         if (!formData.password) errors.password = 'Password is required.';
@@ -240,18 +229,46 @@ export default function DriverSignUpForm() {
       return;
     }
     setLoading(true);
+    setFormErrors({});
+
     try {
+      // Step 1: Upload files to Cloudinary
+      const fileUploadPromises = [];
+      const fileFields = ['idPhotoFront', 'idPhotoBack', 'drivingLicensePhoto'];
+      const uploadedUrls: { [key: string]: string } = {};
+
+      for (const field of fileFields) {
+        const file = formData[field as keyof typeof formData] as File | null;
+        if (file) {
+          fileUploadPromises.push(
+            uploadToCloudinary(file).then(url => {
+              uploadedUrls[field] = url;
+            })
+          );
+        }
+      }
+
+      await Promise.all(fileUploadPromises);
+
+      // Step 2: Prepare data for your backend
+      const { idPhotoFront: _idPhotoFront, idPhotoBack: _idPhotoBack, drivingLicensePhoto: _drivingLicensePhoto, ...restOfFormData } = formData;
+
       const finalFormData = {
-        ...formData,
+        ...restOfFormData,
+        idPhotoFront: uploadedUrls.idPhotoFront || null,
+        idPhotoBack: uploadedUrls.idPhotoBack || null,
+        drivingLicensePhoto: uploadedUrls.drivingLicensePhoto || null,
         role: 'driver' as const,
         deviceDetails: navigator.userAgent,
         verifiedToken
       };
+
+      // Step 3: Call your backend signup service
       await signup(finalFormData);
-      // On successful signup, AuthContext will redirect, but we can also move to a success screen
+
       setSuccessMessage("Account created successfully! Redirecting...");
     } catch (err) {
-      setFormErrors({ submit: 'Failed to create account. Please try again.' });
+      setFormErrors({ submit: 'Failed to create account. Please check your details and try again.' });
       console.error(err);
     } finally {
       setLoading(false);
@@ -318,6 +335,11 @@ export default function DriverSignUpForm() {
                 <label htmlFor="idNumber" className={labelClasses}>ID Number</label>
                 {formErrors.idNumber && <p className="text-red-500 text-xs mt-1">{formErrors.idNumber}</p>}
             </div>
+            <div className="relative">
+                <input id="saccoId" name="saccoId" type="text" required value={formData.saccoId} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                <label htmlFor="saccoId" className={labelClasses}>SACCO ID</label>
+                {formErrors.saccoId && <p className="text-red-500 text-xs mt-1">{formErrors.saccoId}</p>}
+            </div>
           </div>
         )}
         {currentStep === 2 && (
@@ -347,13 +369,13 @@ export default function DriverSignUpForm() {
                     {formErrors.licenseNumber && <p className="text-red-500 text-xs mt-1">{formErrors.licenseNumber}</p>}
                 </div>
                 <div className="relative">
-                    <input id="licenseClass" name="licenseClass" type="text" required value={formData.licenseClass} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="licenseClass" className={labelClasses}>License Class</label>
+                    <input id="licenseClass" name="licenseClass" type="text" value={formData.licenseClass} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="licenseClass" className={labelClasses}>License Class (Optional)</label>
                     {formErrors.licenseClass && <p className="text-red-500 text-xs mt-1">{formErrors.licenseClass}</p>}
                 </div>
                 <div className="relative">
-                    <input id="licenseIssueDate" name="licenseIssueDate" type="date" required value={formData.licenseIssueDate} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="licenseIssueDate" className={labelClasses}>License Issue Date</label>
+                    <input id="licenseIssueDate" name="licenseIssueDate" type="date" value={formData.licenseIssueDate} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="licenseIssueDate" className={labelClasses}>License Issue Date (Optional)</label>
                     {formErrors.licenseIssueDate && <p className="text-red-500 text-xs mt-1">{formErrors.licenseIssueDate}</p>}
                 </div>
                 <div className="relative">
@@ -366,24 +388,26 @@ export default function DriverSignUpForm() {
         {currentStep === 4 && (
             <div className="space-y-6">
                  <div className="relative">
-                    <input id="endorsements" name="endorsements" type="text" required value={formData.endorsements} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="endorsements" className={labelClasses}>Endorsements</label>
+                    <input id="endorsements" name="endorsements" type="text" value={formData.endorsements} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="endorsements" className={labelClasses}>Endorsements (Optional)</label>
                     {formErrors.endorsements && <p className="text-red-500 text-xs mt-1">{formErrors.endorsements}</p>}
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Front Photo</label>
-                    <FileUpload onFileSelect={handleFileChange('idFrontPhoto')} />
-                    {formErrors.idFrontPhoto && <p className="text-red-500 text-xs mt-1">{formErrors.idFrontPhoto}</p>}
+                <div className="flex space-x-4">
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">ID Front Photo</label>
+                        <FileUpload onFileSelect={handleFileChange('idPhotoFront')} />
+                        {formErrors.idPhotoFront && <p className="text-red-500 text-xs mt-1">{formErrors.idPhotoFront}</p>}
+                    </div>
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">ID Back Photo</label>
+                        <FileUpload onFileSelect={handleFileChange('idPhotoBack')} />
+                        {formErrors.idPhotoBack && <p className="text-red-500 text-xs mt-1">{formErrors.idPhotoBack}</p>}
+                    </div>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Back Photo</label>
-                    <FileUpload onFileSelect={handleFileChange('idBackPhoto')} />
-                    {formErrors.idBackPhoto && <p className="text-red-500 text-xs mt-1">{formErrors.idBackPhoto}</p>}
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Driving License Scan</label>
-                    <FileUpload onFileSelect={handleFileChange('drivingLicense')} />
-                    {formErrors.drivingLicense && <p className="text-red-500 text-xs mt-1">{formErrors.drivingLicense}</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Driving License Photo</label>
+                    <FileUpload onFileSelect={handleFileChange('drivingLicensePhoto')} />
+                    {formErrors.drivingLicensePhoto && <p className="text-red-500 text-xs mt-1">{formErrors.drivingLicensePhoto}</p>}
                 </div>
             </div>
         )}
@@ -429,14 +453,15 @@ export default function DriverSignUpForm() {
               <p><strong>Date of Birth:</strong> {formData.dob}</p>
               <p><strong>Gender:</strong> {formData.gender}</p>
               <p><strong>ID Number:</strong> {formData.idNumber}</p>
-              <p><strong>ID Front Photo:</strong> {formData.idFrontPhoto ? formData.idFrontPhoto.name : 'Not uploaded'}</p>
-              <p><strong>ID Back Photo:</strong> {formData.idBackPhoto ? formData.idBackPhoto.name : 'Not uploaded'}</p>
+              <p><strong>SACCO ID:</strong> {formData.saccoId}</p>
+              <p><strong>ID Front Photo:</strong> {formData.idPhotoFront ? formData.idPhotoFront.name : 'Not uploaded'}</p>
+              <p><strong>ID Back Photo:</strong> {formData.idPhotoBack ? formData.idPhotoBack.name : 'Not uploaded'}</p>
               <p><strong>License Number:</strong> {formData.licenseNumber}</p>
-              <p><strong>License Class:</strong> {formData.licenseClass}</p>
-              <p><strong>License Issue Date:</strong> {formData.licenseIssueDate}</p>
+              <p><strong>License Class:</strong> {formData.licenseClass || 'N/A'}</p>
+              <p><strong>License Issue Date:</strong> {formData.licenseIssueDate || 'N/A'}</p>
               <p><strong>License Expiry Date:</strong> {formData.licenseExpiry}</p>
-              <p><strong>Endorsements:</strong> {formData.endorsements}</p>
-              <p><strong>Driving License:</strong> {formData.drivingLicense ? formData.drivingLicense.name : 'Not uploaded'}</p>
+              <p><strong>Endorsements:</strong> {formData.endorsements || 'N/A'}</p>
+              <p><strong>Driving License Photo:</strong> {formData.drivingLicensePhoto ? formData.drivingLicensePhoto.name : 'Not uploaded'}</p>
             </div>
             <div className="flex items-center mt-4">
                 <input id="agreedToTerms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>

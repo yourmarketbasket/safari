@@ -11,6 +11,7 @@ export type LoginCredentials = {
 import { UserRole } from '../models/User.model';
 
 export type SignupData = {
+    // Common fields
     name: string;
     email: string;
     phone: string;
@@ -21,9 +22,32 @@ export type SignupData = {
     dob?: string;
     gender?: string;
     deviceDetails?: string;
-    drivingLicense?: File | null;
-    saccoLicense?: File | null;
-    saccoRegistrationNumber?: string;
+    idNumber?: string;
+
+    // Driver specific
+    saccoId?: string;
+    licenseNumber?: string;
+    drivingLicenseExpiry?: string;
+    idPhotoFront?: string | null;
+    idPhotoBack?: string | null;
+    drivingLicensePhoto?: string | null;
+
+    // Owner specific
+    idNumberOrBusinessRegNo?: string;
+    kraPinCertificate?: string | null;
+    saccoAffiliation?: string;
+    certificateOfIncorporation?: string | null;
+
+    // Sacco specific
+    registrationNumber?: string;
+    byLawsDocument?: string;
+    leadershipInfoDocument?: string;
+    registrationFeePaymentProof?: string;
+    saccoLicense?: string | null;
+
+    // Queue Manager specific
+    drivingLicense?: string;
+    medicalCertificate?: string | null;
 };
 
 export type ForgotPasswordData = {
@@ -85,34 +109,8 @@ export const verifyMfa = async (verifyData: VerifyMfaData): Promise<AuthData> =>
  * Signs up a new user.
  */
 export const signup = async (signupData: SignupData): Promise<AuthData> => {
-    const { drivingLicense, saccoLicense, ...rest } = signupData;
-
-    if (drivingLicense || saccoLicense) {
-        const formData = new FormData();
-        Object.keys(rest).forEach(key => {
-            const value = (rest as Record<string, string | Blob | null>)[key];
-            if (value !== null && value !== undefined) {
-                formData.append(key, value);
-            }
-        });
-
-        if (drivingLicense) {
-            formData.append('drivingLicense', drivingLicense);
-        }
-        if (saccoLicense) {
-            formData.append('saccoLicense', saccoLicense);
-        }
-
-        const response = await api.post<AuthResponse>('/auth/signup', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        return response.data.data;
-    } else {
-        const response = await api.post<AuthResponse>('/auth/signup', signupData);
-        return response.data.data;
-    }
+    const response = await api.post<AuthResponse>('/auth/signup', signupData);
+    return response.data.data;
 };
 
 /**

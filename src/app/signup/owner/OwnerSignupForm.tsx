@@ -8,6 +8,7 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
+import { uploadToCloudinary } from '@/app/services/cloudinary.service';
 import { FiUser, FiPhone, FiFileText, FiLink, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -24,7 +25,9 @@ export default function OwnerSignUpForm() {
     address: '',
     dob: '',
     gender: '',
-    nationalId: null as File | null,
+    idNumberOrBusinessRegNo: '',
+    idPhotoFront: null as File | null,
+    idPhotoBack: null as File | null,
     kraPinCertificate: null as File | null,
     certificateOfIncorporation: null as File | null,
     saccoAffiliation: '',
@@ -64,8 +67,6 @@ export default function OwnerSignUpForm() {
     const errors: Record<string, string> = {};
     if (step === 1) {
       if (!formData.name) errors.name = 'Full name is required.';
-      if (!formData.dob) errors.dob = 'Date of birth is required.';
-      if (!formData.gender) errors.gender = 'Gender is required.';
       if (!formData.email) {
         errors.email = 'Email is required.';
       } else if (!emailRegex.test(formData.email)) {
@@ -78,11 +79,13 @@ export default function OwnerSignUpForm() {
         } else if (!phoneRegex.test(formData.phone)) {
             errors.phone = 'Invalid phone number.';
         }
-        if (!formData.address) errors.address = 'Address is required.';
     }
     if (step === 3) {
-        if (!formData.nationalId) errors.nationalId = 'National ID is required.';
+        if (!formData.idNumberOrBusinessRegNo) errors.idNumberOrBusinessRegNo = 'ID/Business Registration number is required.';
+        if (!formData.idPhotoFront) errors.idPhotoFront = 'ID front photo is required.';
+        if (!formData.idPhotoBack) errors.idPhotoBack = 'ID back photo is required.';
         if (!formData.kraPinCertificate) errors.kraPinCertificate = 'KRA PIN certificate is required.';
+        if (!formData.saccoAffiliation) errors.saccoAffiliation = 'SACCO affiliation is required.';
     }
     if (step === 5) {
         if (!formData.password) errors.password = 'Password is required.';
@@ -177,17 +180,47 @@ export default function OwnerSignUpForm() {
       return;
     }
     setLoading(true);
+    setFormErrors({});
+
     try {
+      // Step 1: Upload files to Cloudinary
+      const fileUploadPromises = [];
+      const fileFields = ['idPhotoFront', 'idPhotoBack', 'kraPinCertificate', 'certificateOfIncorporation'];
+      const uploadedUrls: { [key: string]: string } = {};
+
+      for (const field of fileFields) {
+        const file = formData[field as keyof typeof formData] as File | null;
+        if (file) {
+          fileUploadPromises.push(
+            uploadToCloudinary(file).then(url => {
+              uploadedUrls[field] = url;
+            })
+          );
+        }
+      }
+
+      await Promise.all(fileUploadPromises);
+
+      // Step 2: Prepare data for your backend
+      const { idPhotoFront: _idPhotoFront, idPhotoBack: _idPhotoBack, kraPinCertificate: _kraPinCertificate, certificateOfIncorporation: _certificateOfIncorporation, ...restOfFormData } = formData;
+
       const finalFormData = {
-        ...formData,
+        ...restOfFormData,
+        idPhotoFront: uploadedUrls.idPhotoFront || null,
+        idPhotoBack: uploadedUrls.idPhotoBack || null,
+        kraPinCertificate: uploadedUrls.kraPinCertificate || null,
+        certificateOfIncorporation: uploadedUrls.certificateOfIncorporation || null,
         role: 'owner' as const,
         deviceDetails: navigator.userAgent,
         verifiedToken
       };
+
+      // Step 3: Call your backend signup service
       await signup(finalFormData);
+
       setSuccessMessage("Account created successfully! Redirecting...");
     } catch (err) {
-      setFormErrors({ submit: 'Failed to create account. Please try again.' });
+      setFormErrors({ submit: 'Failed to create account. Please check your details and try again.' });
       console.error(err);
     } finally {
       setLoading(false);
@@ -234,13 +267,13 @@ export default function OwnerSignUpForm() {
                 {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
             </div>
             <div className="relative">
-                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
+                <input id="dob" name="dob" type="date" value={formData.dob} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                <label htmlFor="dob" className={labelClasses}>Date of Birth (Optional)</label>
                 {formErrors.dob && <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>}
             </div>
             <div className="relative">
-                <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
-                    <option value="">Select Gender</option>
+                <select id="gender" name="gender" value={formData.gender} onChange={handleChange} className={inputClasses}>
+                    <option value="">Select Gender (Optional)</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
@@ -263,23 +296,40 @@ export default function OwnerSignUpForm() {
                     {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
                 </div>
                 <div className="relative">
-                    <input id="address" name="address" type="text" required value={formData.address} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="address" className={labelClasses}>Address</label>
+                    <input id="address" name="address" type="text" value={formData.address} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="address" className={labelClasses}>Address (Optional)</label>
                     {formErrors.address && <p className="text-red-500 text-xs mt-1">{formErrors.address}</p>}
                 </div>
             </div>
         )}
         {currentStep === 3 && (
             <div className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">National ID</label>
-                    <FileUpload onFileSelect={handleFileChange('nationalId')} />
-                    {formErrors.nationalId && <p className="text-red-500 text-xs mt-1">{formErrors.nationalId}</p>}
+                <div className="relative">
+                    <input id="idNumberOrBusinessRegNo" name="idNumberOrBusinessRegNo" type="text" required value={formData.idNumberOrBusinessRegNo} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="idNumberOrBusinessRegNo" className={labelClasses}>ID/Business Registration Number</label>
+                    {formErrors.idNumberOrBusinessRegNo && <p className="text-red-500 text-xs mt-1">{formErrors.idNumberOrBusinessRegNo}</p>}
+                </div>
+                <div className="flex space-x-4">
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">ID Front Photo</label>
+                        <FileUpload onFileSelect={handleFileChange('idPhotoFront')} />
+                        {formErrors.idPhotoFront && <p className="text-red-500 text-xs mt-1">{formErrors.idPhotoFront}</p>}
+                    </div>
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">ID Back Photo</label>
+                        <FileUpload onFileSelect={handleFileChange('idPhotoBack')} />
+                        {formErrors.idPhotoBack && <p className="text-red-500 text-xs mt-1">{formErrors.idPhotoBack}</p>}
+                    </div>
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">KRA PIN Certificate</label>
                     <FileUpload onFileSelect={handleFileChange('kraPinCertificate')} />
                     {formErrors.kraPinCertificate && <p className="text-red-500 text-xs mt-1">{formErrors.kraPinCertificate}</p>}
+                </div>
+                <div className="relative">
+                    <input id="saccoAffiliation" name="saccoAffiliation" type="text" required value={formData.saccoAffiliation} onChange={handleChange} placeholder=" " className={inputClasses}/>
+                    <label htmlFor="saccoAffiliation" className={labelClasses}>SACCO Affiliation ID</label>
+                    {formErrors.saccoAffiliation && <p className="text-red-500 text-xs mt-1">{formErrors.saccoAffiliation}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Certificate of Incorporation (Optional)</label>
@@ -325,13 +375,15 @@ export default function OwnerSignUpForm() {
               <p><strong>Name:</strong> {formData.name}</p>
               <p><strong>Email:</strong> {formData.email}</p>
               <p><strong>Phone:</strong> {formData.phone}</p>
-              <p><strong>Address:</strong> {formData.address}</p>
-              <p><strong>Date of Birth:</strong> {formData.dob}</p>
-              <p><strong>Gender:</strong> {formData.gender}</p>
-              <p><strong>National ID:</strong> {formData.nationalId ? formData.nationalId.name : 'Not uploaded'}</p>
+              <p><strong>Address:</strong> {formData.address || 'N/A'}</p>
+              <p><strong>Date of Birth:</strong> {formData.dob || 'N/A'}</p>
+              <p><strong>Gender:</strong> {formData.gender || 'N/A'}</p>
+              <p><strong>ID/Business Reg No:</strong> {formData.idNumberOrBusinessRegNo}</p>
+              <p><strong>ID Front Photo:</strong> {formData.idPhotoFront ? formData.idPhotoFront.name : 'Not uploaded'}</p>
+              <p><strong>ID Back Photo:</strong> {formData.idPhotoBack ? formData.idPhotoBack.name : 'Not uploaded'}</p>
               <p><strong>KRA PIN Certificate:</strong> {formData.kraPinCertificate ? formData.kraPinCertificate.name : 'Not uploaded'}</p>
               <p><strong>Certificate of Incorporation:</strong> {formData.certificateOfIncorporation ? formData.certificateOfIncorporation.name : 'Not uploaded'}</p>
-              <p><strong>SACCO Affiliation:</strong> {formData.saccoAffiliation || 'N/A'}</p>
+              <p><strong>SACCO Affiliation:</strong> {formData.saccoAffiliation}</p>
             </div>
             <div className="flex items-center mt-4">
                 <input id="terms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>

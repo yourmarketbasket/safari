@@ -63,10 +63,11 @@ export interface User {
   saccoRegistrationNumber?: string;
 
   // Queue Manager fields
-  nationalIdUrl?: string;
   medicalCertificateUrl?: string;
+  drivingLicense?: string;
 
   // Owner fields
+  idNumberOrBusinessRegNo?: string;
   kraPinCertificateUrl?: string;
   certificateOfIncorporationUrl?: string;
   saccoAffiliation?: string;
