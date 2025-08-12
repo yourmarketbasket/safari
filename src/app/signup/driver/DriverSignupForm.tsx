@@ -266,7 +266,7 @@ export default function DriverSignUpForm() {
   };
 
   const inputClasses = "block w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500";
-  const labelClasses = "absolute left-3 -top-2.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5 peer-focus:-top-2.5 peer-focus:text-gray-600 peer-focus:text-sm";
+  const labelClasses = "absolute left-3 -top-2.5 text-gray-600 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3.5 peer-focus:-top-2.5 peer-focus:text-gray-600 peer-focus:text-sm bg-white px-1";
 
   const getStepStatus = (step: number): StepStatus => {
     const errors = validateStep(step);

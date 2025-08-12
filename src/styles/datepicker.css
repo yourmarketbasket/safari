@@ -1,19 +1,22 @@
 .rdp {
-  --rdp-cell-size: 40px;
+  --rdp-cell-size: 48px;
   --rdp-accent-color: #4f46e5;
-  --rdp-background-color: #f3f4f6;
+  --rdp-background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
   padding: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .rdp-head_cell {
-  color: #4b5563;
-  font-weight: 600;
+  color: #111827;
+  font-weight: 700;
+  font-size: 1rem;
 }
 
 .rdp-cell {
   color: #1f2937;
+  font-size: 1rem;
 }
 
 .rdp-day_selected {
