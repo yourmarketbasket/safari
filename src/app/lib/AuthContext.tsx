@@ -11,7 +11,7 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   isMfaRequired: boolean;
-  login: (loginData: LoginCredentials) => Promise<void>;
+  login: (loginData: LoginCredentials & { rememberMe?: boolean }) => Promise<void>;
   logout: () => void;
   verifyMfa: (mfaCode: string) => Promise<void>;
   cancelMfa: () => void;
@@ -50,13 +50,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     setMfaToken(null);
     localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
     authService.logout();
     router.push('/login');
   }, [router]);
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const storedToken = localStorage.getItem('authToken');
+      const storedToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
       if (storedToken) {
         try {
           const userData = await authService.getProfile();
@@ -72,7 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     initializeAuth();
   }, [logout]);
 
-  const login = async (loginData: LoginCredentials) => {
+  const login = async (loginData: LoginCredentials & { rememberMe?: boolean }) => {
     setLoading(true);
     try {
       const responseData = await authService.login(loginData);
@@ -81,7 +82,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } else {
         setToken(responseData.token);
         setUser(responseData.user);
-        localStorage.setItem('authToken', responseData.token);
+        if (loginData.rememberMe) {
+          localStorage.setItem('authToken', responseData.token);
+        } else {
+          sessionStorage.setItem('authToken', responseData.token);
+        }
         redirectUser(responseData.user, router);
       }
     } catch (error) {

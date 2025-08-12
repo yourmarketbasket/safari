@@ -31,7 +31,7 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      await login({ emailOrPhone, password });
+      await login({ emailOrPhone, password, rememberMe });
     } catch (err: unknown) {
         if (err instanceof Error) {
             setError(err.message || 'Failed to login. Please check your credentials.');

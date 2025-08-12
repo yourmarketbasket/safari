@@ -16,6 +16,7 @@ export type ApiResponse<T> = {
 export type LoginCredentials = {
   emailOrPhone: string;
   password?: string;
+  rememberMe?: boolean;
 }
 
 import { UserRole } from '../models/User.model';

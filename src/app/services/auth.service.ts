@@ -5,7 +5,7 @@ import { User } from '../models/User.model';
 export type LoginCredentials = {
   emailOrPhone: string;
   password?: string;
-  // mfaCode is removed from initial login
+  rememberMe?: boolean;
 }
 
 
