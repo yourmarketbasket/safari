@@ -10,17 +10,21 @@ interface SuperuserPrivateRouteProps {
 }
 
 export default function SuperuserPrivateRoute({ children }: SuperuserPrivateRouteProps) {
-  const { user, token, isInitialized } = useSuperuserAuth();
+  const { user, token, loading } = useSuperuserAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (isInitialized && (!token || (user && user.role !== 'superuser'))) {
+    if (!loading && (!token || !user || user.role !== 'superuser')) {
       router.push('/superuser/login');
     }
-  }, [user, token, isInitialized, router]);
+  }, [user, token, loading, router]);
 
-  if (!isInitialized || !token || (user && user.role !== 'superuser')) {
+  if (loading) {
     return <LoadingOverlay />;
+  }
+
+  if (!token || !user || user.role !== 'superuser') {
+    return null;
   }
 
   return <>{children}</>;

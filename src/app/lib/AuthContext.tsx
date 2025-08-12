@@ -1,19 +1,15 @@
 "use client";
 
-import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import authService, { LoginCredentials, SignupData, VerifyMfaData } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
-import InactiveTab from '../components/InactiveTab';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import LoadingOverlay from '../components/LoadingOverlay';
-
-type TabStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE';
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  isInitialized: boolean;
+  loading: boolean;
   isMfaRequired: boolean;
   login: (loginData: LoginCredentials) => Promise<void>;
   logout: () => void;
@@ -27,90 +23,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [mfaToken, setMfaToken] = useState<string | null>(null);
-  const [tabStatus, setTabStatus] = useState<TabStatus>('PENDING');
-  const tabId = useRef<string | null>(null);
-
-  const isMfaRequired = !!mfaToken;
   const router = useRouter();
 
-  const handleTakeOver = useCallback(() => {
-    if (tabId.current) {
-      localStorage.setItem('activeTabId', tabId.current);
-      setTabStatus('ACTIVE');
-    }
-  }, []);
-
-  const handleLogout = useCallback(() => {
-    if (tabId.current) {
-        const activeTabId = localStorage.getItem('activeTabId');
-        if (activeTabId === tabId.current) {
-            localStorage.removeItem('activeTabId');
-        }
-    }
-    setUser(null);
-    setToken(null);
-    setMfaToken(null);
-    setIsInitialized(false);
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    localStorage.removeItem('superuserAuthToken');
-    localStorage.removeItem('superuser');
-    authService.logout();
-    router.push('/login');
-  }, [router]);
-
-  useEffect(() => {
-    tabId.current = sessionStorage.getItem('tabId') || `${Date.now()}-${Math.random()}`;
-    sessionStorage.setItem('tabId', tabId.current);
-
-    const checkActiveTab = () => {
-      const activeTabId = localStorage.getItem('activeTabId');
-      if (!activeTabId) {
-        localStorage.setItem('activeTabId', tabId.current!);
-        setTabStatus('ACTIVE');
-      } else {
-        setTabStatus(activeTabId === tabId.current ? 'ACTIVE' : 'INACTIVE');
-      }
-    };
-
-    checkActiveTab();
-
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'activeTabId') {
-        setTabStatus(event.newValue === tabId.current ? 'ACTIVE' : 'INACTIVE');
-      }
-      if (event.key === 'authToken' && event.newValue === null) {
-          handleLogout();
-      }
-    };
-
-    const releaseTab = () => {
-        const activeTabId = localStorage.getItem('activeTabId');
-        if (activeTabId === tabId.current) {
-            localStorage.removeItem('activeTabId');
-        }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('beforeunload', releaseTab);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('beforeunload', releaseTab);
-    };
-  }, [handleLogout]);
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
-    const storedUser = localStorage.getItem('user');
-    if (storedToken && storedUser && storedUser !== 'undefined') {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
-    setIsInitialized(true);
-  }, []);
+  const isMfaRequired = !!mfaToken;
 
   const redirectUser = (user: User, router: AppRouterInstance) => {
     if (user.role === 'ordinary') {
@@ -129,49 +46,79 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const handleLogin = async (loginData: LoginCredentials) => {
-    const responseData = await authService.login(loginData);
+  const logout = useCallback(() => {
+    setUser(null);
+    setToken(null);
+    setMfaToken(null);
+    localStorage.removeItem('authToken');
+    authService.logout();
+    router.push('/login');
+  }, [router]);
 
-    if (responseData.mfaRequired) {
-      setMfaToken(responseData.mfaToken);
-    } else {
-      localStorage.removeItem('superuserAuthToken');
-      localStorage.removeItem('superuser');
-      if (tabId.current) {
-        localStorage.setItem('activeTabId', tabId.current);
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const storedToken = localStorage.getItem('authToken');
+      if (storedToken) {
+        try {
+          const userData = await authService.getProfile();
+          setUser(userData);
+          setToken(storedToken);
+        } catch (error) {
+          console.error("Failed to initialize auth:", error);
+          logout();
+        }
       }
-      setTabStatus('ACTIVE');
-      setToken(responseData.token);
-      setUser(responseData.user);
-      localStorage.setItem('authToken', responseData.token);
-      localStorage.setItem('user', JSON.stringify(responseData.user));
-      redirectUser(responseData.user, router);
+      setLoading(false);
+    };
+    initializeAuth();
+  }, [logout]);
+
+  const login = async (loginData: LoginCredentials) => {
+    setLoading(true);
+    try {
+      const responseData = await authService.login(loginData);
+      if (responseData.mfaRequired) {
+        setMfaToken(responseData.mfaToken);
+      } else {
+        setToken(responseData.token);
+        setUser(responseData.user);
+        localStorage.setItem('authToken', responseData.token);
+        redirectUser(responseData.user, router);
+      }
+    } catch (error) {
+      console.error("Failed to login:", error);
+      logout();
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleVerifyMfa = async (mfaCode: string) => {
+  const verifyMfa = async (mfaCode: string) => {
     if (!mfaToken) throw new Error("MFA token not available.");
-
-    const verifyData: VerifyMfaData = { mfaToken, mfaCode };
-    const responseData = await authService.verifyMfa(verifyData);
-
-    if (responseData.mfaRequired) {
-      throw new Error("MFA verification failed.");
+    setLoading(true);
+    try {
+      const verifyData: VerifyMfaData = { mfaToken, mfaCode };
+      const responseData = await authService.verifyMfa(verifyData);
+      if (!responseData.mfaRequired) {
+        setToken(responseData.token);
+        setUser(responseData.user);
+        localStorage.setItem('authToken', responseData.token);
+        setMfaToken(null);
+        redirectUser(responseData.user, router);
+      }
+    } catch (error) {
+      console.error("Failed to verify MFA:", error);
+      logout();
+    } finally {
+      setLoading(false);
     }
-
-    setToken(responseData.token);
-    setUser(responseData.user);
-    localStorage.setItem('authToken', responseData.token);
-    localStorage.setItem('user', JSON.stringify(responseData.user));
-    setMfaToken(null);
-    redirectUser(responseData.user, router);
   };
 
-  const handleCancelMfa = () => {
+  const cancelMfa = () => {
     setMfaToken(null);
   };
 
-  const handleSignup = async (signupData: SignupData) => {
+  const signup = async (signupData: SignupData) => {
     await authService.signup(signupData);
     router.push('/login');
   };
@@ -179,22 +126,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     user,
     token,
-    isInitialized,
+    loading,
     isMfaRequired,
-    login: handleLogin,
-    logout: handleLogout,
-    signup: handleSignup,
-    verifyMfa: handleVerifyMfa,
-    cancelMfa: handleCancelMfa,
+    login,
+    logout,
+    signup,
+    verifyMfa,
+    cancelMfa,
   };
-
-  if (!isInitialized || (tabStatus === 'PENDING' && token)) {
-    return null;
-  }
-
-  if (tabStatus === 'INACTIVE' && token) {
-    return <InactiveTab onTakeOver={handleTakeOver} />;
-  }
 
   return (
     <AuthContext.Provider value={value}>

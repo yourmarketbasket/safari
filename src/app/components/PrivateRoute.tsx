@@ -11,31 +11,33 @@ interface PrivateRouteProps {
 }
 
 export default function PrivateRoute({ children, allowedRoles }: PrivateRouteProps) {
-  const { user, token, isInitialized } = useAuth();
+  const { user, token, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isInitialized) return;
+    if (loading) return;
 
-    if (!token) {
+    if (!token || !user) {
       router.push('/login');
       return;
     }
 
-    if (user) {
-      if (user.role === 'ordinary') {
-        router.push('/pending-approval');
-        return;
-      }
-
-      if (!allowedRoles.includes(user.role)) {
-        router.push('/dashboard');
-      }
+    if (user.role === 'ordinary') {
+      router.push('/pending-approval');
+      return;
     }
-  }, [user, token, isInitialized, router, allowedRoles]);
 
-  if (!isInitialized || !token || (user && !allowedRoles.includes(user.role))) {
+    if (!allowedRoles.includes(user.role)) {
+      router.push('/dashboard');
+    }
+  }, [user, token, loading, router, allowedRoles]);
+
+  if (loading) {
     return <LoadingOverlay />;
+  }
+
+  if (!token || !user || !allowedRoles.includes(user.role)) {
+    return null;
   }
 
   return <>{children}</>;
