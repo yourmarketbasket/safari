@@ -13,7 +13,7 @@ const availableRoles: UserRole[] = [
   "queue_manager",
   "driver",
   "passenger",
-  "superuser",
+  "Superuser",
 ];
 
 interface AddStaffFormProps {

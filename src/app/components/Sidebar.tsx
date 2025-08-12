@@ -75,7 +75,7 @@ const allNavLinks: { [key in UserRole]?: NavLink[] } = {
     { name: 'Earnings', href: '/driver/earnings', icon: <FiTrendingUp /> },
     { name: 'Trip Completion', href: '/driver/trip-completion', icon: <FiList /> },
   ],
-  superuser: [
+  Superuser: [
     { name: 'Dashboard', href: '/superuser', icon: <FiShield /> },
   ],
 };

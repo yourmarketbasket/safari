@@ -14,7 +14,7 @@ export default function SuperuserPrivateRoute({ children }: SuperuserPrivateRout
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && (!token || !user || user.role !== 'superuser')) {
+    if (!loading && (!token || !user || user.role !== 'Superuser')) {
       router.push('/superuser/login');
     }
   }, [user, token, loading, router]);
@@ -23,7 +23,7 @@ export default function SuperuserPrivateRoute({ children }: SuperuserPrivateRout
     return <LoadingOverlay />;
   }
 
-  if (!token || !user || user.role !== 'superuser') {
+  if (!token || !user || user.role !== 'Superuser') {
     return null;
   }
 

@@ -15,7 +15,7 @@ interface PermissionModalProps {
   permissionToEdit?: Permission | null;
 }
 
-const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "superuser"];
+const allRoles: UserRole[] = ["sacco", "owner", "admin", "driver", "passenger", "support_staff", "queue_manager", "Superuser"];
 
 export default function PermissionModal({ isOpen, onClose, onSave, permissionToEdit }: PermissionModalProps) {
   const [permissionNumber, setPermissionNumber] = useState('');

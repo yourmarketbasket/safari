@@ -106,7 +106,7 @@ function SuperuserRegisterPageContent() {
         email,
         phone,
         password,
-        role: 'superuser',
+        role: 'Superuser',
         verifiedToken,
       };
       await authService.register(userData, adminKey);
