@@ -71,3 +71,11 @@ body {
 .animate-pulse-pink { animation: pulse-pink 2s infinite; }
 .animate-pulse-yellow { animation: pulse-yellow 2s infinite; }
 .animate-pulse-teal { animation: pulse-teal 2s infinite; }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}
+
+input[type="date"]:not(:valid) {
+  color: transparent;
+}
