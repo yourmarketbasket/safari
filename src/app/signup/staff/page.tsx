@@ -6,6 +6,7 @@ import Message from '../../components/Message';
 import PublicRoute from '../../components/PublicRoute';
 import OtpInput from '../../components/OtpInput';
 import authService from '../../services/auth.service';
+import { useRouter } from 'next/navigation';
 import { FiSend, FiCheck } from 'react-icons/fi';
 import { Button } from '../../components/ui/Button';
 import AuthLayout from '../../components/AuthLayout';
@@ -24,6 +25,7 @@ export default function SignupPage() {
   const [confirmedDetails, setConfirmedDetails] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -102,6 +104,8 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await authService.signupPassenger({ name, email, phone, password, verifiedToken });
+      setSuccessMessage("Account created successfully! Redirecting...");
+      setTimeout(() => router.push('/login'), 2000);
     } catch (err) {
       setError('Failed to create account. Please try again.');
       console.error(err);

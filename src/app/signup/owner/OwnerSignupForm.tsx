@@ -7,6 +7,7 @@ import Message from '@/app/components/Message';
 import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import FileUpload from '@/app/components/FileUpload';
+import { useRouter } from 'next/navigation';
 import { uploadToCloudinary } from '@/app/services/cloudinary.service';
 import { FiUser, FiPhone, FiFileText, FiLink, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
@@ -37,6 +38,7 @@ export default function OwnerSignUpForm() {
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -200,6 +202,7 @@ export default function OwnerSignUpForm() {
       await authService.signupOwner(finalFormData);
 
       setSuccessMessage("Account created successfully! Redirecting...");
+      setTimeout(() => router.push('/login'), 2000);
     } catch (err) {
       setFormErrors({ submit: 'Failed to create account. Please check your details and try again.' });
       console.error(err);
