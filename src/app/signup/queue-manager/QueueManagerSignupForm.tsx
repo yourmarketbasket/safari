@@ -24,7 +24,8 @@ export default function QueueManagerSignUpForm() {
     address: '',
     dob: '',
     gender: '',
-    nationalId: null as File | null,
+    nationalIdFront: null as File | null,
+    nationalIdBack: null as File | null,
     medicalCertificate: null as File | null,
     drivingLicense: null as File | null,
     password: '',
@@ -93,7 +94,8 @@ export default function QueueManagerSignUpForm() {
         if (!formData.address) errors.address = 'Address is required.';
     }
     if (step === 3) {
-        if (!formData.nationalId) errors.nationalId = 'National ID is required.';
+        if (!formData.nationalIdFront) errors.nationalIdFront = 'National ID front is required.';
+        if (!formData.nationalIdBack) errors.nationalIdBack = 'National ID back is required.';
         if (!formData.medicalCertificate) errors.medicalCertificate = 'Medical certificate is required.';
     }
     if (step === 5) {
@@ -283,10 +285,17 @@ export default function QueueManagerSignUpForm() {
         )}
         {currentStep === 3 && (
             <div className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">National ID</label>
-                    <FileUpload onFileSelect={handleFileChange('nationalId')} />
-                    {formErrors.nationalId && <p className="text-red-500 text-xs mt-1">{formErrors.nationalId}</p>}
+                <div className="flex space-x-4">
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">National ID Front</label>
+                        <FileUpload onFileSelect={handleFileChange('nationalIdFront')} />
+                        {formErrors.nationalIdFront && <p className="text-red-500 text-xs mt-1">{formErrors.nationalIdFront}</p>}
+                    </div>
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">National ID Back</label>
+                        <FileUpload onFileSelect={handleFileChange('nationalIdBack')} />
+                        {formErrors.nationalIdBack && <p className="text-red-500 text-xs mt-1">{formErrors.nationalIdBack}</p>}
+                    </div>
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Medical Certificate</label>
@@ -340,7 +349,8 @@ export default function QueueManagerSignUpForm() {
               <p><strong>Address:</strong> {formData.address}</p>
               <p><strong>Date of Birth:</strong> {formData.dob}</p>
               <p><strong>Gender:</strong> {formData.gender}</p>
-              <p><strong>National ID:</strong> {formData.nationalId ? formData.nationalId.name : 'Not uploaded'}</p>
+              <p><strong>National ID Front:</strong> {formData.nationalIdFront ? formData.nationalIdFront.name : 'Not uploaded'}</p>
+              <p><strong>National ID Back:</strong> {formData.nationalIdBack ? formData.nationalIdBack.name : 'Not uploaded'}</p>
               <p><strong>Medical Certificate:</strong> {formData.medicalCertificate ? formData.medicalCertificate.name : 'Not uploaded'}</p>
               <p><strong>Driving License:</strong> {formData.drivingLicense ? formData.drivingLicense.name : 'Not uploaded'}</p>
             </div>

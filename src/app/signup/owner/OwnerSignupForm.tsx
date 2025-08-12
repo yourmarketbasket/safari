@@ -24,7 +24,8 @@ export default function OwnerSignUpForm() {
     address: '',
     dob: '',
     gender: '',
-    nationalId: null as File | null,
+    nationalIdFront: null as File | null,
+    nationalIdBack: null as File | null,
     kraPinCertificate: null as File | null,
     certificateOfIncorporation: null as File | null,
     saccoAffiliation: '',
@@ -81,7 +82,8 @@ export default function OwnerSignUpForm() {
         if (!formData.address) errors.address = 'Address is required.';
     }
     if (step === 3) {
-        if (!formData.nationalId) errors.nationalId = 'National ID is required.';
+        if (!formData.nationalIdFront) errors.nationalIdFront = 'National ID front is required.';
+        if (!formData.nationalIdBack) errors.nationalIdBack = 'National ID back is required.';
         if (!formData.kraPinCertificate) errors.kraPinCertificate = 'KRA PIN certificate is required.';
     }
     if (step === 5) {
@@ -271,10 +273,17 @@ export default function OwnerSignUpForm() {
         )}
         {currentStep === 3 && (
             <div className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">National ID</label>
-                    <FileUpload onFileSelect={handleFileChange('nationalId')} />
-                    {formErrors.nationalId && <p className="text-red-500 text-xs mt-1">{formErrors.nationalId}</p>}
+                <div className="flex space-x-4">
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">National ID Front</label>
+                        <FileUpload onFileSelect={handleFileChange('nationalIdFront')} />
+                        {formErrors.nationalIdFront && <p className="text-red-500 text-xs mt-1">{formErrors.nationalIdFront}</p>}
+                    </div>
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">National ID Back</label>
+                        <FileUpload onFileSelect={handleFileChange('nationalIdBack')} />
+                        {formErrors.nationalIdBack && <p className="text-red-500 text-xs mt-1">{formErrors.nationalIdBack}</p>}
+                    </div>
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">KRA PIN Certificate</label>
@@ -328,7 +337,8 @@ export default function OwnerSignUpForm() {
               <p><strong>Address:</strong> {formData.address}</p>
               <p><strong>Date of Birth:</strong> {formData.dob}</p>
               <p><strong>Gender:</strong> {formData.gender}</p>
-              <p><strong>National ID:</strong> {formData.nationalId ? formData.nationalId.name : 'Not uploaded'}</p>
+              <p><strong>National ID Front:</strong> {formData.nationalIdFront ? formData.nationalIdFront.name : 'Not uploaded'}</p>
+              <p><strong>National ID Back:</strong> {formData.nationalIdBack ? formData.nationalIdBack.name : 'Not uploaded'}</p>
               <p><strong>KRA PIN Certificate:</strong> {formData.kraPinCertificate ? formData.kraPinCertificate.name : 'Not uploaded'}</p>
               <p><strong>Certificate of Incorporation:</strong> {formData.certificateOfIncorporation ? formData.certificateOfIncorporation.name : 'Not uploaded'}</p>
               <p><strong>SACCO Affiliation:</strong> {formData.saccoAffiliation || 'N/A'}</p>

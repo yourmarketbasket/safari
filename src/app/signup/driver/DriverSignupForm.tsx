@@ -370,15 +370,17 @@ export default function DriverSignUpForm() {
                     <label htmlFor="endorsements" className={labelClasses}>Endorsements</label>
                     {formErrors.endorsements && <p className="text-red-500 text-xs mt-1">{formErrors.endorsements}</p>}
                 </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Front Photo</label>
-                    <FileUpload onFileSelect={handleFileChange('idFrontPhoto')} />
-                    {formErrors.idFrontPhoto && <p className="text-red-500 text-xs mt-1">{formErrors.idFrontPhoto}</p>}
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">ID Back Photo</label>
-                    <FileUpload onFileSelect={handleFileChange('idBackPhoto')} />
-                    {formErrors.idBackPhoto && <p className="text-red-500 text-xs mt-1">{formErrors.idBackPhoto}</p>}
+                <div className="flex space-x-4">
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">ID Front Photo</label>
+                        <FileUpload onFileSelect={handleFileChange('idFrontPhoto')} />
+                        {formErrors.idFrontPhoto && <p className="text-red-500 text-xs mt-1">{formErrors.idFrontPhoto}</p>}
+                    </div>
+                    <div className="w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">ID Back Photo</label>
+                        <FileUpload onFileSelect={handleFileChange('idBackPhoto')} />
+                        {formErrors.idBackPhoto && <p className="text-red-500 text-xs mt-1">{formErrors.idBackPhoto}</p>}
+                    </div>
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Driving License Scan</label>
