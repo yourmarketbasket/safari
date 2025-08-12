@@ -235,7 +235,7 @@ export default function QueueManagerSignUpForm() {
   ];
 
   return (
-    <div>
+    <div className="max-h-[70vh] overflow-y-auto pr-4">
       <Stepper steps={steps} onStepClick={handleStepClick}/>
       <div className="my-4">
         {otpError && <Message message={otpError} type="error" />}
