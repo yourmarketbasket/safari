@@ -201,7 +201,7 @@ export default function PassengerSignUpForm() {
   };
 
   const inputClasses = "peer h-12 w-full border border-gray-300 rounded-md bg-transparent px-4 text-gray-900 placeholder-transparent focus:border-indigo-500 focus:outline-none";
-  const labelClasses = "absolute left-2 -top-2.5 bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-indigo-600";
+  const labelClasses = "absolute left-2 top-3.5 text-gray-400 text-base transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-indigo-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2.5 peer-[:not(:placeholder-shown)]:text-sm peer-[:not(:placeholder-shown)]:text-indigo-600 peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1";
 
   const getStepStatus = (step: number): StepStatus => {
     const errors = validateStep(step);
@@ -240,8 +240,7 @@ export default function PassengerSignUpForm() {
                 {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
             </div>
             <div className="relative">
-                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={`${inputClasses} pt-3`}/>
-                <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
+                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder="Date of Birth" className={`${inputClasses} pt-3`}/>
                 {formErrors.dob && <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>}
             </div>
             <div className="relative">
@@ -251,7 +250,6 @@ export default function PassengerSignUpForm() {
                     <option value="female">Female</option>
                     <option value="other">Other</option>
                 </select>
-                <label htmlFor="gender" className={labelClasses}>Gender</label>
                 {formErrors.gender && <p className="text-red-500 text-xs mt-1">{formErrors.gender}</p>}
             </div>
             <div className="relative">
