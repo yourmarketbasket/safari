@@ -48,7 +48,7 @@ export default function SaccoSignUpForm() {
     agreedToTerms: false,
     deviceDetails: ''
   });
-  const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
 
@@ -75,9 +75,46 @@ export default function SaccoSignUpForm() {
     setFormData(prev => ({ ...prev, [name]: file }));
   };
 
+  const validateStep = () => {
+    const errors: Record<string, string> = {};
+    if (currentStep === 1) {
+      if (!formData.name) errors.name = 'Sacco name is required.';
+      if (!formData.registrationNumber) errors.registrationNumber = 'Registration number is required.';
+      if (!formData.email) {
+        errors.email = 'Email is required.';
+      } else if (!emailRegex.test(formData.email)) {
+        errors.email = 'Invalid email address.';
+      }
+      if (!formData.phone) {
+        errors.phone = 'Phone number is required.';
+      } else if (!phoneRegex.test(formData.phone)) {
+        errors.phone = 'Invalid phone number.';
+      }
+    }
+    if (currentStep === 2) {
+        if (!formData.address) errors.address = 'Address is required.';
+    }
+    if (currentStep === 3) {
+        if (!formData.registrationCertificate) errors.registrationCertificate = 'Registration certificate is required.';
+        if (!formData.formalIntentRequest) errors.formalIntentRequest = 'Formal intent request is required.';
+        if (!formData.byLaws) errors.byLaws = 'By-laws are required.';
+        if (!formData.leadershipInfo) errors.leadershipInfo = 'Leadership information is required.';
+    }
+    if (currentStep === 4) {
+        if (!formData.proofOfPayment) errors.proofOfPayment = 'Proof of payment is required.';
+    }
+    if (currentStep === 6) {
+        if (!formData.password) errors.password = 'Password is required.';
+        if (formData.password !== formData.confirmPassword) errors.confirmPassword = 'Passwords do not match.';
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleNext = () => {
-    setError('');
-    setCurrentStep(prev => prev + 1);
+    if (validateStep()) {
+      setCurrentStep(prev => prev + 1);
+    }
   };
 
   const handleBack = () => {
@@ -92,18 +129,18 @@ export default function SaccoSignUpForm() {
 
   const handleSendOtp = async () => {
     if (!emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address to receive an OTP.');
+      setFormErrors({ email: 'Please enter a valid email address to receive an OTP.' });
       return;
     }
     setSendOtpLoading(true);
     setOtpError('');
-    setError('');
+    setFormErrors({});
     try {
       await authService.sendSignupOtp(formData.email);
       setIsOtpSent(true);
       setSuccessMessage('OTP has been sent to your email.');
     } catch {
-      setError('Failed to send OTP. Please try again.');
+      setFormErrors({ email: 'Failed to send OTP. Please try again.' });
     } finally {
       setSendOtpLoading(false);
     }
@@ -121,7 +158,7 @@ export default function SaccoSignUpForm() {
       setVerifiedToken(token);
       setIsOtpVerified(true);
       setSuccessMessage('Email verified successfully!');
-      setError('');
+      setFormErrors({});
       setCurrentStep(prev => prev + 1);
     } catch {
       setOtpError('Invalid or expired OTP. Please try again.');
@@ -132,14 +169,10 @@ export default function SaccoSignUpForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    if (!validateStep()) return;
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
     if (!formData.agreedToTerms) {
-      setError('You must agree to the terms and conditions.');
+      setFormErrors({ agreedToTerms: 'You must agree to the terms and conditions.' });
       return;
     }
 
@@ -154,7 +187,7 @@ export default function SaccoSignUpForm() {
       };
       await signup(finalFormData);
     } catch (err) {
-      setError('Failed to create account. Please try again.');
+      setFormErrors({ submit: 'Failed to create account. Please try again.' });
       console.error(err);
     } finally {
       setLoading(false);
@@ -184,9 +217,9 @@ export default function SaccoSignUpForm() {
     <div>
       <Stepper steps={steps} onStepClick={handleStepClick}/>
       <div className="my-4">
-        {error && <Message message={error} type="error" />}
         {otpError && <Message message={otpError} type="error" />}
         {successMessage && <Message message={successMessage} type="success" />}
+        {formErrors.submit && <Message message={formErrors.submit} type="error" />}
       </div>
       <div className="mt-8">
         {currentStep === 1 && (
@@ -194,18 +227,22 @@ export default function SaccoSignUpForm() {
             <div className="relative">
                 <input id="name" name="name" type="text" required value={formData.name} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="name" className={labelClasses}>Sacco Name</label>
+                {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
             </div>
             <div className="relative">
                 <input id="registrationNumber" name="registrationNumber" type="text" required value={formData.registrationNumber} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="registrationNumber" className={labelClasses}>Registration Number</label>
+                {formErrors.registrationNumber && <p className="text-red-500 text-xs mt-1">{formErrors.registrationNumber}</p>}
             </div>
             <div className="relative">
                 <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="email" className={labelClasses}>Email Address</label>
+                {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
             </div>
             <div className="relative">
                 <input id="phone" name="phone" type="tel" required value={formData.phone} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="phone" className={labelClasses}>Phone Number</label>
+                {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
             </div>
           </div>
         )}
@@ -214,6 +251,7 @@ export default function SaccoSignUpForm() {
                 <div className="relative">
                     <input id="address" name="address" type="text" required value={formData.address} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="address" className={labelClasses}>Physical Address</label>
+                    {formErrors.address && <p className="text-red-500 text-xs mt-1">{formErrors.address}</p>}
                 </div>
             </div>
         )}
@@ -222,18 +260,22 @@ export default function SaccoSignUpForm() {
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Registration Certificate</label>
                     <FileUpload onFileSelect={handleFileChange('registrationCertificate')} />
+                    {formErrors.registrationCertificate && <p className="text-red-500 text-xs mt-1">{formErrors.registrationCertificate}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Formal Intent Request</label>
                     <FileUpload onFileSelect={handleFileChange('formalIntentRequest')} />
+                    {formErrors.formalIntentRequest && <p className="text-red-500 text-xs mt-1">{formErrors.formalIntentRequest}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">By-Laws</label>
                     <FileUpload onFileSelect={handleFileChange('byLaws')} />
+                    {formErrors.byLaws && <p className="text-red-500 text-xs mt-1">{formErrors.byLaws}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Leadership Information</label>
                     <FileUpload onFileSelect={handleFileChange('leadershipInfo')} />
+                    {formErrors.leadershipInfo && <p className="text-red-500 text-xs mt-1">{formErrors.leadershipInfo}</p>}
                 </div>
             </div>
         )}
@@ -242,6 +284,7 @@ export default function SaccoSignUpForm() {
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Proof of Payment</label>
                     <FileUpload onFileSelect={handleFileChange('proofOfPayment')} />
+                    {formErrors.proofOfPayment && <p className="text-red-500 text-xs mt-1">{formErrors.proofOfPayment}</p>}
                 </div>
             </div>
         )}
@@ -267,10 +310,12 @@ export default function SaccoSignUpForm() {
                 <div className="relative">
                     <input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="password" className={labelClasses}>Password</label>
+                    {formErrors.password && <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>}
                 </div>
                 <div className="relative">
                     <input id="confirmPassword" name="confirmPassword" type="password" required value={formData.confirmPassword} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="confirmPassword" className={labelClasses}>Confirm Password</label>
+                    {formErrors.confirmPassword && <p className="text-red-500 text-xs mt-1">{formErrors.confirmPassword}</p>}
                 </div>
             </div>
         )}
@@ -292,6 +337,7 @@ export default function SaccoSignUpForm() {
             <div className="flex items-center mt-4">
                 <input id="terms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
                 <label htmlFor="terms" className="ml-2 block text-sm text-black">I agree to the <a href="/terms" className="font-medium text-indigo-800 hover:text-indigo-600">Terms and Conditions</a></label>
+                {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
             </div>
             <Button onClick={handleSubmit} disabled={loading || !formData.agreedToTerms} className="mt-6 w-full">
               {loading ? 'Creating Account...' : 'Create Account'}

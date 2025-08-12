@@ -33,7 +33,7 @@ export default function OwnerSignUpForm() {
     agreedToTerms: false,
     deviceDetails: ''
   });
-  const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
 
@@ -60,9 +60,42 @@ export default function OwnerSignUpForm() {
     setFormData(prev => ({ ...prev, [name]: file }));
   };
 
+  const validateStep = () => {
+    const errors: Record<string, string> = {};
+    if (currentStep === 1) {
+      if (!formData.name) errors.name = 'Full name is required.';
+      if (!formData.dob) errors.dob = 'Date of birth is required.';
+      if (!formData.gender) errors.gender = 'Gender is required.';
+      if (!formData.email) {
+        errors.email = 'Email is required.';
+      } else if (!emailRegex.test(formData.email)) {
+        errors.email = 'Invalid email address.';
+      }
+    }
+    if (currentStep === 2) {
+        if (!formData.phone) {
+            errors.phone = 'Phone number is required.';
+        } else if (!phoneRegex.test(formData.phone)) {
+            errors.phone = 'Invalid phone number.';
+        }
+        if (!formData.address) errors.address = 'Address is required.';
+    }
+    if (currentStep === 3) {
+        if (!formData.nationalId) errors.nationalId = 'National ID is required.';
+        if (!formData.kraPinCertificate) errors.kraPinCertificate = 'KRA PIN certificate is required.';
+    }
+    if (currentStep === 6) {
+        if (!formData.password) errors.password = 'Password is required.';
+        if (formData.password !== formData.confirmPassword) errors.confirmPassword = 'Passwords do not match.';
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleNext = () => {
-    setError('');
-    setCurrentStep(prev => prev + 1);
+    if (validateStep()) {
+      setCurrentStep(prev => prev + 1);
+    }
   };
 
   const handleBack = () => {
@@ -77,18 +110,18 @@ export default function OwnerSignUpForm() {
 
   const handleSendOtp = async () => {
     if (!emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address to receive an OTP.');
+      setFormErrors({ email: 'Please enter a valid email address to receive an OTP.' });
       return;
     }
     setSendOtpLoading(true);
     setOtpError('');
-    setError('');
+    setFormErrors({});
     try {
       await authService.sendSignupOtp(formData.email);
       setIsOtpSent(true);
       setSuccessMessage('OTP has been sent to your email.');
     } catch {
-      setError('Failed to send OTP. Please try again.');
+      setFormErrors({ email: 'Failed to send OTP. Please try again.' });
     } finally {
       setSendOtpLoading(false);
     }
@@ -106,7 +139,7 @@ export default function OwnerSignUpForm() {
       setVerifiedToken(token);
       setIsOtpVerified(true);
       setSuccessMessage('Email verified successfully!');
-      setError('');
+      setFormErrors({});
       setCurrentStep(prev => prev + 1);
     } catch {
       setOtpError('Invalid or expired OTP. Please try again.');
@@ -117,14 +150,10 @@ export default function OwnerSignUpForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    if (!validateStep()) return;
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
     if (!formData.agreedToTerms) {
-      setError('You must agree to the terms and conditions.');
+      setFormErrors({ agreedToTerms: 'You must agree to the terms and conditions.' });
       return;
     }
 
@@ -139,7 +168,7 @@ export default function OwnerSignUpForm() {
       };
       await signup(finalFormData);
     } catch (err) {
-      setError('Failed to create account. Please try again.');
+      setFormErrors({ submit: 'Failed to create account. Please try again.' });
       console.error(err);
     } finally {
       setLoading(false);
@@ -169,9 +198,9 @@ export default function OwnerSignUpForm() {
     <div>
       <Stepper steps={steps} onStepClick={handleStepClick}/>
       <div className="my-4">
-        {error && <Message message={error} type="error" />}
         {otpError && <Message message={otpError} type="error" />}
         {successMessage && <Message message={successMessage} type="success" />}
+        {formErrors.submit && <Message message={formErrors.submit} type="error" />}
       </div>
       <div className="mt-8">
         {currentStep === 1 && (
@@ -179,10 +208,12 @@ export default function OwnerSignUpForm() {
             <div className="relative">
                 <input id="name" name="name" type="text" required value={formData.name} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="name" className={labelClasses}>Full Name</label>
+                {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
             </div>
             <div className="relative">
                 <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
+                {formErrors.dob && <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>}
             </div>
             <div className="relative">
                 <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
@@ -192,10 +223,12 @@ export default function OwnerSignUpForm() {
                     <option value="other">Other</option>
                 </select>
                 <label htmlFor="gender" className={labelClasses}>Gender</label>
+                {formErrors.gender && <p className="text-red-500 text-xs mt-1">{formErrors.gender}</p>}
             </div>
             <div className="relative">
                 <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="email" className={labelClasses}>Email Address</label>
+                {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
             </div>
           </div>
         )}
@@ -204,10 +237,12 @@ export default function OwnerSignUpForm() {
                 <div className="relative">
                     <input id="phone" name="phone" type="tel" required value={formData.phone} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="phone" className={labelClasses}>Phone Number</label>
+                    {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
                 </div>
                 <div className="relative">
                     <input id="address" name="address" type="text" required value={formData.address} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="address" className={labelClasses}>Address</label>
+                    {formErrors.address && <p className="text-red-500 text-xs mt-1">{formErrors.address}</p>}
                 </div>
             </div>
         )}
@@ -216,10 +251,12 @@ export default function OwnerSignUpForm() {
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">National ID</label>
                     <FileUpload onFileSelect={handleFileChange('nationalId')} />
+                    {formErrors.nationalId && <p className="text-red-500 text-xs mt-1">{formErrors.nationalId}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">KRA PIN Certificate</label>
                     <FileUpload onFileSelect={handleFileChange('kraPinCertificate')} />
+                    {formErrors.kraPinCertificate && <p className="text-red-500 text-xs mt-1">{formErrors.kraPinCertificate}</p>}
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Certificate of Incorporation (Optional)</label>
@@ -257,10 +294,12 @@ export default function OwnerSignUpForm() {
                 <div className="relative">
                     <input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="password" className={labelClasses}>Password</label>
+                    {formErrors.password && <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>}
                 </div>
                 <div className="relative">
                     <input id="confirmPassword" name="confirmPassword" type="password" required value={formData.confirmPassword} onChange={handleChange} placeholder=" " className={inputClasses}/>
                     <label htmlFor="confirmPassword" className={labelClasses}>Confirm Password</label>
+                    {formErrors.confirmPassword && <p className="text-red-500 text-xs mt-1">{formErrors.confirmPassword}</p>}
                 </div>
             </div>
         )}
@@ -282,6 +321,7 @@ export default function OwnerSignUpForm() {
             <div className="flex items-center mt-4">
                 <input id="terms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
                 <label htmlFor="terms" className="ml-2 block text-sm text-black">I agree to the <a href="/terms" className="font-medium text-indigo-800 hover:text-indigo-600">Terms and Conditions</a></label>
+                {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
             </div>
             <Button onClick={handleSubmit} disabled={loading || !formData.agreedToTerms} className="mt-6 w-full">
               {loading ? 'Creating Account...' : 'Create Account'}
