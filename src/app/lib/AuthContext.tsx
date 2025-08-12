@@ -50,21 +50,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setToken(null);
     setMfaToken(null);
     localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
     sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('user');
     authService.logout();
     router.push('/login');
   }, [router]);
 
   useEffect(() => {
-    const initializeAuth = async () => {
+    const initializeAuth = () => {
       const storedToken = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-      if (storedToken) {
+      const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+      if (storedToken && storedUser) {
         try {
-          const userData = await authService.getProfile();
-          setUser(userData);
+          setUser(JSON.parse(storedUser));
           setToken(storedToken);
         } catch (error) {
-          console.error("Failed to initialize auth:", error);
+          console.error("Failed to parse stored user:", error);
           logout();
         }
       }
@@ -84,8 +86,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(responseData.user);
         if (loginData.rememberMe) {
           localStorage.setItem('authToken', responseData.token);
+          localStorage.setItem('user', JSON.stringify(responseData.user));
         } else {
           sessionStorage.setItem('authToken', responseData.token);
+          sessionStorage.setItem('user', JSON.stringify(responseData.user));
         }
         redirectUser(responseData.user, router);
       }

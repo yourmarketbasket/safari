@@ -141,28 +141,53 @@ export type DriverSignupData = {
 
 // Signup functions
 export const signupPassenger = async (data: PassengerSignupData): Promise<AuthData> => {
-  const response = await api.post<AuthResponse>('/passengers/signup', data);
-  return response.data.data;
+  const response = await api.post<AuthResponse | ErrorResponse>('/passengers/signup', data);
+  if (response.data.success) {
+    return (response.data as AuthResponse).data;
+  } else {
+    const errorData = response.data as ErrorResponse;
+    throw new Error(errorData.error || errorData.message || 'Signup failed');
+  }
 };
 
 export const signupSacco = async (data: SaccoSignupData): Promise<AuthData> => {
-  const response = await api.post<AuthResponse>('/saccos/signup', data);
-  return response.data.data;
+  const response = await api.post<AuthResponse | ErrorResponse>('/saccos/signup', data);
+  if (response.data.success) {
+    return (response.data as AuthResponse).data;
+  } else {
+    const errorData = response.data as ErrorResponse;
+    throw new Error(errorData.error || errorData.message || 'Signup failed');
+  }
 };
 
 export const signupOwner = async (data: OwnerSignupData): Promise<AuthData> => {
-  const response = await api.post<AuthResponse>('/owners/signup', data);
-  return response.data.data;
+  const response = await api.post<AuthResponse | ErrorResponse>('/owners/signup', data);
+  if (response.data.success) {
+    return (response.data as AuthResponse).data;
+  } else {
+    const errorData = response.data as ErrorResponse;
+    throw new Error(errorData.error || errorData.message || 'Signup failed');
+  }
 };
 
 export const signupQueueManager = async (data: QueueManagerSignupData): Promise<AuthData> => {
-  const response = await api.post<AuthResponse>('/queue-managers/signup', data);
-  return response.data.data;
+  const response = await api.post<AuthResponse | ErrorResponse>('/queue-managers/signup', data);
+  if (response.data.success) {
+    return (response.data as AuthResponse).data;
+  } else {
+    const errorData = response.data as ErrorResponse;
+    throw new Error(errorData.error || errorData.message || 'Signup failed');
+  }
 };
 
 export const signupDriver = async (data: DriverSignupData): Promise<AuthData> => {
-  const response = await api.post<AuthResponse>('/drivers/signup', data);
-  return response.data.data;
+  const response = await api.post<AuthResponse | ErrorResponse>('/drivers/signup', data);
+  if (response.data.success) {
+    return (response.data as AuthResponse).data;
+  } else {
+    const errorData = response.data as ErrorResponse;
+    throw new Error(errorData.error || errorData.message || 'Signup failed');
+  }
 };
 
 /**

@@ -112,8 +112,13 @@ export const register = async (userData: SuperuserRegistrationData, adminKey: st
     adminKey,
     userData,
   };
-  const response = await api.post<AuthResponse>('/superuser/register', payload);
-  return response.data;
+  const response = await api.post<AuthResponse | ErrorResponse>('/superuser/register', payload);
+  if (response.data.success) {
+    return response.data as AuthResponse;
+  } else {
+    const errorData = response.data as ErrorResponse;
+    throw new Error(errorData.error || errorData.message || 'Registration failed');
+  }
 };
 
 /**
