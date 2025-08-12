@@ -203,10 +203,10 @@ export default function ProfilePage() {
                     </form>
                     ) : (
                     <div className="text-center">
-                        {user.avatar ? (
-                            <Image src={user.avatar} alt="Avatar" width={100} height={100} className="rounded-full mx-auto" />
+                        {user.avatar || user.profilePhotoUrl ? (
+                            <Image src={user.avatar || user.profilePhotoUrl || '/default-avatar.png'} alt="Avatar" width={100} height={100} className="rounded-full mx-auto" />
                         ) : (
-                            <FaUserCircle className="w-24 h-24 text-gray-300 mx-auto" />
+                        <FaUserCircle className="w-24 h-24 text-gray-300 mx-auto" />
                         )}
                         <h2 className="mt-4 text-xl font-bold text-gray-900">{user.name}</h2>
                         <p className="text-sm text-gray-500">{user.email}</p>

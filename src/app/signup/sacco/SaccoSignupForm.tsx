@@ -8,7 +8,7 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
-import { FiBriefcase, FiMapPin, FiFileText, FiCreditCard, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight } from 'react-icons/fi';
+import { FiBriefcase, FiMapPin, FiFileText, FiCreditCard, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -170,9 +170,22 @@ export default function SaccoSignUpForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const errors = validateStep(currentStep);
-    if (Object.keys(errors).length > 0) {
-        setFormErrors(errors);
+
+    // Validate all fields before submitting
+    let allErrors: Record<string, string> = {};
+    for (let i = 1; i <= 6; i++) {
+        allErrors = {...allErrors, ...validateStep(i)};
+    }
+
+    if (Object.keys(allErrors).length > 0) {
+        setFormErrors(allErrors);
+        // Find the first step with an error and go to it
+        for (let i = 1; i <= 6; i++) {
+            if (Object.keys(validateStep(i)).length > 0) {
+                setCurrentStep(i);
+                break;
+            }
+        }
         return;
     }
 
@@ -183,7 +196,6 @@ export default function SaccoSignUpForm() {
 
     setLoading(true);
     try {
-      // Add device details to form data
       const finalFormData = {
         ...formData,
         role: 'sacco' as const,
@@ -191,6 +203,7 @@ export default function SaccoSignUpForm() {
         verifiedToken
       };
       await signup(finalFormData);
+      setCurrentStep(prev => prev + 1); // Go to "Done" step
     } catch (err) {
       setFormErrors({ submit: 'Failed to create account. Please try again.' });
       console.error(err);
@@ -213,13 +226,14 @@ export default function SaccoSignUpForm() {
   };
 
   const steps = [
-    { status: getStepStatus(1), icon: FiBriefcase, label: 'SACCO Details', hasError: Object.keys(validateStep(1)).length > 0 && currentStep > 1 },
-    { status: getStepStatus(2), icon: FiMapPin, label: 'Address', hasError: Object.keys(validateStep(2)).length > 0 && currentStep > 2 },
-    { status: getStepStatus(3), icon: FiFileText, label: 'Documents', hasError: Object.keys(validateStep(3)).length > 0 && currentStep > 3 },
-    { status: getStepStatus(4), icon: FiCreditCard, label: 'Payment', hasError: Object.keys(validateStep(4)).length > 0 && currentStep > 4 },
+    { status: getStepStatus(1), icon: FiBriefcase, label: 'SACCO Details' },
+    { status: getStepStatus(2), icon: FiMapPin, label: 'Address' },
+    { status: getStepStatus(3), icon: FiFileText, label: 'Documents' },
+    { status: getStepStatus(4), icon: FiCreditCard, label: 'Payment' },
     { status: getStepStatus(5), icon: FiMail, label: 'Verify Email' },
-    { status: getStepStatus(6), icon: FiLock, label: 'Password', hasError: Object.keys(validateStep(6)).length > 0 && currentStep > 6 },
-    { status: getStepStatus(7), icon: FiCheck, label: 'Done' },
+    { status: getStepStatus(6), icon: FiLock, label: 'Password' },
+    { status: getStepStatus(7), icon: FiEye, label: 'Preview' },
+    { status: getStepStatus(8), icon: FiCheck, label: 'Done' },
   ];
 
   return (
@@ -230,7 +244,7 @@ export default function SaccoSignUpForm() {
         {successMessage && <Message message={successMessage} type="success" />}
         {formErrors.submit && <Message message={formErrors.submit} type="error" />}
       </div>
-      <div className="mt-8">
+      <form onSubmit={handleSubmit} className="mt-8">
         {currentStep === 1 && (
           <div className="space-y-6">
             <div className="relative">
@@ -330,7 +344,7 @@ export default function SaccoSignUpForm() {
         )}
         {currentStep === 7 && (
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">Review Your Details</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Preview Your Details</h2>
             <div className="text-left mt-4 bg-gray-50 p-4 rounded-lg">
               <p><strong>Sacco Name:</strong> {formData.name}</p>
               <p><strong>Registration Number:</strong> {formData.registrationNumber}</p>
@@ -344,30 +358,38 @@ export default function SaccoSignUpForm() {
               <p><strong>Proof of Payment:</strong> {formData.proofOfPayment ? formData.proofOfPayment.name : 'Not uploaded'}</p>
             </div>
             <div className="flex items-center mt-4">
-                <input id="terms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
-                <label htmlFor="terms" className="ml-2 block text-sm text-black">I agree to the <a href="/terms" className="font-medium text-indigo-800 hover:text-indigo-600">Terms and Conditions</a></label>
+                <input id="agreedToTerms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
+                <label htmlFor="agreedToTerms" className="ml-2 block text-sm text-black">I confirm that all the information I have provided is correct.</label>
                 {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
             </div>
-            <Button onClick={handleSubmit} disabled={loading || !formData.agreedToTerms} className="mt-6 w-full">
-              {loading ? 'Creating Account...' : 'Create Account'}
+            <Button type="submit" disabled={loading || !formData.agreedToTerms} className="mt-6 w-full">
+                {loading ? 'Creating Account...' : 'Create Account'}
             </Button>
           </div>
         )}
+        {currentStep === 8 && (
+            <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900">Account Created!</h2>
+                <p className="mt-2 text-lg text-gray-700">
+                    Your SACCO account has been created successfully. You will be redirected shortly.
+                </p>
+            </div>
+        )}
         <div className="mt-8 flex justify-between">
-          {currentStep > 1 && currentStep < 7 && (
-            <Button onClick={handleBack} variant="flat">
+          {currentStep > 1 && currentStep < 8 && (
+            <Button onClick={handleBack} variant="flat" type="button">
                 <FiArrowLeft className="mr-2"/>
                 Back
             </Button>
           )}
-          {currentStep < 6 && (
-            <Button onClick={handleNext} variant="flat">
+          {currentStep < 7 && (
+            <Button onClick={handleNext} variant="flat" type="button">
                 Next
                 <FiArrowRight className="ml-2"/>
             </Button>
           )}
         </div>
-      </div>
+      </form>
     </div>
   );
 }

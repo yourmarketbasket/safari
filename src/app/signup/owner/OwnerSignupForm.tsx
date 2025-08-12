@@ -8,7 +8,7 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
-import { FiUser, FiPhone, FiFileText, FiLink, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight } from 'react-icons/fi';
+import { FiUser, FiPhone, FiFileText, FiLink, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\d{10,12}$/;
@@ -84,7 +84,7 @@ export default function OwnerSignUpForm() {
         if (!formData.nationalId) errors.nationalId = 'National ID is required.';
         if (!formData.kraPinCertificate) errors.kraPinCertificate = 'KRA PIN certificate is required.';
     }
-    if (step === 6) {
+    if (step === 5) {
         if (!formData.password) errors.password = 'Password is required.';
         if (formData.password !== formData.confirmPassword) errors.confirmPassword = 'Passwords do not match.';
     }
@@ -151,9 +151,20 @@ export default function OwnerSignUpForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const errors = validateStep(currentStep);
-    if (Object.keys(errors).length > 0) {
-        setFormErrors(errors);
+
+    let allErrors: Record<string, string> = {};
+    for (let i = 1; i <= 5; i++) {
+        allErrors = {...allErrors, ...validateStep(i)};
+    }
+
+    if (Object.keys(allErrors).length > 0) {
+        setFormErrors(allErrors);
+        for (let i = 1; i <= 5; i++) {
+            if (Object.keys(validateStep(i)).length > 0) {
+                setCurrentStep(i);
+                break;
+            }
+        }
         return;
     }
 
@@ -164,7 +175,6 @@ export default function OwnerSignUpForm() {
 
     setLoading(true);
     try {
-      // Add device details to form data
       const finalFormData = {
         ...formData,
         role: 'owner' as const,
@@ -172,6 +182,7 @@ export default function OwnerSignUpForm() {
         verifiedToken
       };
       await signup(finalFormData);
+      setCurrentStep(prev => prev + 1);
     } catch (err) {
       setFormErrors({ submit: 'Failed to create account. Please try again.' });
       console.error(err);
@@ -194,12 +205,12 @@ export default function OwnerSignUpForm() {
   };
 
   const steps = [
-    { status: getStepStatus(1), icon: FiUser, label: 'Personal Info', hasError: Object.keys(validateStep(1)).length > 0 && currentStep > 1 },
-    { status: getStepStatus(2), icon: FiPhone, label: 'Contact Info', hasError: Object.keys(validateStep(2)).length > 0 && currentStep > 2 },
-    { status: getStepStatus(3), icon: FiFileText, label: 'Documents', hasError: Object.keys(validateStep(3)).length > 0 && currentStep > 3 },
-    { status: getStepStatus(4), icon: FiLink, label: 'Affiliation' },
-    { status: getStepStatus(5), icon: FiMail, label: 'Verify Email' },
-    { status: getStepStatus(6), icon: FiLock, label: 'Password', hasError: Object.keys(validateStep(6)).length > 0 && currentStep > 6 },
+    { status: getStepStatus(1), icon: FiUser, label: 'Personal Info' },
+    { status: getStepStatus(2), icon: FiPhone, label: 'Contact Info' },
+    { status: getStepStatus(3), icon: FiFileText, label: 'Documents' },
+    { status: getStepStatus(4), icon: FiMail, label: 'Verify Email' },
+    { status: getStepStatus(5), icon: FiLock, label: 'Password' },
+    { status: getStepStatus(6), icon: FiEye, label: 'Preview' },
     { status: getStepStatus(7), icon: FiCheck, label: 'Done' },
   ];
 
@@ -211,7 +222,7 @@ export default function OwnerSignUpForm() {
         {successMessage && <Message message={successMessage} type="success" />}
         {formErrors.submit && <Message message={formErrors.submit} type="error" />}
       </div>
-      <div className="mt-8">
+      <form onSubmit={handleSubmit} className="mt-8">
         {currentStep === 1 && (
           <div className="space-y-6">
             <div className="relative">
@@ -274,14 +285,6 @@ export default function OwnerSignUpForm() {
             </div>
         )}
         {currentStep === 4 && (
-            <div className="space-y-6">
-                <div className="relative">
-                    <input id="saccoAffiliation" name="saccoAffiliation" type="text" value={formData.saccoAffiliation} onChange={handleChange} placeholder=" " className={inputClasses}/>
-                    <label htmlFor="saccoAffiliation" className={labelClasses}>SACCO Affiliation (Optional)</label>
-                </div>
-            </div>
-        )}
-        {currentStep === 5 && (
           <div className="text-center">
             <p className="text-gray-700 mb-4">An OTP will be sent to {formData.email}.</p>
             {!isOtpSent ? (
@@ -298,7 +301,7 @@ export default function OwnerSignUpForm() {
             )}
           </div>
         )}
-        {currentStep === 6 && (
+        {currentStep === 5 && (
             <div className="space-y-6">
                 <div className="relative">
                     <input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder=" " className={inputClasses}/>
@@ -312,7 +315,7 @@ export default function OwnerSignUpForm() {
                 </div>
             </div>
         )}
-        {currentStep === 7 && (
+        {currentStep === 6 && (
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Review Your Details</h2>
             <div className="text-left mt-4 bg-gray-50 p-4 rounded-lg">
@@ -332,26 +335,34 @@ export default function OwnerSignUpForm() {
                 <label htmlFor="terms" className="ml-2 block text-sm text-black">I agree to the <a href="/terms" className="font-medium text-indigo-800 hover:text-indigo-600">Terms and Conditions</a></label>
                 {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
             </div>
-            <Button onClick={handleSubmit} disabled={loading || !formData.agreedToTerms} className="mt-6 w-full">
+            <Button type="submit" disabled={loading || !formData.agreedToTerms} className="mt-6 w-full">
               {loading ? 'Creating Account...' : 'Create Account'}
             </Button>
           </div>
         )}
+        {currentStep === 7 && (
+            <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900">Account Created!</h2>
+                <p className="mt-2 text-lg text-gray-700">
+                    Your account has been created successfully. You will be redirected shortly.
+                </p>
+            </div>
+        )}
         <div className="mt-8 flex justify-between">
           {currentStep > 1 && currentStep < 7 && (
-            <Button onClick={handleBack} variant="flat">
+            <Button onClick={handleBack} variant="flat" type="button">
                 <FiArrowLeft className="mr-2"/>
                 Back
             </Button>
           )}
           {currentStep < 6 && (
-            <Button onClick={handleNext} variant="flat">
+            <Button onClick={handleNext} variant="flat" type="button">
                 Next
                 <FiArrowRight className="ml-2"/>
             </Button>
           )}
         </div>
-      </div>
+      </form>
     </div>
   );
 }
