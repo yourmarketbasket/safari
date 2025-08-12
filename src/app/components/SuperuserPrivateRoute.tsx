@@ -21,11 +21,11 @@ export default function SuperuserPrivateRoute({ children }: SuperuserPrivateRout
     }
   }, [user, token, isInitialized, router]);
 
-  if (!isInitialized) {
+  if (!isInitialized || !token) {
     return <LoadingOverlay />;
   }
 
-  if (!token || (user && user.role !== 'superuser')) {
+  if (user && user.role !== 'superuser') {
     return null;
   }
 
