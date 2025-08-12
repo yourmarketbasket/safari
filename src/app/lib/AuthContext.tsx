@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setToken(null);
     setMfaToken(null);
+    setIsInitialized(false);
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
     localStorage.removeItem('superuserAuthToken');
