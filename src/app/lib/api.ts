@@ -13,9 +13,9 @@ const api = setupCache(instance, {
 // Request interceptor for encrypting data
 api.interceptors.request.use(
   (config) => {
-    let token = localStorage.getItem('superuserAuthToken');
+    let token = localStorage.getItem('superuserAuthToken') || sessionStorage.getItem('superuserAuthToken');
     if (!token) {
-      token = localStorage.getItem('authToken');
+      token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
     }
 
     if (token) {

@@ -73,13 +73,25 @@ export type AuthResponse = {
 /**
  * Logs in a superuser.
  */
+type ErrorResponse = {
+  success: false;
+  error?: string;
+  message?: string;
+};
+
 export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
   try {
-    const response = await api.post<AuthResponse>('/superuser/login', loginData);
-    return response.data.data;
+    const response = await api.post<AuthResponse | ErrorResponse>('/superuser/login', loginData);
+    if (response.data.success) {
+      return (response.data as AuthResponse).data;
+    } else {
+      const errorData = response.data as ErrorResponse;
+      throw new Error(errorData.error || errorData.message || 'Login failed');
+    }
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || 'Could not login');
+      const errorData = error.response.data;
+      throw new Error(errorData.error || errorData.message || 'Could not login');
     }
     throw error;
   }
