@@ -23,18 +23,23 @@ export interface User {
   phone: string;
   password?: string; // Password should be optional on the frontend
   role: UserRole;
-  rank: UserRank;
+  rank?: UserRank;
   avatar?: string;
   approvedStatus: ApprovedStatus;
   permissions: string[];
   verified: {
     email: boolean;
     phone: boolean;
+    _id?: string;
   };
   mfaSecret?: string;
   passwordResetToken?: string;
   passwordResetExpire?: Date;
   createdAt: Date;
+  updatedAt?: Date;
+  __v?: number;
+  rating?: number;
+  failedLoginAttempts?: number;
   address?: string;
   dob?: string;
   gender?: string;
