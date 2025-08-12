@@ -1,12 +1,11 @@
 import { Metadata } from 'next';
 import PublicRoute from '@/app/components/PublicRoute';
 import QueueManagerSignUpForm from './QueueManagerSignupForm';
+import AuthLayout from '@/app/components/AuthLayout';
 
 export const metadata: Metadata = {
     title: 'Queue Manager Signup',
 };
-// force 
-import AuthLayout from '@/app/components/AuthLayout';
 
 export default function QueueManagerSignupPage() {
 
@@ -17,7 +16,7 @@ export default function QueueManagerSignupPage() {
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900">Queue Manager Signup</h1>
             <p className="mt-2 text-lg text-gray-700">
-              Register as a queue manager to help us manage queues.
+              Join Safary as a queue manager and help us provide a seamless experience.
             </p>
           </div>
           <QueueManagerSignUpForm />

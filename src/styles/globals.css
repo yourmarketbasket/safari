@@ -31,7 +31,7 @@ body {
     @apply text-xs font-light;
   }
   input, select, textarea {
-    @apply border-gray-400 text-black placeholder-gray-800;
+    @apply border-gray-400 text-black placeholder-gray-600;
   }
 }
 
@@ -71,11 +71,3 @@ body {
 .animate-pulse-pink { animation: pulse-pink 2s infinite; }
 .animate-pulse-yellow { animation: pulse-yellow 2s infinite; }
 .animate-pulse-teal { animation: pulse-teal 2s infinite; }
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0;
-}
-
-input[type="date"]::placeholder {
-  color: transparent;
-}

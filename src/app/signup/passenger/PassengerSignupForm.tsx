@@ -8,7 +8,6 @@ import OtpInput from '@/app/components/OtpInput';
 import authService from '@/app/services/auth.service';
 import { useAuth } from '@/app/lib/AuthContext';
 import FileUpload from '@/app/components/FileUpload';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/Select';
 import { FiUser, FiPhone, FiCamera, FiMail, FiLock, FiCheck, FiArrowLeft, FiArrowRight, FiEye } from 'react-icons/fi';
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -44,7 +43,7 @@ export default function PassengerSignUpForm() {
   const [successMessage, setSuccessMessage] = useState('');
   const [verifiedToken, setVerifiedToken] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     if (type === 'checkbox') {
         const { checked } = e.target as HTMLInputElement;
@@ -52,10 +51,6 @@ export default function PassengerSignUpForm() {
     } else {
         setFormData(prev => ({ ...prev, [name]: value }));
     }
-  };
-
-  const handleSelectChange = (name: string) => (value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (file: File | null) => {
@@ -229,7 +224,7 @@ export default function PassengerSignUpForm() {
   ];
 
   return (
-    <div className="max-h-[70vh] overflow-y-auto pr-4">
+    <div>
       <Stepper steps={steps} onStepClick={handleStepClick}/>
       <div className="my-4">
         {otpError && <Message message={otpError} type="error" />}
@@ -245,23 +240,19 @@ export default function PassengerSignUpForm() {
                 {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
             </div>
             <div className="relative">
-                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={`${inputClasses} pt-3`}/>
+                <input id="dob" name="dob" type="date" required value={formData.dob} onChange={handleChange} placeholder=" " className={inputClasses}/>
                 <label htmlFor="dob" className={labelClasses}>Date of Birth</label>
                 {formErrors.dob && <p className="text-red-500 text-xs mt-1">{formErrors.dob}</p>}
             </div>
             <div className="relative">
-              <Select onValueChange={handleSelectChange('gender')} value={formData.gender} label="Gender">
-                <SelectTrigger className={inputClasses}>
-                  <SelectValue placeholder="Gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-              <label htmlFor="gender" className={labelClasses}>Gender</label>
-              {formErrors.gender && <p className="text-red-500 text-xs mt-1">{formErrors.gender}</p>}
+                <select id="gender" name="gender" required value={formData.gender} onChange={handleChange} className={inputClasses}>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+                <label htmlFor="gender" className={labelClasses}>Gender</label>
+                {formErrors.gender && <p className="text-red-500 text-xs mt-1">{formErrors.gender}</p>}
             </div>
             <div className="relative">
                 <input id="email" name="email" type="email" required value={formData.email} onChange={handleChange} placeholder=" " className={inputClasses}/>

@@ -238,7 +238,7 @@ export default function SaccoSignUpForm() {
   ];
 
   return (
-    <div className="max-h-[70vh] overflow-y-auto pr-4">
+    <div>
       <Stepper steps={steps} onStepClick={handleStepClick}/>
       <div className="my-4">
         {otpError && <Message message={otpError} type="error" />}
