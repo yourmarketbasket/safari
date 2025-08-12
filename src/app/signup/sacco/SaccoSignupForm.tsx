@@ -111,6 +111,27 @@ export default function SaccoSignUpForm() {
   };
 
   const handleNext = () => {
+    if (currentStep === 7) { // Preview Step
+        let allErrors: Record<string, string> = {};
+        for (let i = 1; i <= 6; i++) {
+            allErrors = {...allErrors, ...validateStep(i)};
+        }
+        if (Object.keys(allErrors).length > 0) {
+            setFormErrors(allErrors);
+            for (let i = 1; i <= 6; i++) {
+                if (Object.keys(validateStep(i)).length > 0) {
+                    setCurrentStep(i);
+                    break;
+                }
+            }
+            return;
+        }
+        if (!formData.agreedToTerms) {
+            setFormErrors({ agreedToTerms: 'You must agree to the terms to proceed.' });
+            return;
+        }
+    }
+
     const errors = validateStep(currentStep);
     if (Object.keys(errors).length === 0) {
       setCurrentStep(prev => prev + 1);
@@ -168,32 +189,12 @@ export default function SaccoSignUpForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate all fields before submitting
-    let allErrors: Record<string, string> = {};
-    for (let i = 1; i <= 6; i++) {
-        allErrors = {...allErrors, ...validateStep(i)};
-    }
-
-    if (Object.keys(allErrors).length > 0) {
-        setFormErrors(allErrors);
-        // Find the first step with an error and go to it
-        for (let i = 1; i <= 6; i++) {
-            if (Object.keys(validateStep(i)).length > 0) {
-                setCurrentStep(i);
-                break;
-            }
-        }
-        return;
-    }
-
+  const handleSubmit = async () => {
     if (!formData.agreedToTerms) {
       setFormErrors({ agreedToTerms: 'You must agree to the terms and conditions.' });
+      setCurrentStep(7); // Go back to preview step
       return;
     }
-
     setLoading(true);
     try {
       const finalFormData = {
@@ -203,7 +204,7 @@ export default function SaccoSignUpForm() {
         verifiedToken
       };
       await signup(finalFormData);
-      setCurrentStep(prev => prev + 1); // Go to "Done" step
+      setSuccessMessage("Account created successfully! Redirecting...");
     } catch (err) {
       setFormErrors({ submit: 'Failed to create account. Please try again.' });
       console.error(err);
@@ -244,7 +245,7 @@ export default function SaccoSignUpForm() {
         {successMessage && <Message message={successMessage} type="success" />}
         {formErrors.submit && <Message message={formErrors.submit} type="error" />}
       </div>
-      <form onSubmit={handleSubmit} className="mt-8">
+      <div className="mt-8">
         {currentStep === 1 && (
           <div className="space-y-6">
             <div className="relative">
@@ -360,19 +361,19 @@ export default function SaccoSignUpForm() {
             <div className="flex items-center mt-4">
                 <input id="agreedToTerms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
                 <label htmlFor="agreedToTerms" className="ml-2 block text-sm text-black">I confirm that all the information I have provided is correct.</label>
-                {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
             </div>
-            <Button type="submit" disabled={loading || !formData.agreedToTerms} className="mt-6 w-full">
-                {loading ? 'Creating Account...' : 'Create Account'}
-            </Button>
+            {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
           </div>
         )}
         {currentStep === 8 && (
             <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-900">Account Created!</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Final Step</h2>
                 <p className="mt-2 text-lg text-gray-700">
-                    Your SACCO account has been created successfully. You will be redirected shortly.
+                    Your SACCO account is ready to be created. Click the button below to finalize your registration.
                 </p>
+                <Button onClick={handleSubmit} disabled={loading} className="mt-6 w-full">
+                    {loading ? 'Creating Account...' : 'Create Account'}
+                </Button>
             </div>
         )}
         <div className="mt-8 flex justify-between">
@@ -382,14 +383,14 @@ export default function SaccoSignUpForm() {
                 Back
             </Button>
           )}
-          {currentStep < 7 && (
+          {currentStep < 8 && (
             <Button onClick={handleNext} variant="flat" type="button">
                 Next
                 <FiArrowRight className="ml-2"/>
             </Button>
           )}
         </div>
-      </form>
+      </div>
     </div>
   );
 }

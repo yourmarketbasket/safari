@@ -64,22 +64,23 @@ const Stepper: React.FC<StepperProps> = ({ steps, onStepClick }) => {
           return (
             <li
               key={step.label}
-              className={`relative ${!isLastStep ? 'flex-1' : ''} ${appearance.isClickable ? 'cursor-pointer' : ''}`}
-              onClick={appearance.isClickable ? () => onStepClick(stepIdx + 1) : undefined}
+              className={`relative ${!isLastStep ? 'flex-1' : ''}`}
             >
-              <div className="flex justify-center">
-                <div
-                  className={`relative w-8 h-8 flex items-center justify-center rounded-full ${appearance.circleClass} transition-colors duration-300`}
-                  aria-current={step.status === 'current' ? 'step' : undefined}
-                >
-                  <appearance.IconToShow className={`w-4 h-4 ${appearance.iconClass}`} aria-hidden="true" />
-                </div>
-              </div>
-              {!isLastStep && (
-                <div className="absolute top-4 left-1/2 w-full" aria-hidden="true">
+              {/* Connector line (as a background element) */}
+              {!isLastStep ? (
+                <div className="absolute inset-0 flex items-center" aria-hidden="true">
                   <div className={`h-0.5 w-full ${appearance.connectorClass} transition-colors duration-300`} />
                 </div>
-              )}
+              ) : null}
+
+              {/* Step circle (rendered on top of the line) */}
+              <div
+                className={`relative w-8 h-8 flex items-center justify-center rounded-full ${appearance.circleClass} ${appearance.isClickable ? 'cursor-pointer' : ''} transition-colors duration-300`}
+                onClick={appearance.isClickable ? () => onStepClick(stepIdx + 1) : undefined}
+                aria-current={step.status === 'current' ? 'step' : undefined}
+              >
+                <appearance.IconToShow className={`w-4 h-4 ${appearance.iconClass}`} aria-hidden="true" />
+              </div>
             </li>
           );
         })}

@@ -92,6 +92,27 @@ export default function OwnerSignUpForm() {
   };
 
   const handleNext = () => {
+    if (currentStep === 6) { // Preview Step
+        let allErrors: Record<string, string> = {};
+        for (let i = 1; i <= 5; i++) {
+            allErrors = {...allErrors, ...validateStep(i)};
+        }
+        if (Object.keys(allErrors).length > 0) {
+            setFormErrors(allErrors);
+            for (let i = 1; i <= 5; i++) {
+                if (Object.keys(validateStep(i)).length > 0) {
+                    setCurrentStep(i);
+                    break;
+                }
+            }
+            return;
+        }
+        if (!formData.agreedToTerms) {
+            setFormErrors({ agreedToTerms: 'You must agree to the terms to proceed.' });
+            return;
+        }
+    }
+
     const errors = validateStep(currentStep);
     if (Object.keys(errors).length === 0) {
       setCurrentStep(prev => prev + 1);
@@ -149,30 +170,12 @@ export default function OwnerSignUpForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    let allErrors: Record<string, string> = {};
-    for (let i = 1; i <= 5; i++) {
-        allErrors = {...allErrors, ...validateStep(i)};
-    }
-
-    if (Object.keys(allErrors).length > 0) {
-        setFormErrors(allErrors);
-        for (let i = 1; i <= 5; i++) {
-            if (Object.keys(validateStep(i)).length > 0) {
-                setCurrentStep(i);
-                break;
-            }
-        }
-        return;
-    }
-
+  const handleSubmit = async () => {
     if (!formData.agreedToTerms) {
       setFormErrors({ agreedToTerms: 'You must agree to the terms and conditions.' });
+      setCurrentStep(6); // Go back to preview step
       return;
     }
-
     setLoading(true);
     try {
       const finalFormData = {
@@ -182,7 +185,7 @@ export default function OwnerSignUpForm() {
         verifiedToken
       };
       await signup(finalFormData);
-      setCurrentStep(prev => prev + 1);
+      setSuccessMessage("Account created successfully! Redirecting...");
     } catch (err) {
       setFormErrors({ submit: 'Failed to create account. Please try again.' });
       console.error(err);
@@ -222,7 +225,7 @@ export default function OwnerSignUpForm() {
         {successMessage && <Message message={successMessage} type="success" />}
         {formErrors.submit && <Message message={formErrors.submit} type="error" />}
       </div>
-      <form onSubmit={handleSubmit} className="mt-8">
+      <div className="mt-8">
         {currentStep === 1 && (
           <div className="space-y-6">
             <div className="relative">
@@ -333,19 +336,19 @@ export default function OwnerSignUpForm() {
             <div className="flex items-center mt-4">
                 <input id="terms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
                 <label htmlFor="terms" className="ml-2 block text-sm text-black">I agree to the <a href="/terms" className="font-medium text-indigo-800 hover:text-indigo-600">Terms and Conditions</a></label>
-                {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
             </div>
-            <Button type="submit" disabled={loading || !formData.agreedToTerms} className="mt-6 w-full">
-              {loading ? 'Creating Account...' : 'Create Account'}
-            </Button>
+            {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
           </div>
         )}
         {currentStep === 7 && (
             <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-900">Account Created!</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Final Step</h2>
                 <p className="mt-2 text-lg text-gray-700">
-                    Your account has been created successfully. You will be redirected shortly.
+                    Your account is ready to be created. Click the button below to finalize your registration.
                 </p>
+                <Button onClick={handleSubmit} disabled={loading} className="mt-6 w-full">
+                    {loading ? 'Creating Account...' : 'Create Account'}
+                </Button>
             </div>
         )}
         <div className="mt-8 flex justify-between">
@@ -355,14 +358,14 @@ export default function OwnerSignUpForm() {
                 Back
             </Button>
           )}
-          {currentStep < 6 && (
+          {currentStep < 7 && (
             <Button onClick={handleNext} variant="flat" type="button">
                 Next
                 <FiArrowRight className="ml-2"/>
             </Button>
           )}
         </div>
-      </form>
+      </div>
     </div>
   );
 }

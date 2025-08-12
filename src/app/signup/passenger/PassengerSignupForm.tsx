@@ -98,6 +98,27 @@ export default function PassengerSignUpForm() {
   };
 
   const handleNext = () => {
+    if (currentStep === 6) { // Preview Step
+        let allErrors: Record<string, string> = {};
+        for (let i = 1; i <= 5; i++) {
+            allErrors = {...allErrors, ...validateStep(i)};
+        }
+        if (Object.keys(allErrors).length > 0) {
+            setFormErrors(allErrors);
+            for (let i = 1; i <= 5; i++) {
+                if (Object.keys(validateStep(i)).length > 0) {
+                    setCurrentStep(i);
+                    break;
+                }
+            }
+            return;
+        }
+        if (!formData.agreedToTerms) {
+            setFormErrors({ agreedToTerms: 'You must agree to the terms to proceed.' });
+            return;
+        }
+    }
+
     const errors = validateStep(currentStep);
     if (Object.keys(errors).length === 0) {
       setCurrentStep(prev => prev + 1);
@@ -155,22 +176,14 @@ export default function PassengerSignUpForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const errors = validateStep(currentStep);
-    if (Object.keys(errors).length > 0) {
-        setFormErrors(errors);
-        return;
-    }
-
+  const handleSubmit = async () => {
     if (!formData.agreedToTerms) {
       setFormErrors({ agreedToTerms: 'You must agree to the terms and conditions.' });
+      setCurrentStep(6); // Go back to preview step
       return;
     }
-
     setLoading(true);
     try {
-      // Add device details to form data
       const finalFormData = {
         ...formData,
         role: 'passenger' as const,
@@ -178,6 +191,7 @@ export default function PassengerSignUpForm() {
         verifiedToken
       };
       await signup(finalFormData);
+      setSuccessMessage("Account created successfully! Redirecting...");
     } catch (err) {
       setFormErrors({ submit: 'Failed to create account. Please try again.' });
       console.error(err);
@@ -313,8 +327,8 @@ export default function PassengerSignUpForm() {
             <div className="flex items-center mt-4">
                 <input id="agreedToTerms" name="agreedToTerms" type="checkbox" checked={formData.agreedToTerms} onChange={handleChange} className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
                 <label htmlFor="agreedToTerms" className="ml-2 block text-sm text-black">I confirm that all the information I have provided is correct.</label>
-                {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
             </div>
+            {formErrors.agreedToTerms && <p className="text-red-500 text-xs mt-1">{formErrors.agreedToTerms}</p>}
           </div>
         )}
         {currentStep === 7 && (
@@ -328,15 +342,16 @@ export default function PassengerSignUpForm() {
             </Button>
           </div>
         )}
+
         <div className="mt-8 flex justify-between">
           {currentStep > 1 && currentStep < 7 && (
-            <Button onClick={handleBack} variant="flat">
+            <Button onClick={handleBack} variant="flat" type="button">
                 <FiArrowLeft className="mr-2"/>
                 Back
             </Button>
           )}
-          {currentStep < 6 && (
-            <Button onClick={handleNext} variant="flat">
+          {currentStep < 7 && (
+            <Button onClick={handleNext} variant="flat" type="button">
                 Next
                 <FiArrowRight className="ml-2"/>
             </Button>
