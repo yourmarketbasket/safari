@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import superuserService, { LoginCredentials } from '../services/superuser.service';
+import superuserService, { LoginCredentials, AuthResponse, ErrorResponse } from '../services/superuser.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
 
@@ -9,7 +9,7 @@ interface SuperuserAuthContextType {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (loginData: LoginCredentials & { rememberMe?: boolean }) => Promise<void>;
+  login: (loginData: LoginCredentials & { rememberMe?: boolean }) => Promise<{ success: false; error?: string; message?: string; } | null>;
   logout: () => void;
 }
 
@@ -50,26 +50,24 @@ export const SuperuserAuthProvider = ({ children }: { children: React.ReactNode 
   }, [logout]);
 
   const login = async (loginData: LoginCredentials & { rememberMe?: boolean }) => {
-    setLoading(true);
-    try {
-      const responseData = await superuserService.login(loginData);
-      if (!responseData.mfaRequired) {
-        setToken(responseData.token);
-        setUser(responseData.user);
+    const response = await superuserService.login(loginData);
+    if (response.success) {
+      const authData = (response as AuthResponse).data;
+      if (!authData.mfaRequired) {
+        setToken(authData.token);
+        setUser(authData.user);
         if (loginData.rememberMe) {
-          localStorage.setItem('superuserAuthToken', responseData.token);
-          localStorage.setItem('superuser', JSON.stringify(responseData.user));
+          localStorage.setItem('superuserAuthToken', authData.token);
+          localStorage.setItem('superuser', JSON.stringify(authData.user));
         } else {
-          sessionStorage.setItem('superuserAuthToken', responseData.token);
-          sessionStorage.setItem('superuser', JSON.stringify(responseData.user));
+          sessionStorage.setItem('superuserAuthToken', authData.token);
+          sessionStorage.setItem('superuser', JSON.stringify(authData.user));
         }
         router.push('/superuser/dashboard');
       }
-    } catch (error) {
-      console.error("Failed to login:", error);
-      logout();
-    } finally {
-      setLoading(false);
+      return null;
+    } else {
+      return response as ErrorResponse;
     }
   };
 

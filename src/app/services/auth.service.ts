@@ -35,7 +35,7 @@ export type AuthData = {
 }
 
 export type AuthResponse = {
-    success: boolean;
+    success: true;
     data: AuthData;
 }
 
@@ -44,27 +44,21 @@ export type AuthResponse = {
  */
 import axios from 'axios';
 
-type ErrorResponse = {
+export type ErrorResponse = {
   success: false;
   error?: string;
   message?: string;
 };
 
-export const login = async (loginData: LoginCredentials): Promise<AuthData> => {
+export const login = async (loginData: LoginCredentials): Promise<AuthResponse | ErrorResponse> => {
   try {
     const response = await api.post<AuthResponse | ErrorResponse>('/auth/login', loginData);
-    if (response.data.success) {
-      return (response.data as AuthResponse).data;
-    } else {
-      const errorData = response.data as ErrorResponse;
-      throw new Error(errorData.error || errorData.message || 'Login failed');
-    }
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      const errorData = error.response.data;
-      throw new Error(errorData.error || errorData.message || 'Could not login');
+      return error.response.data;
     }
-    throw error;
+    return { success: false, error: 'An unknown error occurred' };
   }
 };
 

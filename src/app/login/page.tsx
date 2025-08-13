@@ -31,18 +31,14 @@ export default function LoginPage() {
 
     setLoading(true);
     setMessage({ text: 'Logging in...', type: 'info' });
-    try {
-      await login({ emailOrPhone, password, rememberMe });
-      // On success, the AuthContext will redirect, so no success message needed here.
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            setMessage({ text: err.message || 'Failed to login. Please check your credentials.', type: 'error' });
-        } else {
-            setMessage({ text: 'An unknown error occurred.', type: 'error' });
-        }
-      console.error(err);
-    } finally {
-      setLoading(false);
+    const errorResponse = await login({ emailOrPhone, password, rememberMe });
+    setLoading(false);
+
+    if (errorResponse) {
+      setMessage({ text: errorResponse.error || errorResponse.message || 'Login failed', type: 'error' });
+    } else {
+      // On success, the AuthContext will redirect, so clear any message.
+      setMessage({ text: '', type: '' });
     }
   };
 

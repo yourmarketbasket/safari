@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import authService, { LoginCredentials, VerifyMfaData } from '../services/auth.service';
+import authService, { LoginCredentials, VerifyMfaData, AuthResponse, ErrorResponse } from '../services/auth.service';
 import { useRouter } from 'next/navigation';
 import { User } from '../models/User.model';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
@@ -11,7 +11,7 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   isMfaRequired: boolean;
-  login: (loginData: LoginCredentials & { rememberMe?: boolean }) => Promise<void>;
+  login: (loginData: LoginCredentials & { rememberMe?: boolean }) => Promise<{ success: false; error?: string; message?: string; } | null>;
   logout: () => void;
   verifyMfa: (mfaCode: string) => Promise<void>;
   cancelMfa: () => void;
@@ -76,28 +76,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [logout]);
 
   const login = async (loginData: LoginCredentials & { rememberMe?: boolean }) => {
-    setLoading(true);
-    try {
-      const responseData = await authService.login(loginData);
-      if (responseData.mfaRequired) {
-        setMfaToken(responseData.mfaToken);
+    const response = await authService.login(loginData);
+    if (response.success) {
+      const authData = (response as AuthResponse).data;
+      if (authData.mfaRequired) {
+        setMfaToken(authData.mfaToken);
       } else {
-        setToken(responseData.token);
-        setUser(responseData.user);
+        setToken(authData.token);
+        setUser(authData.user);
         if (loginData.rememberMe) {
-          localStorage.setItem('authToken', responseData.token);
-          localStorage.setItem('user', JSON.stringify(responseData.user));
+          localStorage.setItem('authToken', authData.token);
+          localStorage.setItem('user', JSON.stringify(authData.user));
         } else {
-          sessionStorage.setItem('authToken', responseData.token);
-          sessionStorage.setItem('user', JSON.stringify(responseData.user));
+          sessionStorage.setItem('authToken', authData.token);
+          sessionStorage.setItem('user', JSON.stringify(authData.user));
         }
-        redirectUser(responseData.user, router);
+        redirectUser(authData.user, router);
       }
-    } catch (error) {
-      console.error("Failed to login:", error);
-      logout();
-    } finally {
-      setLoading(false);
+      return null;
+    } else {
+      return response as ErrorResponse;
     }
   };
 
