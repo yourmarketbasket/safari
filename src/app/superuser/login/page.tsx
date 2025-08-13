@@ -13,27 +13,29 @@ function SuperuserLoginPageContent() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
   const { login } = useSuperuserAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setMessage({ text: '', type: '' });
 
     if (!emailOrPhoneRegex.test(emailOrPhone)) {
-        setError('Please enter a valid email or phone number.');
-        return;
+      setMessage({ text: 'Please enter a valid email or phone number.', type: 'error' });
+      return;
     }
 
     setLoading(true);
+    setMessage({ text: 'Logging in...', type: 'info' });
     try {
       await login({ emailOrPhone, password });
+      // On success, the AuthContext will redirect, so no success message needed here.
     } catch (err: unknown) {
         if (err instanceof Error) {
-            setError(err.message || 'Failed to login. Please check your credentials.');
+            setMessage({ text: err.message || 'Failed to login. Please check your credentials.', type: 'error' });
         } else {
-            setError('An unknown error occurred.');
+            setMessage({ text: 'An unknown error occurred.', type: 'error' });
         }
       console.error(err);
     } finally {
@@ -52,7 +54,7 @@ function SuperuserLoginPageContent() {
               <p className="mt-2 text-gray-400">Access the superuser dashboard</p>
           </div>
           <div className="my-4">
-            {error && <Message message={error} type="error" />}
+            {message.text && <Message message={message.text} type={message.type as 'success' | 'error' | 'info'} />}
           </div>
           <form onSubmit={handleSubmit} className="space-y-6 pt-4">
             <div className="relative">
